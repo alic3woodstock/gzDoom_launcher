@@ -3,24 +3,30 @@ import wx
 import os
 import csv
 import gameDef
+import download
 
 class MyFrame(wx.Frame):
     def __init__(self, parent, title):
         self.itens = []
         frame = wx.Frame.__init__(self, parent, title=title)
         
+        #Dwonload button
         panel = wx.Panel(self, wx.ID_ANY)
         font = panel.GetFont()
         font.MakeLarger()
         font.MakeLarger()
         panel.SetFont(font)
         
+        menu = wx.MenuBar()
+        fileMenu = wx.Menu()
+        menuDownload = fileMenu.Append(wx.ID_FILE, item = "Download")                
+        menu.Append(fileMenu, "&File")
+        self.SetMenuBar(menu)
+        
         gameTab = wx.Notebook(panel)
         listGames = wx.ListCtrl(gameTab, id=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
         listMaps = wx.ListCtrl(gameTab, id=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
         listRun = [listGames, listMaps]
-        #directive self. allows me to access outside class
-        #listCtrl = wx.ListCtrl(panel, id=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
         gameTab.InsertPage(0, listRun[0], 'Games', 1, 0)
         gameTab.InsertPage(1, listRun[1], 'Maps', 1, 0)
 
@@ -44,7 +50,8 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, lambda event: self.btnOkOnPress(event, gameTab), btnOk)
         panel.Bind(wx.EVT_CHAR_HOOK, lambda event: self.panelOnKeyHook(event, gameTab))
         listRun[0].Bind(wx.EVT_KEY_DOWN, self.listCtrlOnKeyDown)
-        listRun[1].Bind(wx.EVT_KEY_DOWN, self.listCtrlOnKeyDown)
+        listRun[1].Bind(wx.EVT_KEY_DOWN, self.listCtrlOnKeyDown)        
+        self.Bind(wx.EVT_MENU, self.menuDownloadOnClick, menuDownload)
         
         if (not(os.path.exists('games.csv'))):
             self.writeDefaultCSV()
@@ -106,10 +113,14 @@ class MyFrame(wx.Frame):
             list.SetFocus()
             list.Focus(0)
         event.Skip()
+        
+    def menuDownloadOnClick(self, event):
+        download.StartDownload(self)
+        # dialog = download.MyDialog(self, "Downloading...")
+        # dialog.ShowModal()
 
     def lauchGame(self, listCtrl):
         item = self.itens[listCtrl.GetItem(listCtrl.GetFirstSelected()).GetData()]
-        #os.popen(item.GetExec() + " -game " + item.GetGameDir())
         command = item.GetExec() + " -iWad " + item.GetIWad()
         for file in item.GetFiles():
             command += " -file " + file
