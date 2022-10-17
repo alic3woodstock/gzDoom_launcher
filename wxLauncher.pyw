@@ -4,6 +4,7 @@ import os
 import csv
 import gameDef
 import download
+import extract
 
 class MyFrame(wx.Frame):
     def __init__(self, parent, title):
@@ -19,7 +20,8 @@ class MyFrame(wx.Frame):
         
         menu = wx.MenuBar()
         fileMenu = wx.Menu()
-        menuDownload = fileMenu.Append(wx.ID_FILE, item = "Download")                
+        menuDownload = fileMenu.Append(101, item = "&Download")                
+        menuExtract = fileMenu.Append(102, item = "&Extract All")
         menu.Append(fileMenu, "&File")
         self.SetMenuBar(menu)
         
@@ -52,6 +54,7 @@ class MyFrame(wx.Frame):
         listRun[0].Bind(wx.EVT_KEY_DOWN, self.listCtrlOnKeyDown)
         listRun[1].Bind(wx.EVT_KEY_DOWN, self.listCtrlOnKeyDown)        
         self.Bind(wx.EVT_MENU, self.menuDownloadOnClick, menuDownload)
+        self.Bind(wx.EVT_MENU, self.menuExtractOnClick, menuExtract)
         
         if (not(os.path.exists('games.csv'))):
             self.writeDefaultCSV()
@@ -116,8 +119,9 @@ class MyFrame(wx.Frame):
         
     def menuDownloadOnClick(self, event):
         download.StartDownload(self)
-        # dialog = download.MyDialog(self, "Downloading...")
-        # dialog.ShowModal()
+        
+    def menuExtractOnClick(self, parent):
+        extract.ExtractAll(self)
 
     def lauchGame(self, listCtrl):
         item = self.itens[listCtrl.GetItem(listCtrl.GetFirstSelected()).GetData()]

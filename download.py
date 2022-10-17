@@ -39,8 +39,7 @@ def StartDownload(parent):
     if(not os.path.exists("downloads")):
         os.mkdir("downloads")
         
-    files = []
-        
+    files = []        
     
     #GzDoom
     if (os.name == "nt"): 
@@ -89,45 +88,52 @@ def StartDownload(parent):
     totalFiles = len(files)
     
     for f in files:
-        GetFile(f)
+        GetFile(f)        
     
 def GetFile(f):  
     global current
     global progress
-    print(f.GetUrl())
-    print(f.GetFilePath())
     if (current < totalFiles):
         current  += 1
-        r = requests.get(f.GetUrl(), stream = True)
-        with open(f.GetFilePath(), "wb") as downloadF:
-            total_length = r.headers.get('content-length')
-            if (total_length == None):
-                total_length = 0
-            else:
-                total_length = int(total_length)
-            i = 1024
-            
-            #updates dialog based on a fixed max range since I don't know the total size of all files before download each file.
-            totalParc = (MAX_RANGE / totalFiles)
-            percentDone = (current - 1) * totalParc
-            
-            for chunk in r.iter_content(chunk_size = 1024):
-                if chunk:           
-                    intProgress = int(round(percentDone))
-                    if (total_length > 0):
-                        #Adding 1 prevents dialog freezes even with download completed
-                        intProgress = int(round(i * totalParc / total_length + 1 + percentDone))
-                        strTotal = str(total_length // 1024)
-                    else:
-                        strTotal = "..."
-                    downloadF.write(chunk)
-                i += 1024
+
+        #updates dialog based on a fixed max range since I don't know the total size of all files before download each file.
+        totalParc = (MAX_RANGE / totalFiles)
+        percentDone = (current - 1) * totalParc
+        
+        if (not os.path.isfile(f.GetFilePath())):
+            r = requests.get(f.GetUrl(), stream = True)        
+            with open(f.GetFilePath(), "wb") as downloadF:
+                total_length = r.headers.get('content-length')
+                if (total_length == None):
+                    total_length = 0
+                else:
+                    total_length = int(total_length)
+                i = 1024               
                 
-                if (intProgress >= MAX_RANGE):
-                    intProgress = MAX_RANGE - 1
+                for chunk in r.iter_content(chunk_size = 1024):
+                    if chunk:           
+                        intProgress = int(round(percentDone))
+                        if (total_length > 0):
+                            #Adding 1 prevents dialog freezes even with download completed
+                            intProgress = int(round(i * totalParc / total_length + 1 + percentDone))
+                            strTotal = str(total_length // 1024)
+                        else:
+                            strTotal = "..."
+                        downloadF.write(chunk)
+                    i += 1024
                     
-                progress.Update(intProgress, "Downloading file " +  str(current) + "/" + str(totalFiles) + ": " +
-                        str(i // 1024) + "k of " + strTotal + "k")            
+                    if (intProgress >= MAX_RANGE):
+                        intProgress = MAX_RANGE - 1
                         
+                    progress.Update(intProgress, "Downloading file " +  str(current) + "/" + str(totalFiles) + ": " +
+                            str(i // 1024) + "k of " + strTotal + "k")            
+        else:
+            intProgress = int(round(percentDone + totalParc))
+            
+            if (intProgress >= MAX_RANGE):
+                intProgress = MAX_RANGE - 1
+            
+            progress.Update(intProgress, "File exists, skiping...")            
+                       
         if (current == totalFiles):
             progress.Update(MAX_RANGE, "Download Complete!")
