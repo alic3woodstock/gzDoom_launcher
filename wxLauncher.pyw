@@ -29,8 +29,8 @@ class MyFrame(wx.Frame):
         listGames = wx.ListCtrl(gameTab, id=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
         listMaps = wx.ListCtrl(gameTab, id=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
         listRun = [listGames, listMaps]
-        gameTab.InsertPage(0, listRun[0], 'Games', 1, 0)
-        gameTab.InsertPage(1, listRun[1], 'Maps', 1, 0)
+        gameTab.InsertPage(0, listRun[0], 'Games', 1)
+        gameTab.InsertPage(1, listRun[1], 'Maps', 1)
 
         btnOk = wx.Button(panel, wx.ID_ANY, 'OK')
         btnCancel = wx.Button(panel, wx.ID_ANY, 'Cancelar')
