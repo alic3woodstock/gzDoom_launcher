@@ -17,8 +17,9 @@ class zipFile():
         if(not os.path.exists(path)):
             os.mkdir(path)
         if os.path.isfile(fromFile):
-            zip = zipfile.ZipFile(fromFile)
-            zip.extractall(path)
+            if (self.GetFormat() == "zip"):
+                zip = zipfile.ZipFile(fromFile)
+                zip.extractall(path)
         
     def CopyTo(self,path):
         fromFile = "downloads/" + self._name
@@ -40,6 +41,43 @@ class zipFile():
             
     def GetFormat(self):
         return self._format
+        
+    def GetMapName(self):
+        fromFile = "downloads/" + self.GetName()
+        zip = zipfile.ZipFile(fromFile)
+        
+        # Mps with non standard txt
+        if (self.GetName() == "mm2.zip"):
+            return "Memento Mori 2"            
+        if (self.GetName() == "av.zip"):
+            return "Alien Vendetta"            
+        if (self.GetName() == "hr.zip"):
+            return "Hell Revealed"
+
+        try:
+            txtFile = zip.namelist()
+            for t in txtFile:
+                if (t.lower().find(".txt") >= 0):
+                    with zip.open(t) as f:
+                        names = f.readlines()
+                        for name in names:
+                            s = str(name)
+                            if (s.find("Title ") == 2) and (s.find(":") >= 0) and (s.find("Screen") < 0):
+                                start = s.find(":") + 1
+                                s = s.replace("\\n","")
+                                s = s.replace("\\r","")
+                                s = s.replace("'","")
+                                s = s.replace(".wad","")
+                                return (s[start:].strip())
+        except:
+            return self.GetName()
+        return self.GetName()
+                
+        # txtFiles = os.listdir("temp/map")
+        # print(txtFiles)
+        # except:            
+            # print(self.GetName())
+        
         
         
 def ExtractAll(parent):
@@ -96,13 +134,13 @@ def CreateCSV(progress):
     for w in wads:
         zipFiles.append(zipFile(w,"wads")) # store path in format string since I don't need to use Extract
         
-    mods = os.listdir("mods")
-    for m in mods:
-        zipFiles.append(zipFile(m,"mods"))
-    
     maps = os.listdir("maps")
     for a in maps:
         zipFiles.append(zipFile(a,"maps"))
+        
+    mods = os.listdir("mods")
+    for m in mods:
+        zipFiles.append(zipFile(m,"mods"))    
         
     lines = []
     lines.append(['id', 'Name','Tab Index', 'Executable', 'Group', 'Last run mod','iWad','file1','file2','...'])
@@ -112,17 +150,25 @@ def CreateCSV(progress):
         exec = ".\\gzdoom\\gzdoom.exe"
     else:
         exec = "./gzdoom/gzdoom"
-
+        
+    i = 0
     for zip in zipFiles:
         fullPath = zip.GetFormat() + "/" + zip.GetName() 
         if (zip.TestFileName("blasphem")): 
             blasphenWad = (fullPath) # works because wad comes first in the list
         elif (zip.TestFileName("bls")):
-            lines.append([0, "Blasphem", 0, exec, "heretic", 0, blasphenWad, fullPath])
+            lines.append([i, "Blasphem", 0, exec, "heretic", 0, blasphenWad, fullPath])
         elif (zip.TestFileName("freedoom1")):            
-            lines.append([1, "Freedoom Phase 1", 0, exec, "doom", 0, fullPath])
+            lines.append([i, "Freedoom Phase 1", 0, exec, "doom", 0, fullPath])
         elif (zip.TestFileName("freedoom2")):
-            lines.append([2, "Freedoom Phase 2", 0, exec, "doom", 0, fullPath])
+            lines.append([i, "Freedoom Phase 2", 0, exec, "doom", 0, fullPath])
+        elif (zip.GetFormat() == "maps"):     
+            if (zip.TestFileName("htchest") or zip.TestFileName("unbeliev")):
+                lines.append([i, zip.GetMapName(), 1, exec, "heretic", 0, "wads/blasphem-0.1.7.wad", fullPath])
+            else:
+                lines.append([i, zip.GetMapName(), 1, exec, "doom", 0, "wads/freedoom2.wad", fullPath])
+
+        i += 1
         
     with open ('games.csv', 'w', newline = '') as csvfile:
         writer = csv.writer(csvfile, dialect = 'unix')

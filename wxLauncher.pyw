@@ -29,6 +29,7 @@ class MyFrame(wx.Frame):
         listGames = wx.ListCtrl(gameTab, id=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
         listMaps = wx.ListCtrl(gameTab, id=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
         listRun = [listGames, listMaps]
+        self.listRun = listRun
         gameTab.InsertPage(0, listRun[0], 'Games', 1)
         gameTab.InsertPage(1, listRun[1], 'Maps', 1)
 
@@ -52,7 +53,9 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, lambda event: self.btnOkOnPress(event, gameTab), btnOk)
         panel.Bind(wx.EVT_CHAR_HOOK, lambda event: self.panelOnKeyHook(event, gameTab))
         listRun[0].Bind(wx.EVT_KEY_DOWN, self.listCtrlOnKeyDown)
-        listRun[1].Bind(wx.EVT_KEY_DOWN, self.listCtrlOnKeyDown)        
+        listRun[1].Bind(wx.EVT_KEY_DOWN, self.listCtrlOnKeyDown)                
+        listRun[0].Bind(wx.EVT_LEFT_DCLICK, self.listCtrlOnDClick)
+        listRun[1].Bind(wx.EVT_LEFT_DCLICK, self.listCtrlOnDClick)        
         self.Bind(wx.EVT_MENU, self.menuDownloadOnClick, menuDownload)
         self.Bind(wx.EVT_MENU, self.menuExtractOnClick, menuExtract)
         
@@ -61,12 +64,9 @@ class MyFrame(wx.Frame):
 
 
         listRun[0].AppendColumn('Levels', width=listRun[0].GetSize().GetWidth() - 4)
-        listRun[1].AppendColumn('Levels', width=listRun[0].GetSize().GetWidth() - 4)
-        self.readCSV(self.itens)
+        listRun[1].AppendColumn('Levels', width=listRun[1].GetSize().GetWidth() - 4)
+        self.readCSV()
         
-        for i in range(len(self.itens)):
-            listRun[self.itens[i].GetTab()].InsertItem(self.itens[i].GetItem())            
-               
         listRun[0].Select(0)
         gameTab.SetSelection(0)
         listRun[0].SetFocus()
@@ -98,6 +98,10 @@ class MyFrame(wx.Frame):
             self.lauchGame(event.GetEventObject())
         else:
             event.Skip()
+            
+    def listCtrlOnDClick(self, event):
+        self.lauchGame(event.GetEventObject())
+        event.Skip()
 
     def panelOnKeyHook(self, event, tab):
         event.DoAllowNextEvent()
@@ -150,7 +154,8 @@ class MyFrame(wx.Frame):
             writer.writerow([3, 'Alien Vendetta', 1, exec, 'doom', 0, 'wad/freedoom2.wad', 'maps/av.zip'])
             writer.writerow([4, 'Ancient Aliens', 1, exec, 'doom', 0, 'wad/freedoom2.wad', 'maps/aaliens.zip'])                    
 
-    def readCSV(self, itens):
+    def readCSV(self):
+        self.itens = []
         tempItens = []
         with open ('games.csv', newline = '') as csvfile:
             reader = csv.reader(csvfile, dialect='unix')
@@ -163,20 +168,24 @@ class MyFrame(wx.Frame):
                        game.AppendFile(row[x])
                     tempItens.append(game)                            
                 i += 1
-                
+               
+        # Show itens in alphabetical order.
         order = []                
         for i in tempItens:
             order.append([i.GetItem().GetText(),i.GetItem().GetData()])
         order.sort()
         i = 0
+        
         for o in order:
             for j in tempItens:
                 if (j.GetItem().GetData() == o[1]):
                     j.GetItem().SetId(i)
-                    itens.append(j)                    
-                    print(itens[i].GetItem().GetData())
+                    self.itens.append(j)                    
                     i += 1
-
+                    
+                    
+        for i in range(len(self.itens)):
+            self.listRun[self.itens[i].GetTab()].InsertItem(self.itens[i].GetItem())            
 
 app = wx.App(False)
 frame = MyFrame(None, 'gzDoom Laucher')

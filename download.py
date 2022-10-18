@@ -1,6 +1,7 @@
 import wx
 import requests
 import os
+import dropbox
 
 # class MyDialog(wx.Dialog): 
    # def __init__(self, parent, title): 
@@ -64,7 +65,7 @@ def StartDownload(parent):
     files.append(Url("https://github.com/BLOODWOLF333/Brutal-Doom-Community-Expansion/releases/download/V21.11.2/brutalv21.11.2.pk3","brutal.pk3"))
     
     #maps
-    files.append(Url("https://www.dropbox.com/s/vi47z1a4e4c4980/Sunder%202407.zip","Sunder_202407.zip")) #it's easier not deal with spaces at file names
+    files.append(Url("https://uca33b27708475e12d125e97f419.dl.dropboxusercontent.com/cd/0/get/BvEKSo2HAmEsPFPw5zleo0AviWI0jLE8Tezy_jf8b16dU4Gr8o4-4V8FauiFG75gLIjl-S1la5Pa-16dESkZY5hhIRNnQxIFH4wrDlb0gUy9lz1jrAW55mhhsNqYZXgRdT24-vKqX5Qk4P5iqIoL8xCUvsRg4yzSug4x3U2e86YVa4HmhBy7eG14m1nAiGa1hkY/file?_download_id=9815169858843142338449664975160590021971407357996857694533512262&_notify_domain=www.dropbox.com&dl=1","Sunder_2407.zip")) #it's easier not deal with spaces at file names
     files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/av.zip","av.zip"))
     files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/aaliens.zip","aliens.zip"))
     files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/btsx_e1.zip","btsx_e1.zip"))
