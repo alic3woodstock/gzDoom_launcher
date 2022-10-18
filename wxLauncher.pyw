@@ -63,10 +63,10 @@ class MyFrame(wx.Frame):
         listRun[0].AppendColumn('Levels', width=listRun[0].GetSize().GetWidth() - 4)
         listRun[1].AppendColumn('Levels', width=listRun[0].GetSize().GetWidth() - 4)
         self.readCSV(self.itens)
-
+        
         for i in range(len(self.itens)):
-            listRun[self.itens[i].GetTab()].InsertItem(self.itens[i].GetItem())
-                
+            listRun[self.itens[i].GetTab()].InsertItem(self.itens[i].GetItem())            
+               
         listRun[0].Select(0)
         gameTab.SetSelection(0)
         listRun[0].SetFocus()
@@ -122,9 +122,14 @@ class MyFrame(wx.Frame):
         
     def menuExtractOnClick(self, parent):
         extract.ExtractAll(self)
+        self.readCSV(self.itens)
 
     def lauchGame(self, listCtrl):
-        item = self.itens[listCtrl.GetItem(listCtrl.GetFirstSelected()).GetData()]
+        item = ""
+        tempItem = listCtrl.GetItem(listCtrl.GetFirstSelected())
+        for i in self.itens:
+            if (i.GetItem().GetData() == tempItem.GetData()):
+                item = i
         command = item.GetExec() + " -iWad " + item.GetIWad()
         for file in item.GetFiles():
             command += " -file " + file
@@ -146,6 +151,7 @@ class MyFrame(wx.Frame):
             writer.writerow([4, 'Ancient Aliens', 1, exec, 'doom', 0, 'wad/freedoom2.wad', 'maps/aaliens.zip'])                    
 
     def readCSV(self, itens):
+        tempItens = []
         with open ('games.csv', newline = '') as csvfile:
             reader = csv.reader(csvfile, dialect='unix')
             i = 0
@@ -155,8 +161,22 @@ class MyFrame(wx.Frame):
                     game = gameDef.GameDef(int(row[0]), row[1], int(row[2]), row[3], row[4], int(row[5]), row[6], [])
                     for x in range(7, len(row)):
                        game.AppendFile(row[x])
-                    itens.append(game)                            
+                    tempItens.append(game)                            
                 i += 1
+                
+        order = []                
+        for i in tempItens:
+            order.append([i.GetItem().GetText(),i.GetItem().GetData()])
+        order.sort()
+        i = 0
+        for o in order:
+            for j in tempItens:
+                if (j.GetItem().GetData() == o[1]):
+                    j.GetItem().SetId(i)
+                    itens.append(j)                    
+                    print(itens[i].GetItem().GetData())
+                    i += 1
+
 
 app = wx.App(False)
 frame = MyFrame(None, 'gzDoom Laucher')
