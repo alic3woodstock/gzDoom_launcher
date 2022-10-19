@@ -202,4 +202,4 @@ def CreateCSV(progress):
         for l in lines:
             writer.writerow(l)
             
-    progress.Update(progress.GetRange(), "Done, have fun.")
+    progress.Update(progress.GetRange(), "Done, have fun!")

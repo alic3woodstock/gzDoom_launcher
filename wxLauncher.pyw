@@ -36,7 +36,8 @@ class MyFrame(wx.Frame):
         gameTab = wx.Notebook(panel)
         listGames =  MyListCtrl(gameTab, ID=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
         listMaps = MyListCtrl(gameTab, ID=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
-        listRun = [listGames, listMaps]
+        listMods = wx.ComboBox(panel, style = wx.CB_READONLY)
+        listRun = [listGames, listMaps, listMods]        
         self.listRun = listRun
         gameTab.InsertPage(0, listRun[0], 'Games', 1)
         gameTab.InsertPage(1, listRun[1], 'Maps', 1)
@@ -50,9 +51,17 @@ class MyFrame(wx.Frame):
         # box.AddSpacer(6)
 
         box2 = wx.BoxSizer(wx.HORIZONTAL)
-        box2.Add(btnOk,0, wx.RIGHT)
-        box2.Add(btnCancel,0, wx.RIGHT, border=4)
-        box.Add(box2, 0, wx.ALIGN_RIGHT | wx.ALL)
+        box2.AddSpacer(4)
+        box2.Add(wx.StaticText(panel, label = "Run with mod:"), 0, wx.CENTER, border = 4)
+        box2.AddSpacer(4)
+        box2.Add(listRun[2], 0, wx.CENTER, border = 4)
+        
+        
+        box3 = wx.BoxSizer(wx.HORIZONTAL)
+        box3.Add(btnOk,0, wx.RIGHT)
+        box3.Add(btnCancel,0, wx.RIGHT, border=4)
+        box.Add(box2, 0, wx.ALIGN_LEFT | wx.ALL)
+        box.Add(box3, 0, wx.ALIGN_RIGHT | wx.ALL)
         box.AddSpacer(8)
 
         #Bind Events
@@ -144,9 +153,11 @@ class MyFrame(wx.Frame):
     def lauchGame(self, listCtrl):
         item = ""
         tempItem = listCtrl.GetItem(listCtrl.GetFirstSelected())
+        
         for i in self.itens:
             if (i.GetItem().GetData() == tempItem.GetData()):
                 item = i
+                
         command = item.GetExec() + " -iWad " + item.GetIWad()
         for file in item.GetFiles():
             command += " -file " + file
@@ -198,9 +209,16 @@ class MyFrame(wx.Frame):
                     self.itens.append(j)                    
                     i += 1
                     
-                    
+
+        self.listRun[2].Clear()
+        self.listRun[2].Insert("None", 0, gameDef.GameDef(-1,"None",2))                
+        self.listRun[2].SetSelection(0)
+
         for i in range(len(self.itens)):
-            self.listRun[self.itens[i].GetTab()].InsertItem(self.itens[i].GetItem())            
+            if (self.itens[i].GetTab() > 1):
+                self.listRun[2].Insert(self.itens[i].GetItem().GetText(), self.listRun[2].GetCount(), self.itens[i])
+            else:
+                self.listRun[self.itens[i].GetTab()].InsertItem(self.itens[i].GetItem())            
 
 app = wx.App(False)
 frame = MyFrame(None, 'gzDoom Laucher')
