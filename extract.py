@@ -3,6 +3,7 @@ import shutil
 import zipfile
 import wx
 import csv
+import tarfile
 
 class zipFile():
     _format = ""
@@ -17,18 +18,28 @@ class zipFile():
         if(not os.path.exists(path)):
             os.mkdir(path)
         if os.path.isfile(fromFile):
-            if (self.GetFormat() == "zip"):
-                zip = zipfile.ZipFile(fromFile)
-                zip.extractall(path)
+            try:
+                if (self.GetFormat() == "zip"):
+                    zip = zipfile.ZipFile(fromFile)
+                    zip.extractall(path)
+            except:
+                print("Extracting " + self.GetName() + " failed")
         
     def CopyTo(self,path):
-        fromFile = "downloads/" + self._name
-        
-        if(not os.path.exists(path)):
-            os.mkdir(path)
+        try:  
+            fromFile = "downloads/" + self._name
             
-        if os.path.isfile(fromFile):
-            shutil.copy(fromFile,path)
+            if (self.GetFormat() == "zip") or (self.GetFormat() == "pk3"):
+                zip = zipfile.ZipFile(fromFile)
+                zip.testzip
+        
+            if(not os.path.exists(path)):
+                os.mkdir(path)
+                
+            if os.path.isfile(fromFile):
+                shutil.copy(fromFile,path)
+        except:
+            print("Extracting " + self.GetName() + " failed")
     
     def GetName(self):
         return self._name

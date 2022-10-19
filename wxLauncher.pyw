@@ -5,6 +5,14 @@ import csv
 import gameDef
 import download
 import extract
+import wx.lib.mixins.listctrl as listmix
+
+class MyListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
+    def __init__(self, parent, ID, pos=wx.DefaultPosition,
+                 size=wx.DefaultSize, style=0):
+        wx.ListCtrl.__init__(self, parent, ID, pos, size, style)
+        listmix.ListCtrlAutoWidthMixin.__init__(self)
+        self.setResizeColumn(0)
 
 class MyFrame(wx.Frame):
     def __init__(self, parent, title):
@@ -26,8 +34,8 @@ class MyFrame(wx.Frame):
         self.SetMenuBar(menu)
         
         gameTab = wx.Notebook(panel)
-        listGames = wx.ListCtrl(gameTab, id=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
-        listMaps = wx.ListCtrl(gameTab, id=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
+        listGames =  MyListCtrl(gameTab, ID=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
+        listMaps = MyListCtrl(gameTab, ID=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
         listRun = [listGames, listMaps]
         self.listRun = listRun
         gameTab.InsertPage(0, listRun[0], 'Games', 1)
@@ -39,11 +47,10 @@ class MyFrame(wx.Frame):
         box = wx.BoxSizer(wx.VERTICAL)
         #box.Add(self.listCtrl, 1, wx.EXPAND | wx.ALL, border=4)
         box.Add(gameTab, 1, wx.EXPAND | wx.ALL, border=4)
-        box.AddSpacer(6)
+        # box.AddSpacer(6)
 
         box2 = wx.BoxSizer(wx.HORIZONTAL)
         box2.Add(btnOk,0, wx.RIGHT)
-        box2.AddSpacer(4)
         box2.Add(btnCancel,0, wx.RIGHT, border=4)
         box.Add(box2, 0, wx.ALIGN_RIGHT | wx.ALL)
         box.AddSpacer(8)
@@ -63,9 +70,15 @@ class MyFrame(wx.Frame):
             self.writeDefaultCSV()
 
 
-        listRun[0].AppendColumn('Levels', width=listRun[0].GetSize().GetWidth() - 4)
-        listRun[1].AppendColumn('Levels', width=listRun[1].GetSize().GetWidth() - 4)
-        self.readCSV()
+        listRun[0].AppendColumn('Levels')
+        listRun[1].AppendColumn('Levels')
+        self.readCSV()        
+        if listRun[1].GetColumnWidth(0) >= listRun[0].GetColumnWidth(0): 
+            listRun[0].resizeColumn(listRun[1].GetColumnWidth(0))       
+        else:
+            listRun[1].resizeColumn(listRun[0].GetColumnWidth(0))       
+        # listRun[0].SetColumnWidth(0, listRun[1].GetColumnWidth(0))
+        # listRun[1].SetColumnWidth(0,wx.LIST_AUTOSIZE)
         
         listRun[0].Select(0)
         gameTab.SetSelection(0)
@@ -126,7 +139,7 @@ class MyFrame(wx.Frame):
         
     def menuExtractOnClick(self, parent):
         extract.ExtractAll(self)
-        self.readCSV(self.itens)
+        self.readCSV()
 
     def lauchGame(self, listCtrl):
         item = ""
@@ -155,6 +168,7 @@ class MyFrame(wx.Frame):
             writer.writerow([4, 'Ancient Aliens', 1, exec, 'doom', 0, 'wad/freedoom2.wad', 'maps/aaliens.zip'])                    
 
     def readCSV(self):
+        
         self.itens = []
         tempItens = []
         with open ('games.csv', newline = '') as csvfile:
