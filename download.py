@@ -1,7 +1,6 @@
 import wx
 import requests
 import os
-import dropbox
 
 # class MyDialog(wx.Dialog): 
    # def __init__(self, parent, title): 
