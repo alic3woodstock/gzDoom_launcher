@@ -56,7 +56,7 @@ class GameDef():
         self._tab = tab
         self._exec = exec
         self._group = group
-        self_lastMod = lastMod
+        self._lastMod = lastMod
         self._iWad = wad
         self._files = files
 

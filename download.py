@@ -87,8 +87,11 @@ def StartDownload(parent):
     global totalFiles
     totalFiles = len(files)
     
-    for f in files:
-        GetFile(f)        
+    try:
+        for f in files:
+            GetFile(f)        
+    except:
+         progress.Update(MAX_RANGE, "Failed to download " + f.GetFileName())
     
 def GetFile(f):  
     global current

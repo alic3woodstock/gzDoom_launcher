@@ -74,10 +74,6 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.menuDownloadOnClick, menuDownload)
         self.Bind(wx.EVT_MENU, self.menuExtractOnClick, menuExtract)
         
-        if (not(os.path.exists('games.csv'))):
-            self.writeDefaultCSV()
-
-
         listRun[0].AppendColumn('Levels')
         listRun[1].AppendColumn('Levels')
         self.readCSV()        
@@ -86,9 +82,6 @@ class MyFrame(wx.Frame):
         else:
             listRun[1].resizeColumn(listRun[0].GetColumnWidth(0))       
             
-        # listRun[0].SetColumnWidth(0, listRun[1].GetColumnWidth(0))
-        # listRun[1].SetColumnWidth(0,wx.LIST_AUTOSIZE)
-        
         listRun[0].Select(0)
         gameTab.SetSelection(0)
         listRun[0].SetFocus()
@@ -139,8 +132,10 @@ class MyFrame(wx.Frame):
         
         for i in self.itens:
             if (i.GetTab() == 2) and (i.GetGroup() == item.GetGroup()):
-                self.listRun[2].Insert(i.GetItem().GetText(), self.listRun[2].GetCount(), i)        
-
+                self.listRun[2].Insert(i.GetItem().GetText(), self.listRun[2].GetCount(), i)
+                if (item.GetLastMod() == i.GetItem().GetData()):
+                    self.listRun[2].SetSelection(self.listRun[2].GetCount() - 1)
+    
     def panelOnKeyHook(self, event, tab):
         event.DoAllowNextEvent()
         changeFocus = False
@@ -157,6 +152,11 @@ class MyFrame(wx.Frame):
             list.Select(0)
             list.SetFocus()
             list.Focus(0)
+        if (event.GetKeyCode() == wx.WXK_SPACE):
+            if (self.listRun[2].GetSelection() < (self.listRun[2].GetCount() - 1)):
+                self.listRun[2].SetSelection(self.listRun[2].GetSelection() + 1)
+            else:
+                self.listRun[2].SetSelection(0)
         event.Skip()
         
     def menuDownloadOnClick(self, event):
@@ -184,21 +184,37 @@ class MyFrame(wx.Frame):
                 command += " -file " + file
         
         os.popen(command)
+        
+        with open ('games.csv', 'r+') as csvfile:
+            fileText = csvfile.readlines()
+
+        for i in range(len(fileText)):
+            fLine = fileText[i]
+            x = fLine.find(',')
+            if (fLine[1:x - 1] == str(item.GetItem().GetData())):
+                csvLine = fLine.split(',')
+                csvLine[5] = '"' + str(mod.GetItem().GetData()) + '"'
+                fileText[i] = ','.join(csvLine)
+                break           
+        
+        with open ('games.csv', 'w+') as csvfile:
+            csvfile.writelines(fileText)
+                        
         listCtrl.SetFocus()
 
-    def writeDefaultCSV(self):
-        with open ('games.csv', 'w', newline = '') as csvfile:
-            writer = csv.writer(csvfile, dialect = 'unix')
-            if (os.name == "nt"):
-                exec = ".\\gzdoom\\gzdoom.exe"
-            else:
-                exec = "./gzdoom/gzdoom"
-            writer.writerow(['id', 'Name','Tab Index', 'Executable', 'Group', 'Last run mod','iWad','file1','file2','...'])
-            writer.writerow([0, 'Blasphemer', 0, exec, 'heretic', 0, 'wad/blasphem-0.1.7.wad', 'wad/BLSMPTXT.WAD'])
-            writer.writerow([1, 'Freedoom Phase 1', 0, exec, 'doom', 0, 'wad/freedoom1.wad'])
-            writer.writerow([2, 'Freedoom Phase 2', 0, exec, 'doom', 0, 'wad/freedoom2.wad'])
-            writer.writerow([3, 'Alien Vendetta', 1, exec, 'doom', 0, 'wad/freedoom2.wad', 'maps/av.zip'])
-            writer.writerow([4, 'Ancient Aliens', 1, exec, 'doom', 0, 'wad/freedoom2.wad', 'maps/aaliens.zip'])                    
+    # def writeDefaultCSV(self):
+        # with open ('games.csv', 'w', newline = '') as csvfile:
+            # writer = csv.writer(csvfile, dialect = 'unix')
+            # if (os.name == "nt"):
+                # exec = ".\\gzdoom\\gzdoom.exe"
+            # else:
+                # exec = "./gzdoom/gzdoom"
+            # writer.writerow(['id', 'Name','Tab Index', 'Executable', 'Group', 'Last run mod','iWad','file1','file2','...'])
+            # writer.writerow([0, 'Blasphemer', 0, exec, 'heretic', 0, 'wad/blasphem-0.1.7.wad', 'wad/BLSMPTXT.WAD'])
+            # writer.writerow([1, 'Freedoom Phase 1', 0, exec, 'doom', 0, 'wad/freedoom1.wad'])
+            # writer.writerow([2, 'Freedoom Phase 2', 0, exec, 'doom', 0, 'wad/freedoom2.wad'])
+            # writer.writerow([3, 'Alien Vendetta', 1, exec, 'doom', 0, 'wad/freedoom2.wad', 'maps/av.zip'])
+            # writer.writerow([4, 'Ancient Aliens', 1, exec, 'doom', 0, 'wad/freedoom2.wad', 'maps/aaliens.zip'])                    
 
     def readCSV(self):
         self.listRun[0].DeleteAllItems()
