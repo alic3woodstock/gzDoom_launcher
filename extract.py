@@ -180,7 +180,7 @@ def CreateCSV(progress):
     for zip in zipFiles:
         fullPath = zip.GetFormat() + "/" + zip.GetName() 
         if (zip.TestFileName("blasphem")): 
-            blasphenWad = (fullPath) # works because wad comes first in the list
+            blasphenWad = (fullPath) # works because wad comes first in the list            
         elif (zip.TestFileName("bls")):
             lines.append([i, "Blasphem", 0, exec, "heretic", 0, blasphenWad, fullPath])
         elif (zip.TestFileName("freedoom1")):            
@@ -192,7 +192,14 @@ def CreateCSV(progress):
                 lines.append([i, zip.GetMapName(), 1, exec, "heretic", 0, "wads/blasphem-0.1.7.wad", fullPath])
             else:
                 lines.append([i, zip.GetMapName(), 1, exec, "doom", 0, "wads/freedoom2.wad", fullPath])
-
+        elif (zip.GetFormat() == "mods"):
+            if (zip.TestFileName("150skins")):
+                i -= 1
+            elif (zip.TestFileName("beaultiful")):
+                lines.append([i, "Beaultiful Doom", 2, exec, "doom", 0, "", "mods/150skins.zip", "mods/Beaultiful_Doom.pk3"])
+            elif (zip.TestFileName("brutal")):
+                lines.append([i, "Brutal Doom", 2, exec, "doom", 0, "", "mods/brutal.pk3"])
+            
         i += 1
         
         progress.Update(i + 21, "Creating a new CSV...") 

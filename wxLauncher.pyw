@@ -54,8 +54,7 @@ class MyFrame(wx.Frame):
         box2.AddSpacer(4)
         box2.Add(wx.StaticText(panel, label = "Run with mod:"), 0, wx.CENTER, border = 4)
         box2.AddSpacer(4)
-        box2.Add(listRun[2], 0, wx.CENTER, border = 4)
-        
+        box2.Add(listRun[2], 0, wx.EXPAND | wx.ALL, border = 4)
         
         box3 = wx.BoxSizer(wx.HORIZONTAL)
         box3.Add(btnOk,0, wx.RIGHT)
@@ -68,10 +67,10 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.btnCancelOnPress, btnCancel)
         self.Bind(wx.EVT_BUTTON, lambda event: self.btnOkOnPress(event, gameTab), btnOk)
         panel.Bind(wx.EVT_CHAR_HOOK, lambda event: self.panelOnKeyHook(event, gameTab))
-        listRun[0].Bind(wx.EVT_KEY_DOWN, self.listCtrlOnKeyDown)
-        listRun[1].Bind(wx.EVT_KEY_DOWN, self.listCtrlOnKeyDown)                
-        listRun[0].Bind(wx.EVT_LEFT_DCLICK, self.listCtrlOnDClick)
-        listRun[1].Bind(wx.EVT_LEFT_DCLICK, self.listCtrlOnDClick)        
+        for i in range(2):
+            listRun[i].Bind(wx.EVT_KEY_DOWN, self.listCtrlOnKeyDown)
+            listRun[i].Bind(wx.EVT_LEFT_DCLICK, self.listCtrlOnDClick)
+            listRun[i].Bind(wx.EVT_LIST_ITEM_SELECTED, self.listCtrlOnSelect)
         self.Bind(wx.EVT_MENU, self.menuDownloadOnClick, menuDownload)
         self.Bind(wx.EVT_MENU, self.menuExtractOnClick, menuExtract)
         
@@ -86,6 +85,7 @@ class MyFrame(wx.Frame):
             listRun[0].resizeColumn(listRun[1].GetColumnWidth(0))       
         else:
             listRun[1].resizeColumn(listRun[0].GetColumnWidth(0))       
+            
         # listRun[0].SetColumnWidth(0, listRun[1].GetColumnWidth(0))
         # listRun[1].SetColumnWidth(0,wx.LIST_AUTOSIZE)
         
@@ -124,6 +124,22 @@ class MyFrame(wx.Frame):
     def listCtrlOnDClick(self, event):
         self.lauchGame(event.GetEventObject())
         event.Skip()
+        
+    def listCtrlOnSelect(self, event):
+        self.listRun[2].Clear()
+        self.listRun[2].Insert("None                    ", 0, gameDef.GameDef(-1,"None",2))                
+        self.listRun[2].SetSelection(0)
+        
+        item = ""
+        tempItem = event.GetEventObject().GetItem(event.GetEventObject().GetFirstSelected())
+        
+        for i in self.itens:
+            if (i.GetItem().GetData() == tempItem.GetData()):
+                item = i
+        
+        for i in self.itens:
+            if (i.GetTab() == 2) and (i.GetGroup() == item.GetGroup()):
+                self.listRun[2].Insert(i.GetItem().GetText(), self.listRun[2].GetCount(), i)        
 
     def panelOnKeyHook(self, event, tab):
         event.DoAllowNextEvent()
@@ -161,6 +177,12 @@ class MyFrame(wx.Frame):
         command = item.GetExec() + " -iWad " + item.GetIWad()
         for file in item.GetFiles():
             command += " -file " + file
+
+        mod = self.listRun[2].GetClientData(self.listRun[2].GetSelection())
+        if (mod.GetItem().GetData() >= 0):
+            for file in mod.GetFiles():
+                command += " -file " + file
+        
         os.popen(command)
         listCtrl.SetFocus()
 
@@ -192,7 +214,7 @@ class MyFrame(wx.Frame):
                     game = gameDef.GameDef(int(row[0]), row[1], int(row[2]), row[3], row[4], int(row[5]), row[6], [])
                     for x in range(7, len(row)):
                        game.AppendFile(row[x])
-                    tempItens.append(game)                            
+                    tempItens.append(game) 
                 i += 1
                
         # Show itens in alphabetical order.
@@ -211,13 +233,11 @@ class MyFrame(wx.Frame):
                     
 
         self.listRun[2].Clear()
-        self.listRun[2].Insert("None", 0, gameDef.GameDef(-1,"None",2))                
+        self.listRun[2].Insert("None                    ", 0, gameDef.GameDef(-1,"None",2))                
         self.listRun[2].SetSelection(0)
 
         for i in range(len(self.itens)):
-            if (self.itens[i].GetTab() > 1):
-                self.listRun[2].Insert(self.itens[i].GetItem().GetText(), self.listRun[2].GetCount(), self.itens[i])
-            else:
+            if (self.itens[i].GetTab() <= 1):
                 self.listRun[self.itens[i].GetTab()].InsertItem(self.itens[i].GetItem())            
 
 app = wx.App(False)

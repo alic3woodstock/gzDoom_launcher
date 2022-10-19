@@ -20,8 +20,8 @@ class GameDef():
     def SetExec(self, exec):
         self._exec = exec
         
-    def GedGroup(self):
-        return group
+    def GetGroup(self):
+        return self._group
         
     def SetGroup(self, group):
         self._group = group
