@@ -76,6 +76,10 @@ class MyFrame(wx.Frame):
         
         listRun[0].AppendColumn('Levels')
         listRun[1].AppendColumn('Levels')
+        
+        if (not os.path.exists('games.csv')):
+            self.writeDefaultCSV()
+        
         self.readCSV()        
         if listRun[1].GetColumnWidth(0) >= listRun[0].GetColumnWidth(0): 
             listRun[0].resizeColumn(listRun[1].GetColumnWidth(0))       
@@ -202,19 +206,15 @@ class MyFrame(wx.Frame):
                         
         listCtrl.SetFocus()
 
-    # def writeDefaultCSV(self):
-        # with open ('games.csv', 'w', newline = '') as csvfile:
-            # writer = csv.writer(csvfile, dialect = 'unix')
-            # if (os.name == "nt"):
-                # exec = ".\\gzdoom\\gzdoom.exe"
-            # else:
-                # exec = "./gzdoom/gzdoom"
-            # writer.writerow(['id', 'Name','Tab Index', 'Executable', 'Group', 'Last run mod','iWad','file1','file2','...'])
-            # writer.writerow([0, 'Blasphemer', 0, exec, 'heretic', 0, 'wad/blasphem-0.1.7.wad', 'wad/BLSMPTXT.WAD'])
-            # writer.writerow([1, 'Freedoom Phase 1', 0, exec, 'doom', 0, 'wad/freedoom1.wad'])
-            # writer.writerow([2, 'Freedoom Phase 2', 0, exec, 'doom', 0, 'wad/freedoom2.wad'])
-            # writer.writerow([3, 'Alien Vendetta', 1, exec, 'doom', 0, 'wad/freedoom2.wad', 'maps/av.zip'])
-            # writer.writerow([4, 'Ancient Aliens', 1, exec, 'doom', 0, 'wad/freedoom2.wad', 'maps/aaliens.zip'])                    
+    def writeDefaultCSV(self):
+        with open ('games.csv', 'w', newline = '') as csvfile:
+            writer = csv.writer(csvfile, dialect = 'unix')
+            if (os.name == "nt"):
+                exec = ".\\gzdoom\\gzdoom.exe"
+            else:
+                exec = "./gzdoom/gzdoom"
+            writer.writerow(['id', 'Name','Tab Index', 'Executable', 'Group', 'Last run mod','iWad','file1','file2','...'])
+            writer.writerow([0, 'Run file -> Download and File -> Extract...', 0, '', '', 0, '', ''])
 
     def readCSV(self):
         self.listRun[0].DeleteAllItems()
