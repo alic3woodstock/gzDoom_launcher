@@ -22,6 +22,10 @@ class zipFile():
                 if (self.GetFormat() == "zip"):
                     zip = zipfile.ZipFile(fromFile)
                     zip.extractall(path)
+
+                if (self.GetFormat() == "xz"):
+                    zip = tarfile.open(fromFile, 'r:xz')
+                    zip.extractall(path)
             except:
                 print("Extracting " + self.GetName() + " failed")
         
@@ -39,7 +43,7 @@ class zipFile():
             if os.path.isfile(fromFile):
                 shutil.copy(fromFile,path)
         except:
-            print("Extracting " + self.GetName() + " failed")
+            print("Copying " + self.GetName() + " failed")
     
     def GetName(self):
         return self._name
@@ -101,16 +105,26 @@ def ExtractAll(parent):
     zipFiles = []
     for zip in fileNames:
         extPos = zip.rfind(".")
-        format = "zip"
+        format = "zip"        
         if (extPos >= 0):
             format = zip[extPos + 1:].lower()
         zipFiles.append(zipFile(zip, format))
     
-    progress.SetRange(len(zipFiles)*2)
+    progress.SetRange(len(zipFiles) + 22) #if everthyng works number of csv in the list is 22
     i = 1;
     for zip in zipFiles:
         if (zip.TestFileName("gzdoom")):
-            zip.ExtractTo("gzdoom")
+            if (os.name == "nt"):  
+                zip.ExtractTo("gzdoom")
+            else:
+                try:
+                    zip.ExtractTo("temp")
+                    dirs = os.listdir("temp")
+                    for dir in dirs:
+                        if (dir.lower().find("gzdoom") >= 0):
+                            shutil.copytree("temp/" + dir,"gzdoom")
+                except:
+                    print("Copying gzdoom failed!")
         elif (zip.TestFileName("blasphem")):
             zip.ExtractTo("wads")
         elif (zip.TestFileName("freedoom")):
@@ -181,9 +195,11 @@ def CreateCSV(progress):
 
         i += 1
         
+        progress.Update(i + 21, "Creating a new CSV...") 
+        
     with open ('games.csv', 'w', newline = '') as csvfile:
         writer = csv.writer(csvfile, dialect = 'unix')
         for l in lines:
             writer.writerow(l)
             
-    progress.Update(progress.GetRange())
+    progress.Update(progress.GetRange(), "Done, have fun.")

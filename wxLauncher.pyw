@@ -23,7 +23,7 @@ class MyFrame(wx.Frame):
         panel = wx.Panel(self, wx.ID_ANY)
         font = panel.GetFont()
         font.MakeLarger()
-        font.MakeLarger()
+        # font.MakeLarger()
         panel.SetFont(font)
         
         menu = wx.MenuBar()
@@ -168,7 +168,8 @@ class MyFrame(wx.Frame):
             writer.writerow([4, 'Ancient Aliens', 1, exec, 'doom', 0, 'wad/freedoom2.wad', 'maps/aaliens.zip'])                    
 
     def readCSV(self):
-        
+        self.listRun[0].DeleteAllItems()
+        self.listRun[1].DeleteAllItems()
         self.itens = []
         tempItens = []
         with open ('games.csv', newline = '') as csvfile:

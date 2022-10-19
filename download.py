@@ -43,7 +43,7 @@ def StartDownload(parent):
     files = []        
     
     #GzDoom
-    if (os.name == "nt"): 
+    if (os.name == "nt"):
         files.append(Url("https://github.com/coelckers/gzdoom/releases/download/g4.8.2/gzdoom-4-8-2-Windows-64bit.zip","gzdoom.zip"))
     else:
         files.append(Url("https://github.com/ZDoom/gzdoom/releases/download/g4.8.2/GZDoom.v4.8.2.Linux.tar.xz","gzdoom.tar.xz"))
