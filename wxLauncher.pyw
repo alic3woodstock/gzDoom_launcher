@@ -30,6 +30,8 @@ class MyFrame(wx.Frame):
         fileMenu = wx.Menu()
         menuDownload = fileMenu.Append(101, item = "&Download")                
         menuExtract = fileMenu.Append(102, item = "&Extract All")
+        fileMenu.Append(id=wx.ID_SEPARATOR, item="")
+        menuClose = fileMenu.Append(103, item = "&Close")
         menu.Append(fileMenu, "&File")
         self.SetMenuBar(menu)
         
@@ -42,37 +44,31 @@ class MyFrame(wx.Frame):
         gameTab.InsertPage(0, listRun[0], 'Games', 1)
         gameTab.InsertPage(1, listRun[1], 'Maps', 1)
 
-        btnOk = wx.Button(panel, wx.ID_ANY, 'OK')
-        btnCancel = wx.Button(panel, wx.ID_ANY, 'Cancelar')
-
+        btnOk = wx.Button(panel, wx.ID_ANY, 'Run Game')
         box = wx.BoxSizer(wx.VERTICAL)
-        #box.Add(self.listCtrl, 1, wx.EXPAND | wx.ALL, border=4)
         box.Add(gameTab, 1, wx.EXPAND | wx.ALL, border=4)
-        # box.AddSpacer(6)
 
         box2 = wx.BoxSizer(wx.HORIZONTAL)
         box2.AddSpacer(4)
         box2.Add(wx.StaticText(panel, label = "Run with mod:"), 0, wx.CENTER, border = 4)
         box2.AddSpacer(4)
         box2.Add(listRun[2], 0, wx.EXPAND | wx.ALL, border = 4)
-        
         box3 = wx.BoxSizer(wx.HORIZONTAL)
-        box3.Add(btnOk,0, wx.RIGHT)
-        box3.Add(btnCancel,0, wx.RIGHT, border=4)
+        box3.Add(btnOk,0, wx.ALL, border = 4)
         box.Add(box2, 0, wx.ALIGN_LEFT | wx.ALL)
+        box.AddSpacer(4)
+        box.Add(wx.StaticLine(panel, id=wx.ID_ANY, style = wx.LI_HORIZONTAL), 0, wx.EXPAND)
         box.Add(box3, 0, wx.ALIGN_RIGHT | wx.ALL)
-        box.AddSpacer(8)
 
         #Bind Events
-        self.Bind(wx.EVT_BUTTON, self.btnCancelOnPress, btnCancel)
         self.Bind(wx.EVT_BUTTON, lambda event: self.btnOkOnPress(event, gameTab), btnOk)
         panel.Bind(wx.EVT_CHAR_HOOK, lambda event: self.panelOnKeyHook(event, gameTab))
         for i in range(2):
-            listRun[i].Bind(wx.EVT_KEY_DOWN, self.listCtrlOnKeyDown)
             listRun[i].Bind(wx.EVT_LEFT_DCLICK, self.listCtrlOnDClick)
             listRun[i].Bind(wx.EVT_LIST_ITEM_SELECTED, self.listCtrlOnSelect)
         self.Bind(wx.EVT_MENU, self.menuDownloadOnClick, menuDownload)
-        self.Bind(wx.EVT_MENU, self.menuExtractOnClick, menuExtract)
+        self.Bind(wx.EVT_MENU, lambda event: self.menuExtractOnClick(event, gameTab), menuExtract)
+        self.Bind(wx.EVT_MENU, self.menuCloseOnClick, menuClose)
         
         listRun[0].AppendColumn('Levels')
         listRun[1].AppendColumn('Levels')
@@ -96,18 +92,12 @@ class MyFrame(wx.Frame):
         self.Centre()
         self.Show(True)
 
-    def btnCancelOnPress(self, event):
+    def menuCloseOnClick(self, event):
         self.Close()
 
     def btnOkOnPress(self, event, tab):
         self.lauchGame(tab.GetChildren()[tab.GetSelection()])
 
-    def listCtrlOnKeyDown(self, event):
-        if (event.GetKeyCode() == 13):
-            self.lauchGame(event.GetEventObject())
-        else:
-            event.Skip()
-            
     def listCtrlOnDClick(self, event):
         self.lauchGame(event.GetEventObject())
         event.Skip()
@@ -133,6 +123,8 @@ class MyFrame(wx.Frame):
     def panelOnKeyHook(self, event, tab):
         event.DoAllowNextEvent()
         changeFocus = False
+        if (event.GetKeyCode() == wx.WXK_RETURN):
+            self.lauchGame(tab.GetChildren()[tab.GetSelection()])
         if (event.GetKeyCode() == wx.WXK_ESCAPE):
             self.Close()
         if ((event.GetKeyCode() == wx.WXK_RIGHT) and (tab.GetSelection() < tab.GetPageCount() - 1)):
@@ -156,11 +148,17 @@ class MyFrame(wx.Frame):
     def menuDownloadOnClick(self, event):
         download.StartDownload(self)
         
-    def menuExtractOnClick(self, parent):
+    def menuExtractOnClick(self, event, tab):
         extract.ExtractAll(self)
         self.readCSV()
+        gameList = tab.GetChildren()[tab.GetSelection()]
+        gameList.Select(0)
+        
 
     def lauchGame(self, listCtrl):
+        if (listCtrl.GetFirstSelected() < 0):
+            listCtrl.Select(0)
+            
         item = ""
         tempItem = listCtrl.GetItem(listCtrl.GetFirstSelected())
         

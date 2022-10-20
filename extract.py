@@ -9,8 +9,8 @@ class zipFile():
     _format = ""
     _name = ""
     
-    def __init__(self,name, format = "zip"):
-        self._format = format
+    def __init__(self,name, fileFormat = "z"):
+        self._format = fileFormat
         self._name = name
         
     def ExtractTo(self,path):
@@ -20,12 +20,12 @@ class zipFile():
         if os.path.isfile(fromFile):
             try:
                 if (self.GetFormat() == "zip"):
-                    zip = zipfile.ZipFile(fromFile)
-                    zip.extractall(path)
+                    z = zipfile.ZipFile(fromFile)
+                    z.extractall(path)
 
                 if (self.GetFormat() == "xz"):
-                    zip = tarfile.open(fromFile, 'r:xz')
-                    zip.extractall(path)
+                    z = tarfile.open(fromFile, 'r:xz')
+                    z.extractall(path)
             except:
                 print("Extracting " + self.GetName() + " failed")
         
@@ -34,8 +34,8 @@ class zipFile():
             fromFile = "downloads/" + self._name
             
             if (self.GetFormat() == "zip") or (self.GetFormat() == "pk3"):
-                zip = zipfile.ZipFile(fromFile)
-                zip.testzip
+                z = zipfile.ZipFile(fromFile)
+                z.testzip
         
             if(not os.path.exists(path)):
                 os.mkdir(path)
@@ -59,7 +59,7 @@ class zipFile():
         
     def GetMapName(self):
         fromFile = "downloads/" + self.GetName()
-        zip = zipfile.ZipFile(fromFile)
+        z = zipfile.ZipFile(fromFile)
         
         # Mps with non standard txt
         if (self.GetName() == "mm2.zip"):
@@ -70,10 +70,10 @@ class zipFile():
             return "Hell Revealed"
 
         try:
-            txtFile = zip.namelist()
+            txtFile = z.namelist()
             for t in txtFile:
                 if (t.lower().find(".txt") >= 0):
-                    with zip.open(t) as f:
+                    with z.open(t) as f:
                         names = f.readlines()
                         for name in names:
                             s = str(name)
@@ -88,47 +88,39 @@ class zipFile():
             return self.GetName()
         return self.GetName()
                 
-        # txtFiles = os.listdir("temp/map")
-        # print(txtFiles)
-        # except:            
-            # print(self.GetName())
-        
-        
-        
 def ExtractAll(parent):
     progress = wx.ProgressDialog("Extract and Create CSV", "Extracting/Copying files...", maximum=100, parent=parent,
             style=wx.PD_APP_MODAL | wx.STAY_ON_TOP)
 
     fileNames = os.listdir("downloads")
-    #print(fileNames)      
 
     zipFiles = []
-    for zip in fileNames:
-        extPos = zip.rfind(".")
-        format = "zip"        
+    for z in fileNames:
+        extPos = z.rfind(".")
+        fileFormat = "zip"        
         if (extPos >= 0):
-            format = zip[extPos + 1:].lower()
-        zipFiles.append(zipFile(zip, format))
+            fileFormat = z[extPos + 1:].lower()
+        zipFiles.append(zipFile(z, fileFormat))
     
     progress.SetRange(len(zipFiles) + 22) #if everthyng works number of csv in the list is 22
     i = 1;
-    for zip in zipFiles:
-        if (zip.TestFileName("gzdoom")):
+    for z in zipFiles:
+        if (z.TestFileName("gzdoom")):
             if (os.name == "nt"):  
-                zip.ExtractTo("gzdoom")
+                z.ExtractTo("gzdoom")
             else:
                 try:
-                    zip.ExtractTo("temp")
+                    z.ExtractTo("temp")
                     dirs = os.listdir("temp")
                     for dir in dirs:
                         if (dir.lower().find("gzdoom") >= 0):
                             shutil.copytree("temp/" + dir,"gzdoom")
                 except:
                     print("Copying gzdoom failed!")
-        elif (zip.TestFileName("blasphem")):
-            zip.ExtractTo("wads")
-        elif (zip.TestFileName("freedoom")):
-            zip.ExtractTo("temp")            
+        elif (z.TestFileName("blasphem")):
+            z.ExtractTo("wads")
+        elif (z.TestFileName("freedoom")):
+            z.ExtractTo("temp")            
             tempNames = os.listdir("temp")
             for f in tempNames:
                 if (f.lower().find("freedoom") >= 0):
@@ -139,10 +131,10 @@ def ExtractAll(parent):
                             if(not os.path.exists("wads")):
                                 os.mkdir("wads")
                             shutil.copy(h, "wads")
-        elif (zip.TestFileName("pk3") or zip.TestFileName( "150skins")):
-            zip.CopyTo("mods")            
+        elif (z.TestFileName("pk3") or z.TestFileName( "150skins")):
+            z.CopyTo("mods")            
         else:
-            zip.CopyTo("maps")
+            z.CopyTo("maps")
         progress.Update(i)
         i += 1
     
@@ -172,33 +164,33 @@ def CreateCSV(progress):
     blasphenWad = ""
         
     if (os.name == "nt"):
-        exec = ".\\gzdoom\\gzdoom.exe"
+        gameExec = ".\\gzdoom\\gzdoom.exe"
     else:
-        exec = "./gzdoom/gzdoom"
+        gameExec = "./gzdoom/gzdoom"
         
     i = 0
-    for zip in zipFiles:
-        fullPath = zip.GetFormat() + "/" + zip.GetName() 
-        if (zip.TestFileName("blasphem")): 
+    for z in zipFiles:
+        fullPath = z.GetFormat() + "/" + z.GetName() 
+        if (z.TestFileName("blasphem")): 
             blasphenWad = (fullPath) # works because wad comes first in the list            
-        elif (zip.TestFileName("bls")):
-            lines.append([i, "Blasphem", 0, exec, "heretic", 0, blasphenWad, fullPath])
-        elif (zip.TestFileName("freedoom1")):            
-            lines.append([i, "Freedoom Phase 1", 0, exec, "doom", 0, fullPath])
-        elif (zip.TestFileName("freedoom2")):
-            lines.append([i, "Freedoom Phase 2", 0, exec, "doom", 0, fullPath])
-        elif (zip.GetFormat() == "maps"):     
-            if (zip.TestFileName("htchest") or zip.TestFileName("unbeliev")):
-                lines.append([i, zip.GetMapName(), 1, exec, "heretic", 0, "wads/blasphem-0.1.7.wad", fullPath])
+        elif (z.TestFileName("bls")):
+            lines.append([i, "Blasphem", 0, gameExec, "heretic", 0, blasphenWad, fullPath])
+        elif (z.TestFileName("freedoom1")):            
+            lines.append([i, "Freedoom Phase 1", 0, gameExec, "doom", 0, fullPath])
+        elif (z.TestFileName("freedoom2")):
+            lines.append([i, "Freedoom Phase 2", 0, gameExec, "doom", 0, fullPath])
+        elif (z.GetFormat() == "maps"):     
+            if (z.TestFileName("htchest") or z.TestFileName("unbeliev")):
+                lines.append([i, z.GetMapName(), 1, gameExec, "heretic", 0, "wads/blasphem-0.1.7.wad", fullPath])
             else:
-                lines.append([i, zip.GetMapName(), 1, exec, "doom", 0, "wads/freedoom2.wad", fullPath])
-        elif (zip.GetFormat() == "mods"):
-            if (zip.TestFileName("150skins")):
+                lines.append([i, z.GetMapName(), 1, gameExec, "doom", 0, "wads/freedoom2.wad", fullPath])
+        elif (z.GetFormat() == "mods"):
+            if (z.TestFileName("150skins")):
                 i -= 1
-            elif (zip.TestFileName("beaultiful")):
-                lines.append([i, "Beaultiful Doom", 2, exec, "doom", 0, "", "mods/150skins.zip", "mods/Beaultiful_Doom.pk3"])
-            elif (zip.TestFileName("brutal")):
-                lines.append([i, "Brutal Doom", 2, exec, "doom", 0, "", "mods/brutal.pk3"])
+            elif (z.TestFileName("beaultiful")):
+                lines.append([i, "Beaultiful Doom", 2, gameExec, "doom", 0, "", "mods/150skins.z", "mods/Beaultiful_Doom.pk3"])
+            elif (z.TestFileName("brutal")):
+                lines.append([i, "Brutal Doom", 2, gameExec, "doom", 0, "", "mods/brutal.pk3"])
             
         i += 1
         
