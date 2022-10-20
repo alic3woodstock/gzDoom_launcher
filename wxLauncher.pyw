@@ -174,21 +174,24 @@ class MyFrame(wx.Frame):
         item = ""
         tempItem = listCtrl.GetItem(listCtrl.GetFirstSelected())
         
+        mod = self.listRun[2].GetClientData(self.listRun[2].GetSelection())
+        
         for i in self.itens:
             if (i.GetItem().GetData() == tempItem.GetData()):
                 item = i
+                i.SetLastMod(mod.GetItem().GetData())
                 
         command = item.GetExec() + " -iWad " + item.GetIWad()
         for file in item.GetFiles():
             command += " -file " + file
 
-        mod = self.listRun[2].GetClientData(self.listRun[2].GetSelection())
         if (mod.GetItem().GetData() >= 0):
             for file in mod.GetFiles():
                 command += " -file " + file
         
         os.popen(command)
         
+        # write last run mod on CSV
         with open ('games.csv', 'r+') as csvfile:
             fileText = csvfile.readlines()
 
