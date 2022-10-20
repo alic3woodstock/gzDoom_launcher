@@ -17,8 +17,8 @@ class GameDef():
     def GetExec(self):
         return self._exec
         
-    def SetExec(self, exec):
-        self._exec = exec
+    def SetExec(self, gameExec):
+        self._exec = gameExec
         
     def GetGroup(self):
         return self._group
@@ -48,13 +48,13 @@ class GameDef():
         self._files.append(file)
     
     #Id,Name,Tab Index,Exe,Group,Last run mod,iWad,files...
-    def __init__ (self, id, name, tab, exec = './gzdoom/gzdoom', group = 'doom', lastMod = 0, wad = 'freedoom1.wad', files = []):
+    def __init__ (self, listId, name, tab, gameExec = './gzdoom/gzdoom', group = 'doom', lastMod = 0, wad = 'freedoom1.wad', files = []):
         self._item = wx.ListItem()
-        self._item.SetId(id) 
-        self._item.SetData(id) #listctrl may change item id
+        self._item.SetId(listId) 
+        self._item.SetData(listId) #listctrl may change item id
         self._item.SetText(name)
         self._tab = tab
-        self._exec = exec
+        self._exec = gameExec
         self._group = group
         self._lastMod = lastMod
         self._iWad = wad

@@ -17,7 +17,7 @@ class MyListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
 class MyFrame(wx.Frame):
     def __init__(self, parent, title):
         self.itens = []
-        frame = wx.Frame.__init__(self, parent, title=title)
+        wx.Frame.__init__(self, parent, title=title)
         
         #Dwonload button
         panel = wx.Panel(self, wx.ID_ANY)
@@ -91,16 +91,6 @@ class MyFrame(wx.Frame):
         listRun[0].SetFocus()
         listRun[0].Focus(0)
 
-        # if (os.name == "nt"):
-            # panel.SetForegroundColour("White")
-            # panel.SetBackgroundColour(wx.Colour(25,25,25))
-            # btnOk.SetForegroundColour("White")
-            # btnOk.SetBackgroundColour(wx.Colour(20,20,20))
-            # btnCancel.SetForegroundColour("White")
-            # btnCancel.SetBackgroundColour(wx.Colour(20,20,20))
-            # gameTab.SetForegroundColour("White")
-            # gameTab.SetBackgroundColour(wx.Colour(20,20,20))
-
         panel.SetSizer(box)
         box.SetSizeHints(self)
         self.Centre()
@@ -152,10 +142,10 @@ class MyFrame(wx.Frame):
             tab.SetSelection(tab.GetSelection() - 1)
             changeFocus = True
         if (changeFocus):
-            list = tab.GetChildren()[tab.GetSelection()]
-            list.Select(0)
-            list.SetFocus()
-            list.Focus(0)
+            gameList = tab.GetChildren()[tab.GetSelection()]
+            gameList.Select(0)
+            gameList.SetFocus()
+            gameList.Focus(0)
         if (event.GetKeyCode() == wx.WXK_SPACE):
             if (self.listRun[2].GetSelection() < (self.listRun[2].GetCount() - 1)):
                 self.listRun[2].SetSelection(self.listRun[2].GetSelection() + 1)
@@ -212,10 +202,6 @@ class MyFrame(wx.Frame):
     def writeDefaultCSV(self):
         with open ('games.csv', 'w', newline = '') as csvfile:
             writer = csv.writer(csvfile, dialect = 'unix')
-            if (os.name == "nt"):
-                exec = ".\\gzdoom\\gzdoom.exe"
-            else:
-                exec = "./gzdoom/gzdoom"
             writer.writerow(['id', 'Name','Tab Index', 'Executable', 'Group', 'Last run mod','iWad','file1','file2','...'])
             writer.writerow([0, 'Run file -> Download and File -> Extract...', 0, '', '', 0, '', ''])
 
@@ -232,7 +218,7 @@ class MyFrame(wx.Frame):
                     #id, name, tab, exec, group, lastMod, wad, files':
                     game = gameDef.GameDef(int(row[0]), row[1], int(row[2]), row[3], row[4], int(row[5]), row[6], [])
                     for x in range(7, len(row)):
-                       game.AppendFile(row[x])
+                        game.AppendFile(row[x])
                     tempItens.append(game) 
                 i += 1
                
