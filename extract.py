@@ -188,7 +188,7 @@ def CreateCSV(progress):
             if (z.TestFileName("150skins")):
                 i -= 1
             elif (z.TestFileName("beaultiful")):
-                lines.append([i, "Beaultiful Doom", 2, gameExec, "doom", 0, "", "mods/150skins.z", "mods/Beaultiful_Doom.pk3"])
+                lines.append([i, "Beaultiful Doom", 2, gameExec, "doom", 0, "", "mods/150skins.zip", "mods/Beaultiful_Doom.pk3"])
             elif (z.TestFileName("brutal")):
                 lines.append([i, "Brutal Doom", 2, gameExec, "doom", 0, "", "mods/brutal.pk3"])
             

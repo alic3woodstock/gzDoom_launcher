@@ -3,10 +3,10 @@ import requests
 import os
 
 # class MyDialog(wx.Dialog): 
-   # def __init__(self, parent, title): 
-      # super(MyDialog, self).__init__(parent, title = title, size = (250,150)) 
-      # panel = wx.Panel(self) 
-      # self.btn = wx.Button(panel, wx.ID_OK, label = "ok", size = (50,20), pos = (75,50))
+    # def __init__(self, parent, title): 
+        # super(MyDialog, self).__init__(parent, title = title, size = (250,150)) 
+        # panel = wx.Panel(self) 
+        # self.btn = wx.Button(panel, wx.ID_OK, label = "ok", size = (50,20), pos = (75,50))
 
 MAX_RANGE = 1000
 totalFiles = 0
@@ -64,7 +64,6 @@ def StartDownload(parent):
     files.append(Url("https://github.com/BLOODWOLF333/Brutal-Doom-Community-Expansion/releases/download/V21.11.2/brutalv21.11.2.pk3","brutal.pk3"))
     
     #maps
-    files.append(Url("https://uca33b27708475e12d125e97f419.dl.dropboxusercontent.com/cd/0/get/BvEKSo2HAmEsPFPw5zleo0AviWI0jLE8Tezy_jf8b16dU4Gr8o4-4V8FauiFG75gLIjl-S1la5Pa-16dESkZY5hhIRNnQxIFH4wrDlb0gUy9lz1jrAW55mhhsNqYZXgRdT24-vKqX5Qk4P5iqIoL8xCUvsRg4yzSug4x3U2e86YVa4HmhBy7eG14m1nAiGa1hkY/file?_download_id=9815169858843142338449664975160590021971407357996857694533512262&_notify_domain=www.dropbox.com&dl=1","Sunder_2407.zip")) #it's easier not deal with spaces at file names
     files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/av.zip","av.zip"))
     files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/aaliens.zip","aliens.zip"))
     files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/btsx_e1.zip","btsx_e1.zip"))
@@ -91,7 +90,7 @@ def StartDownload(parent):
         for f in files:
             GetFile(f)        
     except:
-         progress.Update(MAX_RANGE, "Failed to download " + f.GetFileName())
+        progress.Update(MAX_RANGE, "Failed to download " + f.GetFileName())
     
 def GetFile(f):  
     global current
