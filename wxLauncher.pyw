@@ -6,6 +6,7 @@ import gameDef
 import download
 import extract
 import wx.lib.mixins.listctrl as listmix
+import addGame
 
 class MyListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
     def __init__(self, parent, ID, pos=wx.DefaultPosition,
@@ -28,6 +29,8 @@ class MyFrame(wx.Frame):
         
         menu = wx.MenuBar()
         fileMenu = wx.Menu()
+        menuAddGame = fileMenu.Append(104, item = "&Add game...")
+        fileMenu.Append(id=wx.ID_SEPARATOR, item="")
         menuDownload = fileMenu.Append(101, item = "&Download")                
         menuExtract = fileMenu.Append(102, item = "&Extract All")
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
@@ -66,9 +69,12 @@ class MyFrame(wx.Frame):
         for i in range(2):
             listRun[i].Bind(wx.EVT_LEFT_DCLICK, self.listCtrlOnDClick)
             listRun[i].Bind(wx.EVT_LIST_ITEM_SELECTED, self.listCtrlOnSelect)
+            
+        #Bind events for menu itens
         self.Bind(wx.EVT_MENU, self.menuDownloadOnClick, menuDownload)
         self.Bind(wx.EVT_MENU, lambda event: self.menuExtractOnClick(event, gameTab), menuExtract)
         self.Bind(wx.EVT_MENU, self.menuCloseOnClick, menuClose)
+        self.Bind(wx.EVT_MENU, self.menuAddGameOnClick, menuAddGame)
         
         listRun[0].AppendColumn('Levels')
         listRun[1].AppendColumn('Levels')
@@ -94,6 +100,13 @@ class MyFrame(wx.Frame):
 
     def menuCloseOnClick(self, event):
         self.Close()
+        
+    def menuAddGameOnClick(self, event):
+        addGameDiag = addGame.MyDialog(self, "Add game, map or mod")
+        addGameDiag.ShowModal()
+        self.readCSV()
+        # gameList = tab.GetChildren()[tab.GetSelection()]
+        # gameList.Select(0)
 
     def btnOkOnPress(self, event, tab):
         self.lauchGame(tab.GetChildren()[tab.GetSelection()])
@@ -138,7 +151,7 @@ class MyFrame(wx.Frame):
             gameList.Select(0)
             gameList.SetFocus()
             gameList.Focus(0)
-        if (event.GetKeyCode() == wx.WXK_SPACE):
+        if (event.GetKeyCode() == wx.WXK_SPACE) or (event.GetKeyCode() == wx.WXK_TAB):
             if (self.listRun[2].GetSelection() < (self.listRun[2].GetCount() - 1)):
                 self.listRun[2].SetSelection(self.listRun[2].GetSelection() + 1)
             else:
