@@ -48,6 +48,9 @@ class MyDialog(wx.Dialog):
         # Buttons
         btnCancel = wx.Button(panel, wx.ID_CANCEL)
         btnOK = wx.Button(panel, wx.ID_OK)      
+        
+        # Change event
+        self.Bind(wx.EVT_COMBOBOX, self.cbxTypeOnChange, self.cbxType)
 
         #Align componentes
         gridData = wx.FlexGridSizer(6, 0, 4, 4)
@@ -94,10 +97,14 @@ class MyDialog(wx.Dialog):
             elif (not os.path.isfile(self.txtExec.GetLineText(0))):
                 wxdialogs.alertDialog(self, message='Game exec. not found!', title='Alert')
                 canSave = False
-            elif (not os.path.isfile(self.txtWad.GetLineText(0))):
-                wxdialogs.alertDialog(self, message='Wad not found!', title='Alert')
-                canSave = False
                 
+            if (self.cbxType.GetSelection() <= 1):
+                if (not os.path.isfile(self.txtWad.GetLineText(0))):                
+                    wxdialogs.alertDialog(self, message='Wad not found!', title='Alert')
+                    canSave = False
+            else:
+                self.txtWad.write("")            
+                    
             if canSave:
                 gameFiles =[]
                 if (self.txtFiles.GetLineText(0) != ''):            
@@ -144,3 +151,9 @@ class MyDialog(wx.Dialog):
                     event.Skip()
             except:
                 wxdialogs.alertDialog(self, message='Failed to save games.csv!')
+                
+    def cbxTypeOnChange(self, event):
+        if (event.GetEventObject().GetSelection() > 1):
+            self.txtWad.Enable(False)
+        else:
+            self.txtWad.Enable(True)

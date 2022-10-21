@@ -74,7 +74,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.menuDownloadOnClick, menuDownload)
         self.Bind(wx.EVT_MENU, lambda event: self.menuExtractOnClick(event, gameTab), menuExtract)
         self.Bind(wx.EVT_MENU, self.menuCloseOnClick, menuClose)
-        self.Bind(wx.EVT_MENU, self.menuAddGameOnClick, menuAddGame)
+        self.Bind(wx.EVT_MENU, lambda event: self.menuAddGameOnClick(event, gameTab), menuAddGame)
         
         listRun[0].AppendColumn('Levels')
         listRun[1].AppendColumn('Levels')
@@ -101,12 +101,12 @@ class MyFrame(wx.Frame):
     def menuCloseOnClick(self, event):
         self.Close()
         
-    def menuAddGameOnClick(self, event):
+    def menuAddGameOnClick(self, event, tab):
         addGameDiag = addGame.MyDialog(self, "Add game, map or mod")
         addGameDiag.ShowModal()
         self.readCSV()
-        # gameList = tab.GetChildren()[tab.GetSelection()]
-        # gameList.Select(0)
+        gameList = tab.GetChildren()[tab.GetSelection()]
+        gameList.Select(0)
 
     def btnOkOnPress(self, event, tab):
         self.lauchGame(tab.GetChildren()[tab.GetSelection()])
