@@ -2,20 +2,24 @@ import wx
 import wx.lib.dialogs as wxdialogs
 import os
 import csv
+from pip._vendor.pygments.unistring import Sm
+
+TEXT_HEIGHT = 400
+
+class SmallButton(wx.Button):
+    def AcceptsFocusFromKeyboard(self):
+        return False
 
 class MyDialog(wx.Dialog): 
     def __init__(self, parent, title): 
         super(MyDialog, self).__init__(parent, title = title, size = (500, wx.DefaultCoord)) 
         panel = wx.Panel(self)
         
-        boxv = wx.BoxSizer(wx.VERTICAL)
-        boxButtons = wx.BoxSizer(wx.HORIZONTAL) 
-        
         #"Name","Tab Index","Executable","Group","Last run mod","iWad","file1"
         
         # Name        
         lblName = wx.StaticText(panel, label = "Name:")
-        self.txtName = wx.TextCtrl(panel, size=(300, wx.DefaultCoord))        
+        self.txtName = wx.TextCtrl(panel, size=(TEXT_HEIGHT, wx.DefaultCoord))        
         
         # Tab Index
         lblType = wx.StaticText(panel, label = "Type:")
@@ -24,12 +28,12 @@ class MyDialog(wx.Dialog):
         
         # Executable
         lblExec = wx.StaticText(panel, label = "Game Exec.:")
-        self.txtExec = wx.TextCtrl(panel, size=(300, wx.DefaultCoord))
+        self.txtExec = wx.TextCtrl(panel, size=(TEXT_HEIGHT, wx.DefaultCoord))
         if (os.name == 'nt'):
             self.txtExec.write('gzdoom\\gzdoom.exe')
         else:
             self.txtExec.write('gzdoom/gzdoom')
-             
+        btnFindExec = SmallButton(panel, label = '...', size=(24, self.txtExec.GetSize().GetHeight()))
         
         # Mod Group
         lblGroup = wx.StaticText(panel, label = "Mod Group:")
@@ -39,18 +43,24 @@ class MyDialog(wx.Dialog):
         
         # iWAD
         lblWad = wx.StaticText(panel, label = "Wad:")        
-        self.txtWad = wx.TextCtrl(panel, size=(300, wx.DefaultCoord))
+        self.txtWad = wx.TextCtrl(panel, size=(TEXT_HEIGHT, wx.DefaultCoord))
+        btnFindWad = SmallButton(panel, label = '...', size=(24, self.txtExec.GetSize().GetHeight()))
         
         # Files
         lblFiles = wx.StaticText(panel, label = "Files (file1, file2, ...):")
-        self.txtFiles = wx.TextCtrl(panel, size=(300, wx.DefaultCoord))
+        self.txtFiles = wx.TextCtrl(panel, size=(TEXT_HEIGHT, wx.DefaultCoord))
+        btnFindFiles = SmallButton(panel, label = '...', size=(24, self.txtExec.GetSize().GetHeight()))
         
         # Buttons
         btnCancel = wx.Button(panel, wx.ID_CANCEL)
         btnOK = wx.Button(panel, wx.ID_OK)      
         
-        # Change event
+        # Bind Events
         self.Bind(wx.EVT_COMBOBOX, self.cbxTypeOnChange, self.cbxType)
+        self.Bind(wx.EVT_BUTTON, self.btnFindExecOnClick, btnFindExec)
+        self.Bind(wx.EVT_BUTTON, self.btnFindWadOnClick, btnFindWad)
+        self.Bind(wx.EVT_BUTTON, self.btnFindFilesOnClick, btnFindFiles)
+        self.Bind(wx.EVT_BUTTON, self.btnOKOnClick, btnOK)
 
         #Align componentes
         gridData = wx.FlexGridSizer(6, 0, 4, 4)
@@ -64,17 +74,28 @@ class MyDialog(wx.Dialog):
         gridData.Add(self.cbxType, 0, wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border = 4)
 
         gridData.Add(lblExec, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.LEFT, border = 4)
-        gridData.Add(self.txtExec, 0, wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border = 4)
+        boxExec =  wx.BoxSizer(wx.HORIZONTAL)
+        boxExec.Add(self.txtExec)
+        boxExec.Add(btnFindExec)
+        gridData.Add(boxExec, 0, wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border = 4)        
         
         gridData.Add(lblGroup, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.LEFT, border = 4)
         gridData.Add(self.cbxGroup, 0, wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border = 4)
         
         gridData.Add(lblWad, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.LEFT, border = 4)
-        gridData.Add(self.txtWad, 0, wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border = 4)
+        boxWad =  wx.BoxSizer(wx.HORIZONTAL)
+        boxWad.Add(self.txtWad)
+        boxWad.Add(btnFindWad)        
+        gridData.Add(boxWad, 0, wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border = 4)
         
         gridData.Add(lblFiles, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.LEFT, border = 4)
-        gridData.Add(self.txtFiles, 0, wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border = 4)
+        boxFiles = wx.BoxSizer(wx.HORIZONTAL)
+        boxFiles.Add(self.txtFiles)
+        boxFiles.Add(btnFindFiles)
+        gridData.Add(boxFiles, 0, wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border = 4)
 
+        boxv = wx.BoxSizer(wx.VERTICAL)
+        boxButtons = wx.BoxSizer(wx.HORIZONTAL)
         boxv.AddSpacer(4)
         boxv.Add(gridData, 0, wx.ALIGN_CENTER)
         boxv.AddSpacer(4)
@@ -84,11 +105,9 @@ class MyDialog(wx.Dialog):
         btnOK.MoveBeforeInTabOrder(btnCancel)
         boxv.Add(boxButtons, 0 , wx.ALIGN_RIGHT)
         panel.SetSizer(boxv)
-        boxv.SetSizeHints(self)
+        boxv.SetSizeHints(self)        
         
-        self.Bind(wx.EVT_BUTTON, self.btnOkClick, btnOK)
-        
-    def btnOkClick(self, event):
+    def btnOKOnClick(self, event):
         canSave = True
         try:
             if (self.txtName.GetLineText(0).find(",") >= 0):
@@ -103,7 +122,7 @@ class MyDialog(wx.Dialog):
                     wxdialogs.alertDialog(self, message='Wad not found!', title='Alert')
                     canSave = False
             else:
-                self.txtWad.write("")            
+                self.txtWad.Clear()          
                     
             if canSave:
                 gameFiles =[]
@@ -157,3 +176,30 @@ class MyDialog(wx.Dialog):
             self.txtWad.Enable(False)
         else:
             self.txtWad.Enable(True)
+            
+    def btnFindExecOnClick(self, event):
+        exeFile = wxdialogs.fileDialog(parent=self, title='Open', style=wx.FD_OPEN)
+        try:
+            exeP = exeFile.paths[0] # if cancel rises an exception
+            self.txtExec.Clear()
+            self.txtExec.write(exeP)
+        except:
+            pass
+        
+    def btnFindWadOnClick(self, event):
+        wadFile = wxdialogs.fileDialog(parent=self, title='Open', style=wx.FD_OPEN)
+        try:
+            wadP = wadFile.paths[0] # if cancel rises an exception
+            self.txtWad.Clear()
+            self.txtWad.write(wadP)
+        except:
+            pass    
+    
+    def btnFindFilesOnClick(self, event):
+        extraFiles = wxdialogs.fileDialog(self, title='Open', style = wx.FD_OPEN | wx.FD_MULTIPLE)
+        try:
+            extraF = ','.join(extraFiles.paths)
+            self.txtFiles.Clear()
+            self.txtFiles.write(extraF)
+        except:
+            pass       

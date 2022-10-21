@@ -257,5 +257,5 @@ class MyFrame(wx.Frame):
                 self.listRun[self.itens[i].GetTab()].InsertItem(self.itens[i].GetItem())            
 
 app = wx.App(False)
-frame = MyFrame(None, 'gzDoom Laucher')
+frame = MyFrame(None, 'gzDoom Launcher')
 app.MainLoop()
