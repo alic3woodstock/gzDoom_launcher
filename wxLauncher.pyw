@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 import wx
 import os
-import csv
 import gameDef
 import download
 import extract
 import wx.lib.mixins.listctrl as listmix
 import addGame
+import gameDefDb
 
 class MyListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
     def __init__(self, parent, ID, pos=wx.DefaultPosition,
@@ -79,10 +79,11 @@ class MyFrame(wx.Frame):
         listRun[0].AppendColumn('Levels')
         listRun[1].AppendColumn('Levels')
         
-        if (not os.path.exists('games.csv')):
-            self.writeDefaultCSV()
+        if (not os.path.exists('games.sqlite3')):
+            gameData = gameDefDb.GameDefDb()
+            gameData.createGameTable()
         
-        self.readCSV()        
+        self.readDB()       
         if listRun[1].GetColumnWidth(0) >= listRun[0].GetColumnWidth(0): 
             listRun[0].resizeColumn(listRun[1].GetColumnWidth(0))       
         else:
@@ -104,7 +105,7 @@ class MyFrame(wx.Frame):
     def menuAddGameOnClick(self, event, tab):
         addGameDiag = addGame.MyDialog(self, "Add game, map or mod")
         addGameDiag.ShowModal()
-        self.readCSV()
+        self.readDB()
         gameList = tab.GetChildren()[tab.GetSelection()]
         gameList.Select(0)
 
@@ -163,7 +164,7 @@ class MyFrame(wx.Frame):
         
     def menuExtractOnClick(self, event, tab):
         extract.ExtractAll(self)
-        self.readCSV()
+        self.readDB()
         gameList = tab.GetChildren()[tab.GetSelection()]
         gameList.Select(0)
         
@@ -191,47 +192,16 @@ class MyFrame(wx.Frame):
                 command += " -file " + file
         
         os.popen(command)
-        
-        # write last run mod on CSV
-        with open ('games.csv', 'r+') as csvfile:
-            fileText = csvfile.readlines()
-
-        for i in range(len(fileText)):
-            fLine = fileText[i]
-            x = fLine.find(',')
-            if (fLine[1:x - 1] == str(item.GetItem().GetData())):
-                csvLine = fLine.split(',')
-                csvLine[5] = '"' + str(mod.GetItem().GetData()) + '"'
-                fileText[i] = ','.join(csvLine)
-                break           
-        
-        with open ('games.csv', 'w+') as csvfile:
-            csvfile.writelines(fileText)
-                        
+        gameData = gameDefDb.GameDefDb()
+        gameData.updateLastRunMod(item,mod)
         listCtrl.SetFocus()
 
-    def writeDefaultCSV(self):
-        with open ('games.csv', 'w', newline = '') as csvfile:
-            writer = csv.writer(csvfile, dialect = 'unix')
-            writer.writerow(['id', 'Name','Tab Index', 'Executable', 'Group', 'Last run mod','iWad','file1','file2','...'])
-            writer.writerow([0, 'Run file -> Download and File -> Extract...', 0, '', '', 0, '', ''])
-
-    def readCSV(self):
+    def readDB(self):
+        gameData = gameDefDb.GameDefDb()
+        tempItens = gameData.selectAllGames()
         self.listRun[0].DeleteAllItems()
         self.listRun[1].DeleteAllItems()
         self.itens = []
-        tempItens = []
-        with open ('games.csv', newline = '') as csvfile:
-            reader = csv.reader(csvfile, dialect='unix')
-            i = 0
-            for row in reader:
-                if (i > 0):
-                    #id, name, tab, exec, group, lastMod, wad, files':
-                    game = gameDef.GameDef(int(row[0]), row[1], int(row[2]), row[3], row[4], int(row[5]), row[6], [])
-                    for x in range(7, len(row)):
-                        game.AppendFile(row[x])
-                    tempItens.append(game) 
-                i += 1
                
         # Show itens in alphabetical order.
         order = []                
@@ -254,7 +224,7 @@ class MyFrame(wx.Frame):
 
         for i in range(len(self.itens)):
             if (self.itens[i].GetTab() <= 1):
-                self.listRun[self.itens[i].GetTab()].InsertItem(self.itens[i].GetItem())            
+                self.listRun[self.itens[i].GetTab()].InsertItem(self.itens[i].GetItem())
 
 app = wx.App(False)
 frame = MyFrame(None, 'gzDoom Launcher')

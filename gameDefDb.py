@@ -1,6 +1,5 @@
 import dataConnect
 import gameDef
-from numpy.testing._private.parameterized import param
 
 class GameDefDb():
     _dataCon = None
@@ -25,7 +24,7 @@ class GameDefDb():
                 id integer PRIMARY KEY AUTOINCREMENT,
                 name text,
                 tabindex integer NOT NULL,
-                gameexec text,
+                gamexec text,
                 modgroup text,
                 lastrunmod integer NOT NULL,
                 iwad text);                                
@@ -44,7 +43,7 @@ class GameDefDb():
     def insertGame(self, game):
         dataCon = self.connectDb()
         dataCon.startTransaction()
-        sql = """INSERT INTO gamedef(name,tabindex,gameexec,modgroup,lastrunmod,iwad)
+        sql = """INSERT INTO gamedef(name,tabindex,gamexec,modgroup,lastrunmod,iwad)
             VALUES (?,?,?,?,?,?);"""
         
         params = (game.GetItem().GetText(), game.GetTab(), game.GetExec(), game.GetGroup(),
@@ -62,5 +61,25 @@ class GameDefDb():
                 
         dataCon.commit()
         dataCon.closeConnection()
-    
         
+    def selectAllGames(self):
+        games = []
+        
+        dataCon = self.connectDb()
+        gameData = dataCon.execSQL("""SELECT id, name, tabindex, gamexec, modgroup, lastrunmod, iwad
+         FROM gamedef ORDER BY id""")
+        for game in gameData:
+            g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6])            
+            g.SetFiles([])
+            fileData = dataCon.execSQL("""SELECT file FROM files WHERE gameid = ?""",[game[0]])
+            for f in fileData:
+                g.GetFiles().append(f[0])
+            games.append(g)
+        return games               
+
+    def updateLastRunMod(self, game, mod):
+        dataCon = self.connectDb()
+        dataCon.startTransaction()
+        dataCon.execSQL("""UPDATE gamedef SET lastrunmod=? WHERE id=?""", [mod.GetItem().GetData(),
+                                                                           game.GetItem().GetData()])
+        dataCon.commit()

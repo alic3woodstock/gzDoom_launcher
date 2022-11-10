@@ -2,7 +2,6 @@ import os
 import shutil
 import zipfile
 import wx
-import csv
 import tarfile
 import gameDefDb
 import gameDef
@@ -144,68 +143,8 @@ def ExtractAll(parent):
     if (os.path.exists("temp")):
         shutil.rmtree("temp")
         
-    #CreateCSV(progress)
     CreateDB(progress)    
         
-def CreateCSV(progress):    
-    zipFiles = []
-    
-    wads = os.listdir("wads")  
-    for w in wads:
-        zipFiles.append(zipFile(w,"wads")) # store path in format string since I don't need to use Extract
-        
-    maps = os.listdir("maps")
-    for a in maps:
-        zipFiles.append(zipFile(a,"maps"))
-        
-    mods = os.listdir("mods")
-    for m in mods:
-        zipFiles.append(zipFile(m,"mods"))    
-        
-    lines = []
-    lines.append(['id', 'Name','Tab Index', 'Executable', 'Group', 'Last run mod','iWad','file1','file2','...'])
-    blasphenWad = ""
-        
-    if (os.name == "nt"):
-        gameExec = ".\\gzdoom\\gzdoom.exe"
-    else:
-        gameExec = "./gzdoom/gzdoom"
-        
-    i = 0
-    for z in zipFiles:
-        fullPath = z.GetFormat() + "/" + z.GetName() 
-        if (z.TestFileName("blasphem")): 
-            blasphenWad = (fullPath) # works because wad comes first in the list            
-        elif (z.TestFileName("bls")):
-            lines.append([i, "Blasphem", 0, gameExec, "heretic", 0, blasphenWad, fullPath])
-        elif (z.TestFileName("freedoom1")):            
-            lines.append([i, "Freedoom Phase 1", 0, gameExec, "doom", 0, fullPath])
-        elif (z.TestFileName("freedoom2")):
-            lines.append([i, "Freedoom Phase 2", 0, gameExec, "doom", 0, fullPath])
-        elif (z.GetFormat() == "maps"):     
-            if (z.TestFileName("htchest") or z.TestFileName("unbeliev")):
-                lines.append([i, z.GetMapName(), 1, gameExec, "heretic", 0, "wads/blasphem-0.1.7.wad", fullPath])
-            else:
-                lines.append([i, z.GetMapName(), 1, gameExec, "doom", 0, "wads/freedoom2.wad", fullPath])
-        elif (z.GetFormat() == "mods"):
-            if (z.TestFileName("150skins")):
-                i -= 1
-            elif (z.TestFileName("beaultiful")):
-                lines.append([i, "Beaultiful Doom", 2, gameExec, "doom", 0, "", "mods/150skins.zip", "mods/Beaultiful_Doom.pk3"])
-            elif (z.TestFileName("brutal")):
-                lines.append([i, "Brutal Doom", 2, gameExec, "doom", 0, "", "mods/brutal.pk3"])
-            
-        i += 1
-        
-        progress.Update(i + 21, "Creating a new CSV...") 
-        
-    with open ('games.csv', 'w', newline = '') as csvfile:
-        writer = csv.writer(csvfile, dialect = 'unix')
-        for l in lines:
-            writer.writerow(l)
-            
-    progress.Update(progress.GetRange(), "Done, have fun!")
-    
 def CreateDB(progress):
     dbGames = gameDefDb.GameDefDb()
     dbGames.createGameTable()

@@ -2,7 +2,6 @@ import wx
 import wx.lib.dialogs as wxdialogs
 import os
 import csv
-from pip._vendor.pygments.unistring import Sm
 
 TEXT_HEIGHT = 400
 
