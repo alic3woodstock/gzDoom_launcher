@@ -88,6 +88,12 @@ class MyFrame(wx.Frame):
             listRun[0].resizeColumn(listRun[1].GetColumnWidth(0))       
         else:
             listRun[1].resizeColumn(listRun[0].GetColumnWidth(0))       
+        
+        if listRun[0].GetItemCount() <= 0:
+            tempItem = wx.ListItem()
+            tempItem.SetId(0)
+            tempItem.SetText("Click in Download, wait, click extract...")
+            listRun[0].InsertItem(tempItem)
             
         listRun[0].Select(0)
         gameTab.SetSelection(0)
