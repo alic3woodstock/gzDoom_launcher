@@ -4,6 +4,8 @@ import zipfile
 import wx
 import csv
 import tarfile
+import gameDefDb
+import gameDef
 
 class zipFile():
     _format = ""
@@ -142,9 +144,10 @@ def ExtractAll(parent):
     if (os.path.exists("temp")):
         shutil.rmtree("temp")
         
-    CreateCSV(progress)    
+    #CreateCSV(progress)
+    CreateDB(progress)    
         
-def CreateCSV(progress):
+def CreateCSV(progress):    
     zipFiles = []
     
     wads = os.listdir("wads")  
@@ -201,4 +204,67 @@ def CreateCSV(progress):
         for l in lines:
             writer.writerow(l)
             
+    progress.Update(progress.GetRange(), "Done, have fun!")
+    
+def CreateDB(progress):
+    dbGames = gameDefDb.GameDefDb()
+    dbGames.createGameTable()
+    dbGames.cleanGameTable()
+    
+    zipFiles = []
+    games = []
+    
+    wads = os.listdir("wads")  
+    for w in wads:
+        zipFiles.append(zipFile(w,"wads")) # store path in format string since I don't need to use Extract
+        
+    maps = os.listdir("maps")
+    for a in maps:
+        zipFiles.append(zipFile(a,"maps"))
+        
+    mods = os.listdir("mods")
+    for m in mods:
+        zipFiles.append(zipFile(m,"mods"))    
+
+    blasphenWad = ""
+        
+    if (os.name == "nt"):
+        gameExec = ".\\gzdoom\\gzdoom.exe"
+    else:
+        gameExec = "./gzdoom/gzdoom"
+        
+    i = 0
+    for z in zipFiles:
+        fullPath = z.GetFormat() + "/" + z.GetName() 
+        if (z.TestFileName("blasphem")): 
+            blasphenWad = (fullPath) # works because wad comes first in the list            
+        elif (z.TestFileName("bls")):            
+            games.append(gameDef.GameDef(i, "Blasphem", 0, gameExec, "heretic", 0, blasphenWad, [fullPath]))
+        elif (z.TestFileName("freedoom1")):
+            games.append(gameDef.GameDef(i, "Freedoom Phase 1", 0, gameExec, "doom", 0, fullPath))            
+        elif (z.TestFileName("freedoom2")):
+            games.append(gameDef.GameDef(i, "Freedoom Phase 2", 0, gameExec, "doom", 0, fullPath))            
+        elif (z.GetFormat() == "maps"):     
+            if (z.TestFileName("htchest") or z.TestFileName("unbeliev")):
+                games.append(gameDef.GameDef(i, z.GetMapName(), 1, gameExec, "heretic", 0, 
+                                             "wads/blasphem-0.1.7.wad", [fullPath]))
+            else:
+                games.append(gameDef.GameDef(i, z.GetMapName(), 1, gameExec, "doom", 0, 
+                                             "wads/freedoom2.wad", [fullPath]))
+        elif (z.GetFormat() == "mods"):
+            if (z.TestFileName("150skins")):
+                i -= 1
+            elif (z.TestFileName("beaultiful")):
+                games.append(gameDef.GameDef(i, "Beaultiful Doom", 2, gameExec, "doom", 0, 
+                                             "", ["mods/150skins.zip", "mods/Beaultiful_Doom.pk3"]))
+            elif (z.TestFileName("brutal")):
+                games.append(gameDef.GameDef(i, "Brutal Doom", 2, gameExec, "doom", 0,
+                                             "", ["mods/brutal.pk3"]))            
+        i += 1
+        
+    #debug
+    for g in games: 
+        progress.Update(i + 21, "Creating games database...")
+        dbGames.insertGame(g)
+        
     progress.Update(progress.GetRange(), "Done, have fun!")
