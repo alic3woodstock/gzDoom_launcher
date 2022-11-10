@@ -7,6 +7,7 @@ import extract
 import wx.lib.mixins.listctrl as listmix
 import addGame
 import gameDefDb
+import manageGames
 
 class MyListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
     def __init__(self, parent, ID, pos=wx.DefaultPosition,
@@ -30,6 +31,7 @@ class MyFrame(wx.Frame):
         menu = wx.MenuBar()
         fileMenu = wx.Menu()
         menuAddGame = fileMenu.Append(104, item = "&Add game...")
+        menuManageGames = fileMenu.Append(105, item = "&Manage games...")
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
         menuDownload = fileMenu.Append(101, item = "&Download")                
         menuExtract = fileMenu.Append(102, item = "&Extract All")
@@ -75,6 +77,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, lambda event: self.menuExtractOnClick(event, gameTab), menuExtract)
         self.Bind(wx.EVT_MENU, self.menuCloseOnClick, menuClose)
         self.Bind(wx.EVT_MENU, lambda event: self.menuAddGameOnClick(event, gameTab), menuAddGame)
+        self.Bind(wx.EVT_MENU, self.menuManageGamesOnClick, menuManageGames)
         
         listRun[0].AppendColumn('Levels')
         listRun[1].AppendColumn('Levels')
@@ -108,6 +111,10 @@ class MyFrame(wx.Frame):
         self.readDB()
         gameList = tab.GetChildren()[tab.GetSelection()]
         gameList.Select(0)
+        
+    def menuManageGamesOnClick(self, event):
+        manageGamesDialog = manageGames.MyDialog(self, "Manage Game/Mod List")
+        manageGamesDialog.ShowModal() 
 
     def btnOkOnPress(self, event, tab):
         self.lauchGame(tab.GetChildren()[tab.GetSelection()])
