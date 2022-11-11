@@ -10,7 +10,7 @@ class MyDialog(wx.Dialog):
         panel = wx.Panel(self)
         
         btnAdd = wx.Button(panel, wx.ID_ANY, "Add...")
-        btnEdit = wx.Button(panel, wx.ID_ANY, "Exit...")
+        btnEdit = wx.Button(panel, wx.ID_ANY, "Edit...")
         btnDelete = wx.Button(panel, wx.ID_ANY, "Delete...")
         btnCancel = wx.Button(panel, wx.ID_CANCEL)
         self.dataGrid = dataview.DataViewListCtrl(panel, id=wx.ID_ANY, size=(400,300))
