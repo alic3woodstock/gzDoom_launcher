@@ -3,6 +3,7 @@ import wx.dataview as dataview
 import gameDefDb
 import addGame
 import wx.lib.dialogs as wxdialogs
+import os
 
 class MyDialog(wx.Dialog): 
     def __init__(self, parent, title): 
@@ -13,7 +14,10 @@ class MyDialog(wx.Dialog):
         btnEdit = wx.Button(panel, wx.ID_ANY, "Edit...")
         btnDelete = wx.Button(panel, wx.ID_ANY, "Delete...")
         btnCancel = wx.Button(panel, wx.ID_CANCEL)
-        self.dataGrid = dataview.DataViewListCtrl(panel, id=wx.ID_ANY, size=(400,300))
+        if os.name == "nt":
+            self.dataGrid = dataview.DataViewListCtrl(panel, id=wx.ID_ANY, size=(400,300))
+        else:
+            self.dataGrid = dataview.DataViewListCtrl(panel, id=wx.ID_ANY, size=(640,480))
         
         self.dataGrid.AppendTextColumn("Name")
         self.dataGrid.AppendTextColumn("Type")

@@ -67,7 +67,7 @@ class GameDefDb():
         
         dataCon = self.ConnectDb()
         gameData = dataCon.ExecSQL("""SELECT id, name, tabindex, gamexec, modgroup, lastrunmod, iwad
-         FROM gamedef ORDER BY id""")
+         FROM gamedef ORDER BY tabindex,name""")
         for game in gameData:
             g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6])            
             g.SetFiles([])
