@@ -12,8 +12,11 @@ class SmallButton(wx.Button):
     def AcceptsFocusFromKeyboard(self):
         return False
 
-class MyDialog(wx.Dialog): 
-    def __init__(self, parent, title): 
+class MyDialog(wx.Dialog):
+    _gameDef = None    
+    
+    def __init__(self, parent, title, gameDef = None): 
+        self._gameDef = gameDef
         super(MyDialog, self).__init__(parent, title = title, size = (500, wx.DefaultCoord)) 
         panel = wx.Panel(self)
         
@@ -31,10 +34,11 @@ class MyDialog(wx.Dialog):
         # Executable
         lblExec = wx.StaticText(panel, label = "Game Exec.:")
         self.txtExec = wx.TextCtrl(panel, size=(TEXT_HEIGHT, wx.DefaultCoord))
-        if (os.name == 'nt'):
-            self.txtExec.write('gzdoom\\gzdoom.exe')
-        else:
-            self.txtExec.write('gzdoom/gzdoom')
+        if not gameDef:
+            if (os.name == 'nt'):
+                self.txtExec.write('gzdoom\\gzdoom.exe')
+            else:
+                self.txtExec.write('gzdoom/gzdoom')
         btnFindExec = SmallButton(panel, label = '...', size=(24, self.txtExec.GetSize().GetHeight()))
         
         # Mod Group
@@ -63,6 +67,13 @@ class MyDialog(wx.Dialog):
         # Buttons
         btnCancel = wx.Button(panel, wx.ID_CANCEL)
         btnOK = wx.Button(panel, wx.ID_OK)      
+        
+        if gameDef:
+            self.txtName.write(gameDef.GetItem().GetText())
+            self.cbxType.Select(gameDef.GetTab())
+            self.txtExec.write(gameDef.GetExec())
+            self.txtWad.write(gameDef.GetIWad())  
+            self.gridFiles.AppendItem(gameDef.GetFiles())          
         
         # Bind Events
         self.Bind(wx.EVT_COMBOBOX, self.CbxTypeOnChange, self.cbxType)

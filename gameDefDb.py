@@ -83,3 +83,26 @@ class GameDefDb():
         dataCon.execSQL("""UPDATE gamedef SET lastrunmod=? WHERE id=?""", [mod.GetItem().GetData(),
                                                                            game.GetItem().GetData()])
         dataCon.commit()
+        
+    def DeleteGame(self, game):
+        self.DeleteGameById(game.GetItem().GetData())
+        
+    def DeleteGameById(self, gameId):
+        dataCon = self.ConnectDb()
+        dataCon.startTransaction()
+        dataCon.execSQL("""DELETE FROM gamedef WHERE id=?""", [gameId])
+        dataCon.commit()
+        
+    def SelectGameById(self, gameId):
+        dataCon = self.ConnectDb()
+        gameData = dataCon.execSQL("""SELECT id, name, tabindex, gamexec, modgroup, lastrunmod, iwad
+         FROM gamedef WHERE id=? ORDER BY id""", [gameId])
+        game = gameData.fetchone()
+        g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6])            
+        g.SetFiles([])
+        fileData = dataCon.execSQL("""SELECT file FROM files WHERE gameid = ?""",[game[0]])
+        for f in fileData:
+            g.GetFiles().append(f[0])
+        return(g)      
+
+        
