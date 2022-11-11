@@ -19,10 +19,10 @@ class MyDialog(wx.Dialog):
         self.dataGrid.AppendTextColumn("Mod Group")
         self.dataGrid.AppendTextColumn("iWad")
         
-        self.readDB()
+        self.ReadDB()
         
         #Bind eventes
-        self.bind(wx.EVT_BUTTON, self.btnAddOnClick, btnAdd)
+        self.bind(wx.EVT_BUTTON, self.BtnAddOnClick, btnAdd)
         
         boxv = wx.BoxSizer(wx.VERTICAL)
         boxButtons = wx.BoxSizer(wx.HORIZONTAL)
@@ -39,14 +39,14 @@ class MyDialog(wx.Dialog):
         panel.SetSizer(boxv)
         boxv.SetSizeHints(self)            
         
-    def btnAddOnClick(self, event):
+    def BtnAddOnClick(self, event):
         addGameDiag = addGame.MyDialog(self, "Add game, map or mod")
         addGameDiag.ShowModal()
-        self.readDB()
+        self.ReadDB()
         
-    def readDB(self):
+    def ReadDB(self):
         gameData = gameDefDb.GameDefDb()
-        games = gameData.selectAllGames()
+        games = gameData.SelectAllGames()
         for game in games:            
             if game.GetTab() == 0:
                 strType = "Game"

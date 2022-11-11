@@ -147,8 +147,8 @@ def ExtractAll(parent):
         
 def CreateDB(progress):
     dbGames = gameDefDb.GameDefDb()
-    dbGames.createGameTable()
-    dbGames.cleanGameTable()
+    dbGames.CreateGameTable()
+    dbGames.CleanGameTable()
     
     zipFiles = []
     games = []
@@ -204,6 +204,6 @@ def CreateDB(progress):
     #debug
     for g in games: 
         progress.Update(i + 21, "Creating games database...")
-        dbGames.insertGame(g)
+        dbGames.InsertGame(g)
         
     progress.Update(progress.GetRange(), "Done, have fun!")

@@ -84,7 +84,7 @@ class MyFrame(wx.Frame):
         
         if (not os.path.exists('games.sqlite3')):
             gameData = gameDefDb.GameDefDb()
-            gameData.createGameTable()
+            gameData.CreateGameTable()
         
         self.ReadDB()       
         if listRun[1].GetColumnWidth(0) >= listRun[0].GetColumnWidth(0): 
@@ -209,12 +209,12 @@ class MyFrame(wx.Frame):
         
         os.popen(command)
         gameData = gameDefDb.GameDefDb()
-        gameData.updateLastRunMod(item,mod)
+        gameData.UpdateLastRunMod(item,mod)
         listCtrl.SetFocus()
 
     def ReadDB(self):
         gameData = gameDefDb.GameDefDb()
-        tempItens = gameData.selectAllGames()
+        tempItens = gameData.SelectAllGames()
         self.listRun[0].DeleteAllItems()
         self.listRun[1].DeleteAllItems()
         self.itens = []

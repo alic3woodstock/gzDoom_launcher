@@ -187,7 +187,7 @@ class MyDialog(wx.Dialog):
 
             try:
                 gameData = gameDefDb.GameDefDb()
-                gameData.insertGame(game)
+                gameData.InsertGame(game)
                 event.Skip()
             except:
                 wxdialogs.alertDialog(self, message='Failed to write data!')

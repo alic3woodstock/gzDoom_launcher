@@ -4,15 +4,15 @@ import gameDef
 class GameDefDb():
     _dataCon = None
     
-    def getDataCon(self):
+    def GetDataCon(self):
         return self._dataCon
     
-    def connectDb(self):
+    def ConnectDb(self):
         self._dataCon = dataConnect.SqliteDB('games.sqlite3')
         return self._dataCon
         
-    def createGameTable(self):
-        dataCon = self.connectDb()
+    def CreateGameTable(self):
+        dataCon = self.ConnectDb()
         dataCon.execSQL("""CREATE TABLE IF NOT EXISTS files(
             id integer PRIMARY KEY AUTOINCREMENT,
             gameid integer,                        
@@ -31,17 +31,17 @@ class GameDefDb():
             """)
         dataCon.closeConnection()
         
-    def cleanGameTable(self):
-        dataCon = self.connectDb()
+    def CleanGameTable(self):
+        dataCon = self.ConnectDb()
         dataCon.startTransaction()
         dataCon.execSQL("""DROP TABLE files;""")        
         dataCon.execSQL("""DROP TABLE gamedef;""")        
         dataCon.commit()
         dataCon.closeConnection()
-        self.createGameTable()        
+        self.CreateGameTable()        
         
-    def insertGame(self, game):
-        dataCon = self.connectDb()
+    def InsertGame(self, game):
+        dataCon = self.ConnectDb()
         dataCon.startTransaction()
         sql = """INSERT INTO gamedef(name,tabindex,gamexec,modgroup,lastrunmod,iwad)
             VALUES (?,?,?,?,?,?);"""
@@ -62,10 +62,10 @@ class GameDefDb():
         dataCon.commit()
         dataCon.closeConnection()
         
-    def selectAllGames(self):
+    def SelectAllGames(self):
         games = []
         
-        dataCon = self.connectDb()
+        dataCon = self.ConnectDb()
         gameData = dataCon.execSQL("""SELECT id, name, tabindex, gamexec, modgroup, lastrunmod, iwad
          FROM gamedef ORDER BY id""")
         for game in gameData:
@@ -77,8 +77,8 @@ class GameDefDb():
             games.append(g)
         return games               
 
-    def updateLastRunMod(self, game, mod):
-        dataCon = self.connectDb()
+    def UpdateLastRunMod(self, game, mod):
+        dataCon = self.ConnectDb()
         dataCon.startTransaction()
         dataCon.execSQL("""UPDATE gamedef SET lastrunmod=? WHERE id=?""", [mod.GetItem().GetData(),
                                                                            game.GetItem().GetData()])
