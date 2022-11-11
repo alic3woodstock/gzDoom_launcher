@@ -66,18 +66,18 @@ class MyFrame(wx.Frame):
         box.Add(box3, 0, wx.ALIGN_RIGHT | wx.ALL)
 
         #Bind Events
-        self.Bind(wx.EVT_BUTTON, lambda event: self.btnOkOnPress(event, gameTab), btnOk)
-        panel.Bind(wx.EVT_CHAR_HOOK, lambda event: self.panelOnKeyHook(event, gameTab))
+        self.Bind(wx.EVT_BUTTON, lambda event: self.BtnOkOnPress(event, gameTab), btnOk)
+        panel.Bind(wx.EVT_CHAR_HOOK, lambda event: self.PanelOnKeyHook(event, gameTab))
         for i in range(2):
-            listRun[i].Bind(wx.EVT_LEFT_DCLICK, self.listCtrlOnDClick)
-            listRun[i].Bind(wx.EVT_LIST_ITEM_SELECTED, self.listCtrlOnSelect)
+            listRun[i].Bind(wx.EVT_LEFT_DCLICK, self.ListCtrlOnDClick)
+            listRun[i].Bind(wx.EVT_LIST_ITEM_SELECTED, self.ListCtrlOnSelect)
             
         #Bind events for menu itens
-        self.Bind(wx.EVT_MENU, self.menuDownloadOnClick, menuDownload)
-        self.Bind(wx.EVT_MENU, lambda event: self.menuExtractOnClick(event, gameTab), menuExtract)
-        self.Bind(wx.EVT_MENU, self.menuCloseOnClick, menuClose)
-        self.Bind(wx.EVT_MENU, lambda event: self.menuAddGameOnClick(event, gameTab), menuAddGame)
-        self.Bind(wx.EVT_MENU, self.menuManageGamesOnClick, menuManageGames)
+        self.Bind(wx.EVT_MENU, self.MenuDownloadOnClick, menuDownload)
+        self.Bind(wx.EVT_MENU, lambda event: self.MenuExtractOnClick(event, gameTab), menuExtract)
+        self.Bind(wx.EVT_MENU, self.MenuCloseOnClick, menuClose)
+        self.Bind(wx.EVT_MENU, lambda event: self.MenuAddGameOnClick(event, gameTab), menuAddGame)
+        self.Bind(wx.EVT_MENU, self.MenuManageGamesOnClick, menuManageGames)
         
         listRun[0].AppendColumn('Levels')
         listRun[1].AppendColumn('Levels')
@@ -86,7 +86,7 @@ class MyFrame(wx.Frame):
             gameData = gameDefDb.GameDefDb()
             gameData.createGameTable()
         
-        self.readDB()       
+        self.ReadDB()       
         if listRun[1].GetColumnWidth(0) >= listRun[0].GetColumnWidth(0): 
             columnWidth = listRun[1].GetColumnWidth(0)
         else:
@@ -111,28 +111,28 @@ class MyFrame(wx.Frame):
         self.Centre()
         self.Show(True)
 
-    def menuCloseOnClick(self, event):
+    def MenuCloseOnClick(self, event):
         self.Close()
         
-    def menuAddGameOnClick(self, event, tab):
+    def MenuAddGameOnClick(self, event, tab):
         addGameDiag = addGame.MyDialog(self, "Add game, map or mod")
         addGameDiag.ShowModal()
-        self.readDB()
+        self.ReadDB()
         gameList = tab.GetChildren()[tab.GetSelection()]
         gameList.Select(0)
         
-    def menuManageGamesOnClick(self, event):
+    def MenuManageGamesOnClick(self, event):
         manageGamesDialog = manageGames.MyDialog(self, "Manage Game/Mod List")
         manageGamesDialog.ShowModal() 
 
-    def btnOkOnPress(self, event, tab):
-        self.lauchGame(tab.GetChildren()[tab.GetSelection()])
+    def BtnOkOnPress(self, event, tab):
+        self.LauchGame(tab.GetChildren()[tab.GetSelection()])
 
-    def listCtrlOnDClick(self, event):
-        self.lauchGame(event.GetEventObject())
+    def ListCtrlOnDClick(self, event):
+        self.LauchGame(event.GetEventObject())
         event.Skip()
         
-    def listCtrlOnSelect(self, event):
+    def ListCtrlOnSelect(self, event):
         self.listRun[2].Clear()
         self.listRun[2].Insert("None                    ", 0, gameDef.GameDef(-1,"None",2))                
         self.listRun[2].SetSelection(0)
@@ -150,11 +150,11 @@ class MyFrame(wx.Frame):
                 if (item.GetLastMod() == i.GetItem().GetData()):
                     self.listRun[2].SetSelection(self.listRun[2].GetCount() - 1)
     
-    def panelOnKeyHook(self, event, tab):
+    def PanelOnKeyHook(self, event, tab):
         event.DoAllowNextEvent()
         changeFocus = False
         if (event.GetKeyCode() == wx.WXK_RETURN):
-            self.lauchGame(tab.GetChildren()[tab.GetSelection()])
+            self.LauchGame(tab.GetChildren()[tab.GetSelection()])
         if (event.GetKeyCode() == wx.WXK_ESCAPE):
             self.Close()
         if ((event.GetKeyCode() == wx.WXK_RIGHT) and (tab.GetSelection() < tab.GetPageCount() - 1)):
@@ -175,17 +175,17 @@ class MyFrame(wx.Frame):
                 self.listRun[2].SetSelection(0)
         event.Skip()
         
-    def menuDownloadOnClick(self, event):
+    def MenuDownloadOnClick(self, event):
         download.StartDownload(self)
         
-    def menuExtractOnClick(self, event, tab):
+    def MenuExtractOnClick(self, event, tab):
         extract.ExtractAll(self)
-        self.readDB()
+        self.ReadDB()
         gameList = tab.GetChildren()[tab.GetSelection()]
         gameList.Select(0)
         
 
-    def lauchGame(self, listCtrl):
+    def LauchGame(self, listCtrl):
         if (listCtrl.GetFirstSelected() < 0):
             listCtrl.Select(0)
             
@@ -212,7 +212,7 @@ class MyFrame(wx.Frame):
         gameData.updateLastRunMod(item,mod)
         listCtrl.SetFocus()
 
-    def readDB(self):
+    def ReadDB(self):
         gameData = gameDefDb.GameDefDb()
         tempItens = gameData.selectAllGames()
         self.listRun[0].DeleteAllItems()
