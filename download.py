@@ -69,6 +69,7 @@ def StartDownload(parent):
     files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/btsx_e1.zip","btsx_e1.zip"))
     files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/btsx_e2.zip","btsx_e2.zip"))
     files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/eviternity.zip","eviternity.zip"))
+    files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/gd.zip","gd.zip"))
     files.append(Url("https://youfailit.net/pub/idgames/themes/hr/hr.zip","hr.zip"))
     files.append(Url("https://youfailit.net/pub/idgames/themes/hr/hr2final.zip","hr2final.zip"))
     files.append(Url("https://youfailit.net/pub/idgames/levels/heretic/Ports/htchest.zip","htchest.zip"))

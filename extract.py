@@ -203,7 +203,7 @@ def CreateDB(progress):
         
     #debug
     for g in games: 
-        progress.Update(i + 21, "Creating games database...")
+        progress.Update(i + 22, "Creating games database...")
         dbGames.InsertGame(g)
         
     progress.Update(progress.GetRange(), "Done, have fun!")
