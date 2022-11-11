@@ -21,16 +21,14 @@ class MyFrame(wx.Frame):
         self.itens = []
         wx.Frame.__init__(self, parent, title=title)
         
-        #Dwonload button
         panel = wx.Panel(self, wx.ID_ANY)
         font = panel.GetFont()
         font.MakeLarger()
-        # font.MakeLarger()
         panel.SetFont(font)
         
         menu = wx.MenuBar()
         fileMenu = wx.Menu()
-        menuAddGame = fileMenu.Append(104, item = "&Add game...")
+        # menuAddGame = fileMenu.Append(104, item = "&Add game...")
         menuManageGames = fileMenu.Append(105, item = "&Manage games...")
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
         menuDownload = fileMenu.Append(101, item = "&Download")                
@@ -76,7 +74,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.MenuDownloadOnClick, menuDownload)
         self.Bind(wx.EVT_MENU, lambda event: self.MenuExtractOnClick(event, gameTab), menuExtract)
         self.Bind(wx.EVT_MENU, self.MenuCloseOnClick, menuClose)
-        self.Bind(wx.EVT_MENU, lambda event: self.MenuAddGameOnClick(event, gameTab), menuAddGame)
+        # self.Bind(wx.EVT_MENU, lambda event: self.MenuAddGameOnClick(event, gameTab), menuAddGame)
         self.Bind(wx.EVT_MENU, self.MenuManageGamesOnClick, menuManageGames)
         
         listRun[0].AppendColumn('Levels')

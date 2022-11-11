@@ -73,7 +73,8 @@ class MyDialog(wx.Dialog):
             self.cbxType.Select(gameDef.GetTab())
             self.txtExec.write(gameDef.GetExec())
             self.txtWad.write(gameDef.GetIWad())  
-            self.gridFiles.AppendItem(gameDef.GetFiles())          
+            if len(gameDef.GetFiles()) > 0:
+                self.gridFiles.AppendItem(gameDef.GetFiles())          
         
         # Bind Events
         self.Bind(wx.EVT_COMBOBOX, self.CbxTypeOnChange, self.cbxType)
@@ -198,7 +199,12 @@ class MyDialog(wx.Dialog):
 
             try:
                 gameData = gameDefDb.GameDefDb()
-                gameData.InsertGame(game)
+                if self._gameDef:
+                    game.GetItem().SetData(self._gameDef.GetItem().GetData())
+                    updateFiles = self._gameDef.GetFiles() != game.GetFiles()
+                    gameData.UpdateGame(game, updateFiles)
+                else:
+                    gameData.InsertGame(game)
                 event.Skip()
             except:
                 wxdialogs.alertDialog(self, message='Failed to write data!')

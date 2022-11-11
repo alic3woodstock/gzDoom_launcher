@@ -5,9 +5,9 @@ class SqliteDB():
 	_connection = None
 	
 	def __init__(self, dbName):
-		self.createConnection(dbName)
+		self.CreateConnection(dbName)
 	
-	def createConnection(self, dbName):
+	def CreateConnection(self, dbName):
 		try:
 			self._connection = sqlite3.connect(dbName)
 			return True
@@ -15,23 +15,23 @@ class SqliteDB():
 			print(e)	
 			return False	
 			
-	def getConnection(self):
+	def GetConnection(self):
 		return self._connection
 	
-	def closeConnection(self):
+	def CloseConnection(self):
 		if self._connection:
 			self._connection.close()
 			
-	def execSQL(self, sql, params = ""):
+	def ExecSQL(self, sql, params = ""):
 		try:
 			return self._connection.execute(sql, params)
 		except Error as e:
 			print(e)
 			return ""
 		
-	def startTransaction(self):
+	def StartTransaction(self):
 		self._connection.execute("""BEGIN TRANSACTION;""")
 	
-	def commit(self):
+	def Commit(self):
 		self._connection.execute("""COMMIT;""")
 		

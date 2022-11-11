@@ -3,7 +3,6 @@ import wx.dataview as dataview
 import gameDefDb
 import addGame
 import wx.lib.dialogs as wxdialogs
-from wx.lib.dialogs import alertDialog
 
 class MyDialog(wx.Dialog): 
     def __init__(self, parent, title): 
@@ -27,7 +26,9 @@ class MyDialog(wx.Dialog):
         #Bind eventes
         self.Bind(wx.EVT_BUTTON, self.BtnAddOnClick, btnAdd)
         self.Bind(wx.EVT_BUTTON, self.BtnDeleteOnClick, btnDelete)  
-        self.Bind(wx.EVT_BUTTON, self.BtnEditOnClick, btnEdit)      
+        self.Bind(wx.EVT_BUTTON, self.BtnEditOnClick, btnEdit)
+        self.Bind(dataview.EVT_DATAVIEW_ITEM_ACTIVATED, self.DataGridOnDbClick, self.dataGrid)
+        self.Bind(wx.EVT_CHAR_HOOK, self.DataGridOnKeyPress, self.dataGrid)    
         
         boxv = wx.BoxSizer(wx.VERTICAL)
         boxButtons = wx.BoxSizer(wx.HORIZONTAL)
@@ -44,7 +45,7 @@ class MyDialog(wx.Dialog):
         btnDelete.MoveBeforeInTabOrder(btnCancel)
         boxv.Add(boxButtons, 0 , wx.ALIGN_RIGHT)
         panel.SetSizer(boxv)
-        boxv.SetSizeHints(self)            
+        boxv.SetSizeHints(self)                   
         
     def BtnAddOnClick(self, event):
         addGameDiag = addGame.MyDialog(self, "Add game, map or mod")
@@ -68,8 +69,18 @@ class MyDialog(wx.Dialog):
         else:
             wxdialogs.alertDialog(self, message='Select an item first!', title='Alert')
             
+    def DataGridOnDbClick(self, event):
+        self.EditGame()  
+        
+    def DataGridOnKeyPress(self, event):
+        if (event.GetKeyCode() == wx.WXK_RETURN):
+            self.EditGame()
+        event.Skip()          
         
     def ReadDB(self):
+        sItem = 0
+        if self.dataGrid.HasSelection():
+            sItem = self.dataGrid.GetSelectedRow()        
         self.dataGrid.DeleteAllItems()
         gameData = gameDefDb.GameDefDb()
         games = gameData.SelectAllGames()
@@ -86,6 +97,11 @@ class MyDialog(wx.Dialog):
             
         for i in range(self.dataGrid.GetColumnCount()):
             self.dataGrid.GetColumn(i).SetWidth(wx.COL_WIDTH_AUTOSIZE)
+        self.dataGrid.SetFocus()
+        if self.dataGrid.GetItemCount() > sItem:        
+            self.dataGrid.SelectRow(sItem)
+        elif self.dataGrid.GetItemCount() > 0:
+            self.dataGrid.SelectRow(self.dataGrid.GetItemCount() - 1)
 
     def EditGame(self):
         if self.dataGrid.HasSelection():
