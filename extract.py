@@ -186,7 +186,7 @@ def CreateDB(progress):
         elif (z.GetFormat() == "maps"):     
             if (z.TestFileName("htchest") or z.TestFileName("unbeliev")):
                 games.append(gameDef.GameDef(i, z.GetMapName(), 1, gameExec, "heretic", 0, 
-                                             "wads/blasphem-0.1.7.wad", [fullPath]))
+                                             "wads/blasphem-0.1.7.wad", ["wads/BLSMPTXT.WAD",fullPath]))
             else:
                 games.append(gameDef.GameDef(i, z.GetMapName(), 1, gameExec, "doom", 0, 
                                              "wads/freedoom2.wad", [fullPath]))

@@ -73,8 +73,8 @@ class MyDialog(wx.Dialog):
             self.cbxType.Select(gameDef.GetTab())
             self.txtExec.write(gameDef.GetExec())
             self.txtWad.write(gameDef.GetIWad())  
-            if len(gameDef.GetFiles()) > 0:
-                self.gridFiles.AppendItem(gameDef.GetFiles())          
+            for f in gameDef.GetFiles():
+                self.gridFiles.AppendItem([f])          
         
         # Bind Events
         self.Bind(wx.EVT_COMBOBOX, self.CbxTypeOnChange, self.cbxType)
