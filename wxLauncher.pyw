@@ -83,9 +83,12 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.MenuDownloadOnClick, menuDownload)
         self.Bind(wx.EVT_MENU, lambda event: self.MenuExtractOnClick(event, gameTab), menuExtract)
         self.Bind(wx.EVT_MENU, self.MenuCloseOnClick, menuClose)
-        self.Bind(wx.EVT_MENU, lambda event: self.MenuManageGamesOnClick(event, gameTab), menuManageGames)
-        self.Bind(wx.EVT_MENU, self.MenuReplaceDoomOnClick, menuReplaceDoom)
-        self.Bind(wx.EVT_MENU, self.MenuReplaceHereticOnClick, menuReplaceHeretic)
+        self.Bind(wx.EVT_MENU, lambda event: self.MenuManageGamesOnClick(event, gameTab), 
+                  menuManageGames)
+        self.Bind(wx.EVT_MENU, lambda event: self.MenuReplaceDoomOnClick(event, gameTab), 
+                  menuReplaceDoom)
+        self.Bind(wx.EVT_MENU, lambda event: self.MenuReplaceHereticOnClick(event, gameTab), 
+                  menuReplaceHeretic)
         
         listRun[0].AppendColumn('Levels')
         listRun[1].AppendColumn('Levels')
@@ -199,13 +202,20 @@ class MyFrame(wx.Frame):
             gameList = tab.GetChildren()[tab.GetSelection()]
             gameList.Select(0)
         
-    def MenuReplaceDoomOnClick(self, event):
+    def MenuReplaceDoomOnClick(self, event, tab):
         menuReplaceDialog = replaceWad.MyDialog(self, "Replace Doom maps wad")
         menuReplaceDialog.ShowModal()
+        self.ReadDB()
+        gameList = tab.GetChildren()[tab.GetSelection()]
+        gameList.Select(0)
+
         
-    def MenuReplaceHereticOnClick(self, event):
-        menuReplaceDialog = replaceWad.MyDialog(self, "Replace Heretic maps wad", "Wad (heretic.wad recommended):")
+    def MenuReplaceHereticOnClick(self, event, tab):
+        menuReplaceDialog = replaceWad.MyDialog(self, "Replace Heretic maps wad", 2)
         menuReplaceDialog.ShowModal()                        
+        self.ReadDB()
+        gameList = tab.GetChildren()[tab.GetSelection()]
+        gameList.Select(0)
 
     def LauchGame(self, listCtrl):
         if (listCtrl.GetFirstSelected() < 0):

@@ -170,4 +170,15 @@ class GameDefDb():
         dataCon.CloseConnection()
                 
         return groups
+    
+    def UpdateWad(self, wad, modgroup):
+        dataCon = self.ConnectDb()
+        dataCon.StartTransaction()
+        
+        sql = """UPDATE gamedef SET iwad=? WHERE tabindex=1 AND modgroup=?"""
+        params = [wad, modgroup]         
+        dataCon.ExecSQL(sql, params)
+        if modgroup == 2:
+            dataCon.ExecSQL("""DELETE FROM files WHERE file LIKE '%BLSMPTXT%'""")
+        dataCon.Commit()
 

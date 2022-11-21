@@ -1,5 +1,7 @@
 import wx
 import wx.lib.dialogs as wxdialogs
+import os
+import gameDefDb
 
 TEXT_HEIGHT = 400
 
@@ -10,9 +12,18 @@ class SmallButton(wx.Button):
         return False
 
 class MyDialog(wx.Dialog): 
-    def __init__(self, parent, title, label = "Wad (doom2.wad recommended):"): 
+    def __init__(self, parent, title, modgroup = 1):                 
         super(MyDialog, self).__init__(parent, title = title, size = (500, wx.DefaultCoord)) 
         panel = wx.Panel(self)
+        
+        label = ""
+                
+        if modgroup == 1:
+            label = "Wad (doom2.wad recommended):"
+        elif modgroup == 2:
+            label = "Wad (heretic.wad recommended):"
+            
+        self.modgroup = modgroup
 
         # Label / textbox
         lblWad = wx.StaticText(panel, label = label)        
@@ -25,6 +36,8 @@ class MyDialog(wx.Dialog):
         
         # Bind events        
         self.Bind(wx.EVT_BUTTON, self.BtnFindWadOnClick, btnFindWad)
+        self.Bind(wx.EVT_BUTTON, self.BtnOkClick, btnOK)
+        self.Bind(wx.EVT_CHAR_HOOK, self.TxtWadOnKeyPress, self.txtWad)
         
         
         #Align componentes
@@ -60,3 +73,45 @@ class MyDialog(wx.Dialog):
             self.txtWad.write(wadP)
         except:
             pass    
+        
+    def BtnOkClick(self, event):
+        self.UpdateWad()
+        
+    def TxtWadOnKeyPress(self, event):
+        if event.GetKeyCode() == wx.WXK_RETURN:
+            self.UpdateWad()
+        event.Skip()
+    
+        
+    def UpdateWad(self):
+        if self.modgroup == 1:
+            msg = "Replace wad on all maps of \"doom\" group?"
+        elif self.modgroup == 2:
+            msg = "Replace wad on all maps of \"heretic\" group?"
+        else:
+            msg = "Raplace wad on all maps?"
+            
+        result = wxdialogs.messageDialog(self, message=msg, 
+                           title='Replace wad', aStyle= wx.ICON_WARNING | wx.YES | wx.NO | wx.RIGHT )
+        if result.accepted:
+            canSave = True
+            try:
+                if (not os.path.isfile(self.txtWad.GetLineText(0))):                
+                    wxdialogs.alertDialog(self, message='Wad not found!', title='Alert')
+                    canSave = False
+
+            except:
+                wxdialogs.alertDialog(self, message='Unknown error!', title='Alert')
+                canSave = False
+                
+            if canSave:
+                try:
+                    gameData = gameDefDb.GameDefDb()
+                    gameData.UpdateWad(self.txtWad.GetLineText(0), self.modgroup)
+                    result = wxdialogs.messageDialog(self, message='Wads replaced successesfully!', 
+                           title='Success', aStyle= wx.ICON_INFORMATION | wx.OK | wx.RIGHT )
+                    self.Close()
+                except:
+                    wxdialogs.alertDialog(self, message='Failed to write data!')
+                    
+
