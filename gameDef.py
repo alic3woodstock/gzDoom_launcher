@@ -1,4 +1,5 @@
 import wx
+import modGroup
 
 class GameDef():
 
@@ -26,6 +27,9 @@ class GameDef():
     def SetGroup(self, group):
         self._group = group
         
+    def GetGroupName(self):         
+        return self.GetGroup().GetGroupName()
+    
     def GetLastMod(self):
         return self._lastMod
         
@@ -48,25 +52,16 @@ class GameDef():
         self._files.append(file)
     
     #Id,Name,Tab Index,Exe,Group,Last run mod,iWad,files...
-    def __init__ (self, listId, name, tab, gameExec = './gzdoom/gzdoom', group = 'doom', lastMod = 0, wad = 'freedoom1.wad', files = []):
+    def __init__ (self, listId, name, tab, gameExec = './gzdoom/gzdoom', groupId = 1, lastMod = 0, wad = 'freedoom1.wad', 
+                  files = [], groupName = None):
         self._item = wx.ListItem()
         self._item.SetId(listId) 
         self._item.SetData(listId) #listctrl may change item id
         self._item.SetText(name)
         self._tab = tab
         self._exec = gameExec
-        self._group = group
+        self._group = modGroup.ModGroup(groupId, groupName)
         self._lastMod = lastMod
         self._iWad = wad
         self._files = files
 
-    # def __init__(self):
-        # self._item = wx.ListItem()
-        # self._item.SetId(0)
-        # self._item.SetText('')
-        # self._tab = 0 #integer
-        # self._exec = '' #string
-        # self._group = '' #string
-        # self_lastMod = 0 #integer
-        # self._iWad = '' #string
-        # self._files = [] #array

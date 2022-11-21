@@ -8,6 +8,8 @@ import wx.lib.mixins.listctrl as listmix
 import addGame
 import gameDefDb
 import manageGames
+import replaceWad
+import wx.lib.dialogs as wxdialogs
 
 class MyListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
     def __init__(self, parent, ID, pos=wx.DefaultPosition,
@@ -36,7 +38,14 @@ class MyFrame(wx.Frame):
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
         menuClose = fileMenu.Append(103, item = "&Close")
         menu.Append(fileMenu, "&File")
+        
+        utilMenu = wx.Menu()
+        menuReplaceDoom = utilMenu.Append(106, item = "Replace &Doom maps wad...")
+        menuReplaceHeretic = utilMenu.Append(107, item = "Replace &Heretic maps wad...")
+        menu.Append(utilMenu, "&Utilities")
+        
         self.SetMenuBar(menu)
+        
         
         gameTab = wx.Notebook(panel)
         listGames =  MyListCtrl(gameTab, ID=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
@@ -74,8 +83,9 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.MenuDownloadOnClick, menuDownload)
         self.Bind(wx.EVT_MENU, lambda event: self.MenuExtractOnClick(event, gameTab), menuExtract)
         self.Bind(wx.EVT_MENU, self.MenuCloseOnClick, menuClose)
-        # self.Bind(wx.EVT_MENU, lambda event: self.MenuAddGameOnClick(event, gameTab), menuAddGame)
-        self.Bind(wx.EVT_MENU, self.MenuManageGamesOnClick, menuManageGames)
+        self.Bind(wx.EVT_MENU, lambda event: self.MenuManageGamesOnClick(event, gameTab), menuManageGames)
+        self.Bind(wx.EVT_MENU, self.MenuReplaceDoomOnClick, menuReplaceDoom)
+        self.Bind(wx.EVT_MENU, self.MenuReplaceHereticOnClick, menuReplaceHeretic)
         
         listRun[0].AppendColumn('Levels')
         listRun[1].AppendColumn('Levels')
@@ -119,9 +129,12 @@ class MyFrame(wx.Frame):
         gameList = tab.GetChildren()[tab.GetSelection()]
         gameList.Select(0)
         
-    def MenuManageGamesOnClick(self, event):
+    def MenuManageGamesOnClick(self, event, tab):
         manageGamesDialog = manageGames.MyDialog(self, "Manage Game/Mod List")
         manageGamesDialog.ShowModal() 
+        self.ReadDB()
+        gameList = tab.GetChildren()[tab.GetSelection()]
+        gameList.Select(0)
 
     def BtnOkOnPress(self, event, tab):
         self.LauchGame(tab.GetChildren()[tab.GetSelection()])
@@ -143,7 +156,7 @@ class MyFrame(wx.Frame):
                 item = i
         
         for i in self.itens:
-            if (i.GetTab() == 2) and (i.GetGroup() == item.GetGroup()):
+            if (i.GetTab() == 2) and (i.GetGroup().GetGroupId() == item.GetGroup().GetGroupId()):
                 self.listRun[2].Insert(i.GetItem().GetText(), self.listRun[2].GetCount(), i)
                 if (item.GetLastMod() == i.GetItem().GetData()):
                     self.listRun[2].SetSelection(self.listRun[2].GetCount() - 1)
@@ -177,11 +190,22 @@ class MyFrame(wx.Frame):
         download.StartDownload(self)
         
     def MenuExtractOnClick(self, event, tab):
-        extract.ExtractAll(self)
-        self.ReadDB()
-        gameList = tab.GetChildren()[tab.GetSelection()]
-        gameList.Select(0)
+        result = wxdialogs.messageDialog(self, message="This will reset game database to the default values. \n" +
+            "Do you want to continue?", 
+                           title='Extract files', aStyle= wx.ICON_WARNING | wx.YES | wx.NO | wx.RIGHT )
+        if result.accepted:        
+            extract.ExtractAll(self)
+            self.ReadDB()
+            gameList = tab.GetChildren()[tab.GetSelection()]
+            gameList.Select(0)
         
+    def MenuReplaceDoomOnClick(self, event):
+        menuReplaceDialog = replaceWad.MyDialog(self, "Replace Doom maps wad")
+        menuReplaceDialog.ShowModal()
+        
+    def MenuReplaceHereticOnClick(self, event):
+        menuReplaceDialog = replaceWad.MyDialog(self, "Replace Heretic maps wad", "Wad (heretic.wad recommended):")
+        menuReplaceDialog.ShowModal()                        
 
     def LauchGame(self, listCtrl):
         if (listCtrl.GetFirstSelected() < 0):

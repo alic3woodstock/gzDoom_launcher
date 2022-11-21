@@ -49,8 +49,8 @@ class zipFile():
     def GetName(self):
         return self._name
         
-    def TestFileName(self,str):
-        if (self.GetName().lower().find(str) >= 0):
+    def TestFileName(self,fName):
+        if (self.GetName().lower().find(fName) >= 0):
             return True
         else:
             return False
@@ -147,8 +147,8 @@ def ExtractAll(parent):
         
 def CreateDB(progress):
     dbGames = gameDefDb.GameDefDb()
+    dbGames.DeleteGameTable()
     dbGames.CreateGameTable()
-    dbGames.CleanGameTable()
     
     zipFiles = []
     games = []
@@ -178,30 +178,30 @@ def CreateDB(progress):
         if (z.TestFileName("blasphem")): 
             blasphenWad = (fullPath) # works because wad comes first in the list            
         elif (z.TestFileName("bls")):            
-            games.append(gameDef.GameDef(i, "Blasphem", 0, gameExec, "heretic", 0, blasphenWad, [fullPath]))
+            games.append(gameDef.GameDef(i, "Blasphem", 0, gameExec, 2, 0, blasphenWad, [fullPath]))
         elif (z.TestFileName("freedoom1")):
-            games.append(gameDef.GameDef(i, "Freedoom Phase 1", 0, gameExec, "doom", 0, fullPath))            
+            games.append(gameDef.GameDef(i, "Freedoom Phase 1", 0, gameExec, 1, 0, fullPath))            
         elif (z.TestFileName("freedoom2")):
-            games.append(gameDef.GameDef(i, "Freedoom Phase 2", 0, gameExec, "doom", 0, fullPath))            
+            games.append(gameDef.GameDef(i, "Freedoom Phase 2", 0, gameExec, 1, 0, fullPath))            
         elif (z.GetFormat() == "maps"):     
             if (z.TestFileName("htchest") or z.TestFileName("unbeliev")):
-                games.append(gameDef.GameDef(i, z.GetMapName(), 1, gameExec, "heretic", 0, 
+                games.append(gameDef.GameDef(i, z.GetMapName(), 1, gameExec, 2, 0, 
                                              "wads/blasphem-0.1.7.wad", ["wads/BLSMPTXT.WAD",fullPath]))
             else:
-                games.append(gameDef.GameDef(i, z.GetMapName(), 1, gameExec, "doom", 0, 
+                games.append(gameDef.GameDef(i, z.GetMapName(), 1, gameExec, 1, 0, 
                                              "wads/freedoom2.wad", [fullPath]))
         elif (z.GetFormat() == "mods"):
             if (z.TestFileName("150skins")):
-                i -= 1
+                games.append(gameDef.GameDef(i, "150 Skins", 2, gameExec, 2, 0, #150 Skins also works with heretic 
+                                             "", ["mods/150skins.zip"]))
             elif (z.TestFileName("beaultiful")):
-                games.append(gameDef.GameDef(i, "Beaultiful Doom", 2, gameExec, "doom", 0, 
+                games.append(gameDef.GameDef(i, "Beaultiful Doom", 2, gameExec, 1, 0, 
                                              "", ["mods/150skins.zip", "mods/Beaultiful_Doom.pk3"]))
             elif (z.TestFileName("brutal")):
-                games.append(gameDef.GameDef(i, "Brutal Doom", 2, gameExec, "doom", 0,
+                games.append(gameDef.GameDef(i, "Brutal Doom", 2, gameExec, 1, 0,
                                              "", ["mods/brutal.pk3"]))            
         i += 1
         
-    #debug
     for g in games: 
         progress.Update(i + 22, "Creating games database...")
         dbGames.InsertGame(g)

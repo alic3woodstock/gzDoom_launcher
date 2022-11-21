@@ -65,7 +65,7 @@ class MyDialog(wx.Dialog):
             gameId = self.dataGrid.GetItemData(game)   
             gameName = self.dataGrid.GetValue(self.dataGrid.GetSelectedRow(), 0)                
             result = wxdialogs.messageDialog(self, message="Delete game: " + gameName + "?", 
-                               title='Delete Game', aStyle= wx.ICON_QUESTION | wx.YES | wx.NO | wx.RIGHT )
+                               title='Delete Game', aStyle= wx.ICON_WARNING | wx.YES | wx.NO | wx.RIGHT )
             if result.accepted:
                 gamedata = gameDefDb.GameDefDb()
                 gamedata.DeleteGameById(gameId)
@@ -97,7 +97,7 @@ class MyDialog(wx.Dialog):
                 strType = "Mod"
                         
             self.dataGrid.AppendItem([game.GetItem().GetText(), strType, game.GetExec(),
-                                 game.GetGroup(), game.GetIWad()], game.GetItem().GetData())
+                                 game.GetGroupName(), game.GetIWad()], game.GetItem().GetData())
             
         for i in range(self.dataGrid.GetColumnCount()):
             self.dataGrid.GetColumn(i).SetWidth(wx.COL_WIDTH_AUTOSIZE)

@@ -1,5 +1,6 @@
 import dataConnect
 import gameDef
+import modGroup
 
 class GameDefDb():
     _dataCon = None
@@ -13,32 +14,47 @@ class GameDefDb():
         
     def CreateGameTable(self):
         dataCon = self.ConnectDb()
-        dataCon.ExecSQL("""CREATE TABLE IF NOT EXISTS files(
-            id integer PRIMARY KEY AUTOINCREMENT,
-            gameid integer,                        
-            file text,
-            FOREIGN KEY (gameid) REFERENCES gamedef(id) ON DELETE CASCADE);
-        """)           
+
+        dataCon.StartTransaction()
+        dataCon.ExecSQL("""CREATE TABLE IF NOT EXISTS groups(
+                id integer PRIMARY KEY AUTOINCREMENT,
+                groupname text);
+            """)
+        
+        dataCon.ExecSQL("""INSERT INTO groups(groupname) VALUES ('doom'),('heretic'),('hexen'),
+                ('strife'),('other');
+            """)
                 
         dataCon.ExecSQL("""CREATE TABLE IF NOT EXISTS gamedef(
                 id integer PRIMARY KEY AUTOINCREMENT,
                 name text,
                 tabindex integer NOT NULL,
                 gamexec text,
-                modgroup text,
+                modgroup integer NOT NULL,
                 lastrunmod integer NOT NULL,
-                iwad text);                                
+                iwad text,
+                FOREIGN KEY (modgroup) REFERENCES groups(id) ON DELETE NO ACTION);                
             """)
+#                                                
+        
+        dataCon.ExecSQL("""CREATE TABLE IF NOT EXISTS files(
+                id integer PRIMARY KEY AUTOINCREMENT,
+                gameid integer,                        
+                file text,
+                FOREIGN KEY (gameid) REFERENCES gamedef(id) ON DELETE CASCADE);
+            """)
+                   
+        dataCon.Commit()
         dataCon.CloseConnection()
         
-    def CleanGameTable(self):
+    def DeleteGameTable(self):
         dataCon = self.ConnectDb()
         dataCon.StartTransaction()
         dataCon.ExecSQL("""DROP TABLE files;""")        
-        dataCon.ExecSQL("""DROP TABLE gamedef;""")        
+        dataCon.ExecSQL("""DROP TABLE gamedef;""")
+        dataCon.ExecSQL("""DROP TABLE groups""")        
         dataCon.Commit()
         dataCon.CloseConnection()
-        self.CreateGameTable()        
         
     def InsertGame(self, game):
         dataCon = self.ConnectDb()
@@ -46,7 +62,7 @@ class GameDefDb():
         sql = """INSERT INTO gamedef(name,tabindex,gamexec,modgroup,lastrunmod,iwad)
             VALUES (?,?,?,?,?,?);"""
         
-        params = (game.GetItem().GetText(), game.GetTab(), game.GetExec(), game.GetGroup(),
+        params = (game.GetItem().GetText(), game.GetTab(), game.GetExec(), game.GetGroup().GetGroupId(),
                   game.GetLastMod(),game.GetIWad())
         
         dataCon.ExecSQL(sql, params)
@@ -66,15 +82,18 @@ class GameDefDb():
         games = []
         
         dataCon = self.ConnectDb()
-        gameData = dataCon.ExecSQL("""SELECT id, name, tabindex, gamexec, modgroup, lastrunmod, iwad
-         FROM gamedef ORDER BY tabindex,name""")
+        gameData = dataCon.ExecSQL("""SELECT a.id, a.name, a.tabindex, a.gamexec, a.modgroup, a.lastrunmod, 
+            a.iwad, b.groupname 
+            FROM gamedef a LEFT JOIN groups b ON b.id = a.modgroup 
+            ORDER BY tabindex,name;""")
         for game in gameData:
-            g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6])            
+            g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6], [], game[7])            
             g.SetFiles([])
             fileData = dataCon.ExecSQL("""SELECT file FROM files WHERE gameid = ?""",[game[0]])
             for f in fileData:
                 g.GetFiles().append(f[0])
             games.append(g)
+        dataCon.CloseConnection()
         return games               
 
     def UpdateLastRunMod(self, game, mod):
@@ -92,17 +111,21 @@ class GameDefDb():
         dataCon.StartTransaction()
         dataCon.ExecSQL("""DELETE FROM gamedef WHERE id=?""", [gameId])
         dataCon.Commit()
+        dataCon.CloseConnection()
         
     def SelectGameById(self, gameId):
         dataCon = self.ConnectDb()
-        gameData = dataCon.ExecSQL("""SELECT id, name, tabindex, gamexec, modgroup, lastrunmod, iwad
-         FROM gamedef WHERE id=? ORDER BY id""", [gameId])
+        gameData = dataCon.ExecSQL("""SELECT a.id, a.name, a.tabindex, a.gamexec, a.modgroup, a.lastrunmod, 
+            a.iwad, b.groupname 
+            FROM gamedef a LEFT JOIN groups b ON b.id = a.modgroup 
+            WHERE a.id=?""", [gameId])
         game = gameData.fetchone()
-        g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6])            
+        g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6], [], game[7])            
         g.SetFiles([])
         fileData = dataCon.ExecSQL("""SELECT file FROM files WHERE gameid = ?""",[game[0]])
         for f in fileData:
             g.GetFiles().append(f[0])
+        dataCon.CloseConnection()
         return(g)
     
     def UpdateGame(self, game, updateFiles = False):
@@ -110,7 +133,7 @@ class GameDefDb():
         dataCon.StartTransaction()
 
         sql = """UPDATE gamedef SET name=?, tabindex=?, gamexec=?, modgroup=?, iwad=? WHERE id=?"""
-        params = [game.GetItem().GetText(), game.GetTab(), game.GetExec(), game.GetGroup(), game.GetIWad(),
+        params = [game.GetItem().GetText(), game.GetTab(), game.GetExec(), game.GetGroup().GetGroupId(), game.GetIWad(),
                   game.GetItem().GetData()]        
         dataCon.ExecSQL(sql, params)
         
@@ -124,5 +147,27 @@ class GameDefDb():
                 dataCon.ExecSQL(sql,params)             
                 
         dataCon.Commit()
-
+        dataCon.CloseConnection()
         
+    def SelectGroupById(self, groupId):
+        dataCon = self.ConnectDb()
+        
+        sql = "SELECT groupname FROM groups where id=?"
+        params = [groupId]
+        
+        groupData = dataCon.ExecSQL(sql, params)
+        return groupData(0,0)   
+    
+    def SelectAllGroups(self):
+        dataCon = self.ConnectDb()
+                
+        sql = "SELECT * FROM groups ORDER BY id"
+        groupData = dataCon.ExecSQL(sql)
+        
+        groups = []        
+        for g in groupData:
+            groups.append(modGroup.ModGroup(g[0], g[1]))            
+        dataCon.CloseConnection()
+                
+        return groups
+

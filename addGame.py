@@ -43,8 +43,11 @@ class MyDialog(wx.Dialog):
         
         # Mod Group
         lblGroup = wx.StaticText(panel, label = "Mod Group:")
-        self.cbxGroup = wx.ComboBox(panel, style = wx.CB_READONLY, choices = ["doom", "heretic", "hexen",
-                                                                        "strife", "other"])
+        self.cbxGroup = wx.ComboBox(panel, style = wx.CB_READONLY)
+        groupData = gameDefDb.GameDefDb()
+        groups = groupData.SelectAllGroups()
+        for g in groups:
+            self.cbxGroup.Append(g.GetGroupName(), g)                
         self.cbxGroup.Select(0)
         
         # iWAD
@@ -74,7 +77,13 @@ class MyDialog(wx.Dialog):
             self.txtExec.write(gameDef.GetExec())
             self.txtWad.write(gameDef.GetIWad())  
             for f in gameDef.GetFiles():
-                self.gridFiles.AppendItem([f])          
+                self.gridFiles.AppendItem([f])  
+                
+            for i in range(self.cbxGroup.GetCount()):
+                gGroup = gameDef.GetGroup().GetGroupId()
+                cGroup = self.cbxGroup.GetClientData(i).GetGroupId()
+                if cGroup == gGroup:
+                    self.cbxGroup.Select(i)        
         
         # Bind Events
         self.Bind(wx.EVT_COMBOBOX, self.CbxTypeOnChange, self.cbxType)
@@ -186,13 +195,17 @@ class MyDialog(wx.Dialog):
             else:
                 gameExec = self.txtExec.GetLineText(0).replace("\\","/")
                 
+            groupId = self.cbxGroup.GetClientData(self.cbxGroup.GetSelection()).GetGroupId()
+            groupName = self.cbxGroup.GetStringSelection()
             game = gameDef.GameDef(0, 
                                    self.txtName.GetLineText(0), 
                                    self.cbxType.GetSelection(), 
                                    gameExec,
-                                   self.cbxGroup.GetStringSelection(),
+                                   groupId,
                                    0, 
-                                   self.txtWad.GetLineText(0))
+                                   self.txtWad.GetLineText(0),
+                                   [],
+                                   groupName)
             for i in range (self.gridFiles.GetItemCount()):
                 game.GetFiles().append(self.gridFiles.GetValue(i, 0))
                              
