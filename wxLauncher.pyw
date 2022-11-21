@@ -34,7 +34,7 @@ class MyFrame(wx.Frame):
         menuManageGames = fileMenu.Append(105, item = "&Manage games...")
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
         menuDownload = fileMenu.Append(101, item = "&Download")                
-        menuExtract = fileMenu.Append(102, item = "&Extract All")
+        menuExtract = fileMenu.Append(102, item = "&Reset to default games")
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
         menuClose = fileMenu.Append(103, item = "&Close")
         menu.Append(fileMenu, "&File")
@@ -106,7 +106,7 @@ class MyFrame(wx.Frame):
         if listRun[0].GetItemCount() <= 0:
             tempItem = wx.ListItem()
             tempItem.SetId(0)
-            tempItem.SetText("Click in Download, wait, click extract...")
+            tempItem.SetText("Click in Download, wait, click Reset to default games...")
             listRun[0].InsertItem(tempItem)
             
         listRun[0].Select(0)
@@ -192,7 +192,7 @@ class MyFrame(wx.Frame):
     def MenuExtractOnClick(self, event, tab):
         result = wxdialogs.messageDialog(self, message="This will reset game database to the default values. \n" +
             "Do you want to continue?", 
-                           title='Extract files', aStyle= wx.ICON_WARNING | wx.YES | wx.NO | wx.RIGHT )
+                           title='Reset to default games', aStyle= wx.ICON_WARNING | wx.YES | wx.NO | wx.RIGHT )
         if result.accepted:        
             extract.ExtractAll(self)
             self.ReadDB()

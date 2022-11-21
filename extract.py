@@ -5,6 +5,7 @@ import wx
 import tarfile
 import gameDefDb
 import gameDef
+import wx.lib.dialogs as wxdialogs
 
 class zipFile():
     _format = ""
@@ -203,7 +204,10 @@ def CreateDB(progress):
         i += 1
         
     for g in games: 
-        progress.Update(i + 22, "Creating games database...")
+        progress.Update(i + 21, "Creating games database...")
         dbGames.InsertGame(g)
         
-    progress.Update(progress.GetRange(), "Done, have fun!")
+    progress.Destroy()
+    wxdialogs.messageDialog(message="Database creation done, have fun!", 
+                            title='Reset to default games', aStyle= wx.ICON_INFORMATION | wx.OK | wx.RIGHT )    
+    

@@ -1,6 +1,7 @@
 import wx
 import requests
 import os
+import wx.lib.dialogs as wxdialogs
 
 # class MyDialog(wx.Dialog): 
     # def __init__(self, parent, title): 
@@ -139,4 +140,7 @@ def GetFile(f):
             progress.Update(intProgress, "File exists, skiping...")            
                        
         if (current == totalFiles):
-            progress.Update(MAX_RANGE, "Download Complete!")
+            progress.Destroy()
+            wxdialogs.messageDialog(message="Download complete!", 
+                                    title='Reset to default games', aStyle= wx.ICON_INFORMATION | wx.OK | wx.RIGHT )   
+            
