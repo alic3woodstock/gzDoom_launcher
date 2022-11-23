@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# custom for this project
+maps/
+wads/
+downloads/
+mods/
+games.sqlite3
