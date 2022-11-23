@@ -50,9 +50,9 @@ class GameDefDb():
     def DeleteGameTable(self):
         dataCon = self.ConnectDb()
         dataCon.StartTransaction()
-        dataCon.ExecSQL("""DROP TABLE files;""")        
-        dataCon.ExecSQL("""DROP TABLE gamedef;""")
-        dataCon.ExecSQL("""DROP TABLE groups""")        
+        dataCon.ExecSQL("""DROP TABLE IF EXISTS files;""")        
+        dataCon.ExecSQL("""DROP TABLE IF EXISTS gamedef;""")
+        dataCon.ExecSQL("""DROP TABLE IF EXISTS groups""")        
         dataCon.Commit()
         dataCon.CloseConnection()
         
