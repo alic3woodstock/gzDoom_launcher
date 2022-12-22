@@ -116,6 +116,8 @@ def ExtractAll(parent):
                     dirs = os.listdir("temp")
                     for dir in dirs:
                         if (dir.lower().find("gzdoom") >= 0):
+                            if (os.path.exists("gzdoom")):
+                                    shutil.rmtree("gzdoom")
                             shutil.copytree("temp/" + dir,"gzdoom")
                 except:
                     print("Copying gzdoom failed!")

@@ -2,6 +2,7 @@ import wx
 import requests
 import os
 import wx.lib.dialogs as wxdialogs
+from fileinput import filename
 
 # class MyDialog(wx.Dialog): 
     # def __init__(self, parent, title): 
@@ -42,12 +43,29 @@ def StartDownload(parent):
         
     files = []        
     
+    r = requests.get("https://github.com/coelckers/gzdoom/releases/latest", stream = False)
+        
+    tmpStr = r.text
+    start = tmpStr.find("https://github.com/ZDoom/gzdoom/releases/expanded_assets")
+    end = tmpStr.find('"', start)
+    tmpStr = tmpStr[start:end].strip()
+    
+    r = requests.get(tmpStr)
+    tmpStr = r.text
+    start = tmpStr.find('Windows-64bit.zip"')
+    start = tmpStr.find("/ZDoom/gzdoom/releases/download", start - 200, )
+    if (os.name == "nt"):
+        end = tmpStr.find('Windows-64bit.zip', start)  + 17
+    else:        
+        end = tmpStr.find('LinuxPortable.tar.xz', start) + 20
+    tmpStr = "https://github.com" + tmpStr[start:end].strip()
+    print(tmpStr)
+               
     #GzDoom
     if (os.name == "nt"):
-        files.append(Url("https://github.com/coelckers/gzdoom/releases/download/g4.8.2/gzdoom-4-8-2-Windows-64bit.zip","gzdoom.zip"))
+        files.append(Url(tmpStr,"gzdoom.zip"))
     else:
-        files.append(Url("https://github.com/ZDoom/gzdoom/releases/download/g4.8.2/GZDoom.v4.8.2.Linux.tar.xz","gzdoom.tar.xz"))
-    
+        files.append(Url(tmpStr,"gzdoom.tar.xz"))    
     #Blasphemer
     files.append(Url("https://github.com/Blasphemer/blasphemer/releases/download/v0.1.7/blasphem-0.1.7.zip","blasphem.zip"))
     files.append(Url("https://github.com/Blasphemer/blasphemer/releases/download/v0.1.7/blasphemer-texture-pack.zip","blasphemer-texture-pack.zip"))
