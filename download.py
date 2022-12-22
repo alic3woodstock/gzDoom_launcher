@@ -52,11 +52,13 @@ def StartDownload(parent):
     
     r = requests.get(tmpStr)
     tmpStr = r.text
-    start = tmpStr.find('Windows-64bit.zip"')
-    start = tmpStr.find("/ZDoom/gzdoom/releases/download", start - 200, )
     if (os.name == "nt"):
+        start = tmpStr.find('Windows-64bit.zip"')
+        start = tmpStr.find("/ZDoom/gzdoom/releases/download", start - 200, )
         end = tmpStr.find('Windows-64bit.zip', start)  + 17
     else:        
+        start = tmpStr.find('LinuxPortable.tar.xz"')
+        start = tmpStr.find("/ZDoom/gzdoom/releases/download", start - 200, )
         end = tmpStr.find('LinuxPortable.tar.xz', start) + 20
     tmpStr = "https://github.com" + tmpStr[start:end].strip()
     print(tmpStr)
