@@ -47,7 +47,7 @@ class MyDialog(wx.Dialog):
         btnAdd.MoveBeforeInTabOrder(btnEdit)
         btnEdit.MoveBeforeInTabOrder(btnDelete)
         btnDelete.MoveBeforeInTabOrder(btnCancel)
-        boxv.Add(boxButtons, 0 , wx.ALIGN_RIGHT)
+        boxv.Add(boxButtons, 0, wx.ALIGN_RIGHT)
         panel.SetSizer(boxv)
         boxv.SetSizeHints(self)                   
         
