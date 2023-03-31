@@ -223,4 +223,6 @@ def UpdateGzDoom(parent):
             except Exception as e:
                 functions.log(e)
                 print("Copying gzdoom failed!")
-    wxdialogs.messageDialog(parent, "Gzdoom updated to version:", "Update gGzdoom", wx.ICON_INFORMATION)
+        if os.path.exists("temp"):
+            shutil.rmtree("temp")
+    wxdialogs.messageDialog(parent, "Gzdoom updated!", "Update gGzdoom", wx.ICON_INFORMATION)
