@@ -5,6 +5,7 @@ import wx.lib.dialogs as wxdialogs
 import functions
 import extract
 import shutil
+import gameDefDb
 
 # class MyDialog(wx.Dialog): 
 # def __init__(self, parent, title):
@@ -43,7 +44,7 @@ def StartDownload(parent, showmessage=True):
 
     files = []
 
-    tmpStr = GetGzDoomUrl()
+    tmpStr = GetGzDoomUrl()[0]
 
     # GzDoom
     if os.name == "nt":
@@ -164,7 +165,9 @@ def GetGzDoomUrl():
     start = tmpStr.find("https://github.com/ZDoom/gzdoom/releases/expanded_assets")
     end = tmpStr.find('"', start)
     tmpStr = tmpStr[start:end].strip()
-    print(tmpStr)
+    start = tmpStr.find("expanded_assets/g")
+    version = tmpStr[start:].strip()
+    version = version[version.find('g') + 1:]
 
     r = requests.get(tmpStr)
     tmpStr = r.text
@@ -178,7 +181,7 @@ def GetGzDoomUrl():
         end = tmpStr.find('LinuxPortable.tar.xz', start) + 20
     tmpStr = "https://github.com" + tmpStr[start:end].strip()
     functions.log(tmpStr, False)
-    return tmpStr
+    return [tmpStr, version]
 
 
 def ShowProgress(parent):
@@ -196,33 +199,50 @@ def UpdateGzDoom(parent):
 
     if os.name == "nt":
         filename = "gzdoom.zip"
+        localFileName = ".\\gzdoom\\gzdoom.exe"
     else:
         filename = "gzdoom.tar.xz"
+        localFileName = "./gzdoom/gzdoom"
 
     if os.path.exists('downloads/' + filename):
         os.remove('downloads/' + filename)
 
     totalFiles = 1
-    url = GetGzDoomUrl()
+    url = GetGzDoomUrl()[0]
+    version = GetGzDoomUrl()[1]
     file = Url(url, filename)
-    GetFile(file, progress, False)
+    gameData = gameDefDb.GameDefDb()
+    localHash = functions.filehash(localFileName)
 
-    zipfile = extract.ZipFile(filename, "xz")
-    if zipfile.TestFileName("gzdoom"):
-        if os.name == "nt":
-            zipfile.ExtractTo("gzdoom")
-        else:
-            try:
-                zipfile.ExtractTo("temp")
-                dirs = os.listdir("temp")
-                for d in dirs:
-                    if d.lower().find("gzdoom") >= 0:
-                        if os.path.exists("gzdoom"):
-                            shutil.rmtree("gzdoom")
-                        shutil.copytree("temp/" + d, "gzdoom")
-            except Exception as e:
-                functions.log(e)
-                print("Copying gzdoom failed!")
-        if os.path.exists("temp"):
-            shutil.rmtree("temp")
-    wxdialogs.messageDialog(parent, "Gzdoom updated!", "Update gGzdoom", wx.ICON_INFORMATION)
+    if (not os.path.isfile(localFileName)) or (not gameData.CheckGzDoomVersion(version, localHash)):
+        GetFile(file, progress, False)
+
+        zipfile = extract.ZipFile(filename, "xz")
+        if zipfile.TestFileName("gzdoom"):
+            if os.name == "nt":
+                zipfile.ExtractTo("gzdoom")
+            else:
+                try:
+                    zipfile.ExtractTo("temp")
+                    dirs = os.listdir("temp")
+                    for d in dirs:
+                        if d.lower().find("gzdoom") >= 0:
+                            if os.path.exists("gzdoom"):
+                                shutil.rmtree("gzdoom")
+                            shutil.copytree("temp/" + d, "gzdoom")
+                    localHash = functions.filehash(localFileName)
+                    progress.Destroy()
+                except Exception as e:
+                    functions.log(e)
+                    print("Copying gzdoom failed!")
+            gameData.UpdateGzdoomVersion(version, localHash)
+            if os.path.exists("temp"):
+                shutil.rmtree("temp")
+        wxdialogs.messageDialog(parent, "Gzdoom updated to version: " + version, "Update Gzdoom", wx.ICON_INFORMATION)
+    else:
+        try:
+            progress.Destroy()
+        except Exception as e:
+            functions.log(e)
+        wxdialogs.messageDialog(parent, "Gzdoom is already at latest version!", "Update Gzdoom",
+                                wx.ICON_INFORMATION)

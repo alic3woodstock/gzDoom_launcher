@@ -200,4 +200,38 @@ class GameDefDb:
             sql = """ALTER TABLE gamedef ADD COLUMN cmdparams text NOT NULL DEFAULT ''"""
             dataCon.ExecSQL(sql)
 
+        sql = """CREATE TABLE IF NOT EXISTS gzdoom_version(
+        id INTEGER PRIMARY KEY,
+        version text,
+        sha256 text)"""
+        dataCon.ExecSQL(sql)
         dataCon.Commit()
+
+    def UpdateGzdoomVersion(self, version, filehash):
+        dataCon = self.ConnectDb()
+        dataCon.StartTransaction()
+        sql = """REPLACE INTO gzdoom_version(id, version, sha256)
+        VALUES (?,?,?)"""
+        params = [1, version, filehash]
+        dataCon.ExecSQL(sql, params)
+        dataCon.Commit()
+
+    def CheckGzDoomVersion(self, version, filehash):
+        dataCon = self.ConnectDb()
+        dataCon.StartTransaction()
+        dataVersion = '0'
+        dataHash = '0'
+        sql = """SELECT * FROM gzdoom_version WHERE id = ?"""
+        params = [1]
+        fileData = dataCon.ExecSQL(sql, params)
+        for data in fileData:
+            dataVersion = data[1]
+            dataHash = data[2]
+
+        if dataVersion == version and dataHash == filehash:
+            return True
+        else:
+            return False
+
+
+

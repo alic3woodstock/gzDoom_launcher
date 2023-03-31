@@ -1,7 +1,9 @@
 import logging
+import hashlib
+import os
 
 LOGLEVEL = logging.DEBUG
-FORMAT = '%(asctime)s - %(message)s'
+FORMAT = '%(levelname)s: %(asctime)s - %(message)s'
 
 
 def log(text, error=True):
@@ -10,3 +12,15 @@ def log(text, error=True):
         logging.error(text)
     else:
         logging.debug(text)
+
+
+def filehash(file_name):
+    sha256hash = ""
+    if os.path.isfile(file_name):
+        try:
+            with open(file_name, 'rb') as f:
+                data = f.read()
+                sha256hash = hashlib.sha256(data).hexdigest()
+        except Exception as e:
+            log(e)
+    return sha256hash
