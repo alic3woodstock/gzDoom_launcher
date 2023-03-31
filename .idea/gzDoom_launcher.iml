@@ -9,6 +9,7 @@
       <excludeFolder url="file://$MODULE_DIR$/quake_levels" />
       <excludeFolder url="file://$MODULE_DIR$/vkquake" />
       <excludeFolder url="file://$MODULE_DIR$/wads" />
+      <excludeFolder url="file://$MODULE_DIR$/temp" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
