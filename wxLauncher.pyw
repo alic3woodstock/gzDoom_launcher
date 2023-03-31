@@ -45,6 +45,7 @@ class MyFrame(wx.Frame):
         utilMenu = wx.Menu()
         menuReplaceDoom = utilMenu.Append(106, item="Replace &Doom maps wad...")
         menuReplaceHeretic = utilMenu.Append(107, item="Replace &Heretic maps wad...")
+        menuUpdateGzDoom = utilMenu.Append(108, item='&Update gzDoom')
         menu.Append(utilMenu, "&Utilities")
 
         self.SetMenuBar(menu)
@@ -91,6 +92,7 @@ class MyFrame(wx.Frame):
                   menuReplaceDoom)
         self.Bind(wx.EVT_MENU, lambda event: self.MenuReplaceHereticOnClick(event, gameTab),
                   menuReplaceHeretic)
+        self.Bind(wx.EVT_MENU, self.MenuUpdageGzDoomOnClick, menuUpdateGzDoom)
 
         listRun[0].AppendColumn('Levels')
         listRun[1].AppendColumn('Levels')
@@ -111,7 +113,7 @@ class MyFrame(wx.Frame):
         if listRun[0].GetItemCount() <= 0:
             tempItem = wx.ListItem()
             tempItem.SetId(0)
-            tempItem.SetText("Click in Download, wait, click Reset to default games...")
+            tempItem.SetText("No games found, click to default games...")
             listRun[0].InsertItem(tempItem)
 
         listRun[0].Select(0)
@@ -291,6 +293,13 @@ class MyFrame(wx.Frame):
         gameData = gameDefDb.GameDefDb()
         gameData.UpdateLastRunMod(item, mod)
         listCtrl.SetFocus()
+
+    def MenuUpdageGzDoomOnClick(self, event):
+        try:
+            download.UpdateGzDoom(self)
+        except Exception as e:
+            functions.log(event)
+            functions.log(e)
 
     def ReadDB(self):
         gameData = gameDefDb.GameDefDb()
