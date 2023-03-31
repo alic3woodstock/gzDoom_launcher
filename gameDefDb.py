@@ -135,9 +135,10 @@ class GameDefDb:
         dataCon = self.ConnectDb()
         dataCon.StartTransaction()
 
-        sql = """UPDATE gamedef SET name=?, tabindex=?, gamexec=?, modgroup=?, iwad=? WHERE id=?"""
+        sql = """UPDATE gamedef SET name=?, tabindex=?, gamexec=?, modgroup=?, iwad=?, cmdparams=?
+         WHERE id=?"""
         params = [game.GetItem().GetText(), game.GetTab(), game.GetExec(), game.GetGroup().GetGroupId(), game.GetIWad(),
-                  game.GetItem().GetData()]
+                  game.GetCmdParams(), game.GetItem().GetData()]
         dataCon.ExecSQL(sql, params)
 
         if updateFiles:
