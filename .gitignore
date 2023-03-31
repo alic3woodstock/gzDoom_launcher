@@ -131,9 +131,8 @@ dmypy.json
 # custom for this project
 maps/
 wads/
-downloads/
 mods/
 games.sqlite3
 /vkquake/
-/vkquake/
 /quake_levels/
+/gzdoom/
