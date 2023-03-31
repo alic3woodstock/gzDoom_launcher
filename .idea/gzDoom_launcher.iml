@@ -3,6 +3,13 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/temp" />
+      <excludeFolder url="file://$MODULE_DIR$/downloads" />
+      <excludeFolder url="file://$MODULE_DIR$/gzdoom" />
+      <excludeFolder url="file://$MODULE_DIR$/maps" />
+      <excludeFolder url="file://$MODULE_DIR$/mods" />
+      <excludeFolder url="file://$MODULE_DIR$/quake_levels" />
+      <excludeFolder url="file://$MODULE_DIR$/vkquake" />
+      <excludeFolder url="file://$MODULE_DIR$/wads" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
