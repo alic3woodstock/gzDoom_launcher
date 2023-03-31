@@ -1,13 +1,15 @@
 import wx
-import wx.lib.dialogs as wxdialogs
+import wx.lib.dialogs as wx_dialogs
 import os
-import csv
 import wx.dataview as dataview
 import gameDef
 import gameDefDb
+import functions
 
 TEXT_HEIGHT = 400
 
+
+# Some try...except on events was used only to stop warnings from IDE (pyCharm or pyDev)
 
 class SmallButton(wx.Button):
     def AcceptsFocusFromKeyboard(self):
@@ -17,8 +19,8 @@ class SmallButton(wx.Button):
 class MyDialog(wx.Dialog):
     _gameDef = None
 
-    def __init__(self, parent, title, gameDef=None):
-        self._gameDef = gameDef
+    def __init__(self, parent, title, game=None):
+        self._gameDef = game
         super(MyDialog, self).__init__(parent, title=title, size=(500, wx.DefaultCoord))
         panel = wx.Panel(self)
 
@@ -36,8 +38,8 @@ class MyDialog(wx.Dialog):
         # Executable
         lblExec = wx.StaticText(panel, label="Game Exec.:")
         self.txtExec = wx.TextCtrl(panel, size=(TEXT_HEIGHT, wx.DefaultCoord))
-        if not gameDef:
-            if (os.name == 'nt'):
+        if not game:
+            if os.name == 'nt':
                 self.txtExec.write('gzdoom\\gzdoom.exe')
             else:
                 self.txtExec.write('gzdoom/gzdoom')
@@ -65,8 +67,8 @@ class MyDialog(wx.Dialog):
         lblFiles = wx.StaticText(panel, label="Files:")
         self.txtFiles = wx.TextCtrl(panel, size=(TEXT_HEIGHT, wx.DefaultCoord))
         btnFindFiles = SmallButton(panel, label='...', size=(36, self.txtExec.GetSize().GetHeight()))
-        self.gridFiles = dataview.DataViewListCtrl(panel, id=wx.ID_ANY, style=dataview.DV_NO_HEADER |
-                                                                              dataview.DV_ROW_LINES, size=(400, 100))
+        self.gridFiles = dataview.DataViewListCtrl(
+            panel, id=wx.ID_ANY, style=dataview.DV_NO_HEADER | dataview.DV_ROW_LINES, size=(400, 100))
         self.gridFiles.AppendTextColumn(label="Path")
         btnAddFile = SmallButton(panel, label='Add', size=(64, self.txtExec.GetSize().GetHeight()))
         btnDeleteFile = SmallButton(panel, label='Del', size=(64, self.txtExec.GetSize().GetHeight()))
@@ -76,21 +78,24 @@ class MyDialog(wx.Dialog):
         btnCancel = wx.Button(panel, wx.ID_CANCEL)
         btnOK = wx.Button(panel, wx.ID_OK)
 
-        if gameDef:
-            self.txtName.write(gameDef.GetItem().GetText())
-            self.cbxType.Select(gameDef.GetTab())
-            self.txtExec.write(gameDef.GetExec())
-            self.txtWad.write(gameDef.GetIWad())
-            for f in gameDef.GetFiles():
+        if game:
+            self.txtName.write(game.GetItem().GetText())
+            self.cbxType.Select(game.GetTab())
+            self.txtExec.write(game.GetExec())
+            self.txtWad.write(game.GetIWad())
+
+            for f in game.GetFiles():
                 self.gridFiles.AppendItem([f])
 
             for i in range(self.cbxGroup.GetCount()):
-                gGroup = gameDef.GetGroup().GetGroupId()
+                gGroup = game.GetGroup().GetGroupId()
                 cGroup = self.cbxGroup.GetClientData(i).GetGroupId()
                 if cGroup == gGroup:
                     self.cbxGroup.Select(i)
 
-                    # Bind Events
+            self.txtCmdPar.write(game.GetCmdParams())
+
+        # Bind Events
         self.Bind(wx.EVT_COMBOBOX, self.CbxTypeOnChange, self.cbxType)
         self.Bind(wx.EVT_BUTTON, self.BtnFindExecOnClick, btnFindExec)
         self.Bind(wx.EVT_BUTTON, self.BtnFindWadOnClick, btnFindWad)
@@ -157,21 +162,20 @@ class MyDialog(wx.Dialog):
         canSave = True
         try:
             if self.txtName.GetLineText(0).strip() == "":
-                wxdialogs.alertDialog(self, "Name can not be blank")
+                wx_dialogs.alertDialog(self, "Name can not be blank")
                 canSave = False
             elif self.txtName.GetLineText(0).find(",") >= 0:
-                wxdialogs.alertDialog(self, 'Name can not contain ","!')
+                wx_dialogs.alertDialog(self, 'Name can not contain ","!')
                 canSave = False
             elif not os.path.isfile(self.txtExec.GetLineText(0)):
-                wxdialogs.alertDialog(self, message='Game exec. not found!', title='Alert')
+                wx_dialogs.alertDialog(self, message='Game exec. not found!', title='Alert')
                 canSave = False
 
             if canSave:
-                if self.txtCmdPar.GetLineText(0) == "" and self.cbxType.GetSelection() <= 1:
+                if self.txtWad.GetLineText(0).strip() != "" and self.cbxType.GetSelection() <= 1:
                     if not os.path.isfile(self.txtWad.GetLineText(0)):
-                        wxdialogs.alertDialog(self, message='You have to specify command line parameters or a valid '
-                                                            'wad.',
-                                              title='Alert')
+                        wx_dialogs.alertDialog(self, message='Invalid wad!',
+                                               title='Alert')
                         canSave = False
                 else:
                     self.txtWad.Clear()
@@ -183,15 +187,16 @@ class MyDialog(wx.Dialog):
                 for i in range(self.gridFiles.GetItemCount()):
                     gameFile = self.gridFiles.GetValue(i, 0)
                     if not os.path.isfile(gameFile):
-                        wxdialogs.alertDialog(self, message='File ' + gameFile + ' not found!', title='Alert')
+                        wx_dialogs.alertDialog(self, message='File ' + gameFile + ' not found!', title='Alert')
                         canSave = False
                         break
             if canSave:
                 if not os.path.isfile('games.sqlite3'):
-                    wxdialogs.alertDialog(self, message='Database not found, press extract before add a game!')
+                    wx_dialogs.alertDialog(self, message='Database not found, press extract before add a game!')
                     canSave = False
-        except:
-            wxdialogs.alertDialog(self, message='Unknown error!', title='Alert')
+        except Exception as e:
+            functions.log(e)
+            wx_dialogs.alertDialog(self, message='Unknown error!', title='Alert')
             canSave = False
 
         if canSave:
@@ -210,7 +215,8 @@ class MyDialog(wx.Dialog):
                                    0,
                                    self.txtWad.GetLineText(0),
                                    [],
-                                   groupName)
+                                   groupName,
+                                   self.txtCmdPar.GetLineText(0))
             for i in range(self.gridFiles.GetItemCount()):
                 game.GetFiles().append(self.gridFiles.GetValue(i, 0))
 
@@ -223,8 +229,9 @@ class MyDialog(wx.Dialog):
                 else:
                     gameData.InsertGame(game)
                 event.Skip()
-            except:
-                wxdialogs.alertDialog(self, message='Failed to write data!')
+            except Exception as e:
+                wx_dialogs.alertDialog(self, message='Failed to write data!')
+                functions.log(e)
 
     def CbxTypeOnChange(self, event):
         if event.GetEventObject().GetSelection() > 1:
@@ -233,37 +240,44 @@ class MyDialog(wx.Dialog):
             self.txtWad.Enable(True)
 
     def BtnFindExecOnClick(self, event):
-        exeFile = wxdialogs.fileDialog(parent=self, title='Open', style=wx.FD_OPEN)
+        exeFile = wx_dialogs.fileDialog(parent=self, title='Open', style=wx.FD_OPEN)
         try:
             exeP = exeFile.paths[0]  # if cancel rises an exception
             self.txtExec.Clear()
             self.txtExec.write(exeP)
-        except:
-            pass
+        except Exception as e:
+            functions.log(event)
+            functions.log(e)
 
     def BtnFindWadOnClick(self, event):
-        wadFile = wxdialogs.fileDialog(parent=self, title='Open', style=wx.FD_OPEN)
+        wadFile = wx_dialogs.fileDialog(parent=self, title='Open', style=wx.FD_OPEN)
         try:
             wadP = wadFile.paths[0]  # if cancel rises an exception
             self.txtWad.Clear()
             self.txtWad.write(wadP)
-        except:
-            pass
+        except Exception as e:
+            functions.log(event)
+            functions.log(e)
 
     def BtnFindFilesOnClick(self, event):
-        extraFiles = wxdialogs.fileDialog(self, title='Open', style=wx.FD_OPEN | wx.FD_MULTIPLE)
+        extraFiles = wx_dialogs.fileDialog(self, title='Open', style=wx.FD_OPEN | wx.FD_MULTIPLE)
         try:
             for f in extraFiles.paths:
                 self.AppendFile(f)
-        except:
-            pass
+        except Exception as e:
+            functions.log(event)
+            functions.log(e)
 
     def BtnAddFileOnClick(self, event):
-        if self.AppendFile(self.txtFiles.GetLineText(0)):
-            self.txtFiles.Clear()
-        else:
-            self.txtFiles.SetFocus()
-            self.txtFiles.SelectAll()
+        try:
+            if self.AppendFile(self.txtFiles.GetLineText(0)):
+                self.txtFiles.Clear()
+            else:
+                self.txtFiles.SetFocus()
+                self.txtFiles.SelectAll()
+        except Exception as e:
+            functions.log(event)
+            functions.log(e)
 
     def TxtFilesOnKeyDown(self, event):
         if event.GetKeyCode() == wx.WXK_RETURN:
@@ -275,21 +289,29 @@ class MyDialog(wx.Dialog):
         event.Skip()
 
     def BtnDeleteFileOnClick(self, event):
-        if self.gridFiles.HasSelection():
-            self.gridFiles.DeleteItem(self.gridFiles.GetSelectedRow())
+        try:
+            if self.gridFiles.HasSelection():
+                self.gridFiles.DeleteItem(self.gridFiles.GetSelectedRow())
+        except Exception as e:
+            functions.log(event)
+            functions.log(e)
 
     def BtnClearGridOnClick(self, event):
-        self.gridFiles.DeleteAllItems()
+        try:
+            self.gridFiles.DeleteAllItems()
+        except Exception as e:
+            functions.log(event)
+            functions.log(e)
 
     def AppendFile(self, f):
         canInsert = True
         if not os.path.isfile(f):
-            wxdialogs.alertDialog(self, message='File ' + f + ' not found!', title='Alert')
+            wx_dialogs.alertDialog(self, message='File ' + f + ' not found!', title='Alert')
             canInsert = False
         else:
             for i in range(self.gridFiles.GetItemCount()):
                 if self.gridFiles.GetValue(i, 0) == f:
-                    wxdialogs.alertDialog(self, message='File ' + f + ' already inserted!', title='Alert')
+                    wx_dialogs.alertDialog(self, message='File ' + f + ' already inserted!', title='Alert')
                     canInsert = False
                     break
         if canInsert:

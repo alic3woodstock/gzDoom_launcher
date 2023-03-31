@@ -1,5 +1,6 @@
 import sqlite3
 from sqlite3 import Error
+import functions
 
 class SqliteDB():
 	_connection = None
@@ -12,7 +13,7 @@ class SqliteDB():
 			self._connection = sqlite3.connect(dbName)
 			return True
 		except Error as e:
-			print(e)	
+			functions.log(e)
 			return False	
 			
 	def GetConnection(self):
@@ -22,11 +23,11 @@ class SqliteDB():
 		if self._connection:
 			self._connection.close()
 			
-	def ExecSQL(self, sql, params = ""):
+	def ExecSQL(self, sql, params=""):
 		try:
 			return self._connection.execute(sql, params)
 		except Error as e:
-			print(e)
+			functions.log(e)
 			return ""
 		
 	def StartTransaction(self):
