@@ -1,9 +1,11 @@
 import logging
 
+LOGLEVEL = logging.DEBUG
+
 
 def log(text, error=True):
-    logging.basicConfig(filename='errors.log', encoding='utf-8', level=logging.INFO)
+    logging.basicConfig(filename='gzDoomLauncher.log', encoding='utf-8', level=LOGLEVEL)
     if error:
         logging.error(text)
     else:
-        logging.info(text)
+        logging.debug(text)
