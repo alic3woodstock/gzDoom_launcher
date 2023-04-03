@@ -11,6 +11,7 @@ import manageGames
 import replaceWad
 import wx.lib.dialogs as wxdialogs
 import functions
+import aboutDialog
 
 
 class MyListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
@@ -41,12 +42,15 @@ class MyFrame(wx.Frame):
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
         menuClose = fileMenu.Append(103, item="&Close")
         menu.Append(fileMenu, "&File")
+        fileMenu.Append(id=wx.ID_SEPARATOR, item="")
+        menuAbout = fileMenu.Append(109, item="&About...")
 
         utilMenu = wx.Menu()
         menuReplaceDoom = utilMenu.Append(106, item="Replace &Doom maps wad...")
         menuReplaceHeretic = utilMenu.Append(107, item="Replace &Heretic maps wad...")
         menuUpdateGzDoom = utilMenu.Append(108, item='&Update gzDoom')
         menu.Append(utilMenu, "&Utilities")
+
 
         self.SetMenuBar(menu)
 
@@ -93,6 +97,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, lambda event: self.MenuReplaceHereticOnClick(event, gameTab),
                   menuReplaceHeretic)
         self.Bind(wx.EVT_MENU, self.MenuUpdageGzDoomOnClick, menuUpdateGzDoom)
+        self.Bind(wx.EVT_MENU, self.AboutMenuOnClick, menuAbout)
 
         listRun[0].AppendColumn('Levels')
         listRun[1].AppendColumn('Levels')
@@ -301,6 +306,15 @@ class MyFrame(wx.Frame):
             functions.log(event)
             functions.log(e)
 
+    def AboutMenuOnClick(self, event):
+        try:
+            aboutMenuDialog = aboutDialog.MyDialog(self, "About")
+            aboutMenuDialog.ShowModal()
+        except Exception as e:
+            functions.log(event)
+            functions.log(e)
+
+
     def ReadDB(self):
         gameData = gameDefDb.GameDefDb()
         tempItens = gameData.SelectAllGames()
@@ -332,5 +346,5 @@ class MyFrame(wx.Frame):
 
 
 app = wx.App(False)
-frame = MyFrame(None, 'gzDoom Launcher')
+frame = MyFrame(None, 'GZDoom Launcher')
 app.MainLoop()

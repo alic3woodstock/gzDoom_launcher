@@ -4,7 +4,8 @@ import os
 
 LOGLEVEL = logging.DEBUG
 FORMAT = '%(levelname)s: %(asctime)s - %(message)s'
-
+APPVERSION = "1.00"
+AUTHOR = "Copyright 2022-2023 © Alice Woodstock"
 
 def log(text, error=True):
     logging.basicConfig(filename='gzDoomLauncher.log', encoding='utf-8', level=LOGLEVEL, format=FORMAT)
