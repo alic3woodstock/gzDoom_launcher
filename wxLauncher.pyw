@@ -51,14 +51,12 @@ class MyFrame(wx.Frame):
         menuUpdateGzDoom = utilMenu.Append(108, item='&Update gzDoom')
         menu.Append(utilMenu, "&Utilities")
 
-
         self.SetMenuBar(menu)
 
         gameTab = wx.Notebook(panel)
-        listGames = MyListCtrl(gameTab, ID=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
-        listMaps = MyListCtrl(gameTab, ID=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
+        listRun = [MyListCtrl(gameTab, ID=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER),
+                   MyListCtrl(gameTab, ID=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)]
         self.listMods = wx.ComboBox(panel, style=wx.CB_READONLY)
-        listRun = [listGames, listMaps]
         self.listRun = listRun
         gameTab.InsertPage(0, listRun[0], 'Games', 1)
         gameTab.InsertPage(1, listRun[1], 'Maps', 1)
@@ -313,7 +311,6 @@ class MyFrame(wx.Frame):
         except Exception as e:
             functions.log(event)
             functions.log(e)
-
 
     def ReadDB(self):
         gameData = gameDefDb.GameDefDb()

@@ -38,7 +38,6 @@ class GameDefDb:
                 cmdparams text NOT NULL DEFAULT '',
                 FOREIGN KEY (modgroup) REFERENCES groups(id) ON DELETE NO ACTION);                
             """)
-        #
 
         dataCon.ExecSQL("""CREATE TABLE IF NOT EXISTS files(
                 id integer PRIMARY KEY AUTOINCREMENT,
@@ -52,11 +51,11 @@ class GameDefDb:
             param TEXT UNIQUE KEY,
             txtvalue TEXT,
             numvalue INTEGER,
-            bolvalue BOOLEAN"""
+            bolvalue BOOLEAN)"""
         dataCon.ExecSQL(sql)
 
-        sql = """INSERT INTO config (param, numvalue)
-            VALUES (dbversion, ?)"""
+        sql = """REPLACE INTO config (param, numvalue)
+            VALUES ('dbversion', ?)"""
         params = [functions.versionNumber()]
         dataCon.ExecSQL(sql, params)
 
@@ -206,7 +205,12 @@ class GameDefDb:
         sql = """SELECT sql FROM sqlite_master WHERE tbl_name = ?"""
         params = ["config"]
         text = dataCon.ExecSQL(sql, params)
-        if text.rowcount <= 0:
+        strTable = ""
+        for t in text:
+            if t[0]:
+                strTable = t[0]
+
+        if strTable.lower().find("config") < 0:
             dataCon.StartTransaction()
             sql = """SELECT sql FROM sqlite_master WHERE tbl_name = ?"""
             params = ["gamedef"]
@@ -242,7 +246,7 @@ class GameDefDb:
                 bolvalue BOOLEAN)"""
             dataCon.ExecSQL(sql)
 
-            sql = """INSERT INTO config (param, numvalue)
+            sql = """REPLACE INTO config (param, numvalue)
                 VALUES (?, ?)"""
             params = ['dbversion', functions.versionNumber()]
             dataCon.ExecSQL(sql, params)
@@ -273,6 +277,3 @@ class GameDefDb:
             return True
         else:
             return False
-
-
-

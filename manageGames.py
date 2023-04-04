@@ -56,32 +56,49 @@ class MyDialog(wx.Dialog):
         boxv.SetSizeHints(self)
 
     def BtnAddOnClick(self, event):
-        addGameDiag = addGame.MyDialog(self, "Add game, map or mod")
-        addGameDiag.ShowModal()
-        self.ReadDB()
+        try:
+            addGameDiag = addGame.MyDialog(self, "Add game, map or mod")
+            addGameDiag.ShowModal()
+            self.ReadDB()
+        except Exception as e:
+            functions.log(event)
+            functions.log(e)
 
     def BtnEditOnClick(self, event):
-        self.EditGame()
+        try:
+            self.EditGame()
+        except Exception as e:
+            functions.log(event)
+            functions.log(e)
 
     def BtnDeleteOnClick(self, event):
-        if self.dataGrid.HasSelection():
-            game = self.dataGrid.RowToItem(self.dataGrid.GetSelectedRow())
-            gameId = self.dataGrid.GetItemData(game)
-            gameName = self.dataGrid.GetValue(self.dataGrid.GetSelectedRow(), 0)
-            result = wxdialogs.messageDialog(self, message="Delete game: " + gameName + "?",
-                                             title='Delete Game', aStyle=wx.ICON_WARNING | wx.YES | wx.NO | wx.RIGHT)
-            if result.accepted:
-                gamedata = gameDefDb.GameDefDb()
-                gamedata.DeleteGameById(gameId)
-                self.ReadDB()
-        else:
-            wxdialogs.alertDialog(self, message='Select an item first!', title='Alert')
+        try:
+            if self.dataGrid.HasSelection():
+                game = self.dataGrid.RowToItem(self.dataGrid.GetSelectedRow())
+                gameId = self.dataGrid.GetItemData(game)
+                gameName = self.dataGrid.GetValue(self.dataGrid.GetSelectedRow(), 0)
+                result = wxdialogs.messageDialog(self, message="Delete game: " + gameName + "?",
+                                                 title='Delete Game',
+                                                 aStyle=wx.ICON_WARNING | wx.YES | wx.NO | wx.RIGHT)
+                if result.accepted:
+                    gamedata = gameDefDb.GameDefDb()
+                    gamedata.DeleteGameById(gameId)
+                    self.ReadDB()
+            else:
+                wxdialogs.alertDialog(self, message='Select an item first!', title='Alert')
+        except Exception as e:
+            functions.log(event)
+            functions.log(e)
 
     def DataGridOnDbClick(self, event):
-        self.EditGame()
+        try:
+            self.EditGame()
+        except Exception as e:
+            functions.log(event)
+            functions.log(e)
 
     def DataGridOnKeyPress(self, event):
-        if (event.GetKeyCode() == wx.WXK_RETURN):
+        if event.GetKeyCode() == wx.WXK_RETURN:
             self.EditGame()
         event.Skip()
 
