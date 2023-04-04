@@ -1,4 +1,5 @@
 import dataConnect
+import functions
 import gameDef
 import modGroup
 
@@ -45,6 +46,19 @@ class GameDefDb:
                 file text,
                 FOREIGN KEY (gameid) REFERENCES gamedef(id) ON DELETE CASCADE);
             """)
+
+        sql = """CREATE TABLE IF NOT EXISTS config(
+            id INTEGER PRIMARY KEY,
+            param TEXT UNIQUE KEY,
+            txtvalue TEXT,
+            numvalue INTEGER,
+            bolvalue BOOLEAN"""
+        dataCon.ExecSQL(sql)
+
+        sql = """INSERT INTO config (param, numvalue)
+            VALUES (dbversion, ?)"""
+        params = [functions.versionNumber()]
+        dataCon.ExecSQL(sql, params)
 
         dataCon.Commit()
         dataCon.CloseConnection()
@@ -188,24 +202,51 @@ class GameDefDb:
 
     def UpdateDatabase(self):
         dataCon = self.ConnectDb()
-        dataCon.StartTransaction()
 
         sql = """SELECT sql FROM sqlite_master WHERE tbl_name = ?"""
-        params = ["gamedef"]
+        params = ["config"]
         text = dataCon.ExecSQL(sql, params)
-        for t in text:
-            sql = t[0]
+        if text.rowcount <= 0:
+            dataCon.StartTransaction()
+            sql = """SELECT sql FROM sqlite_master WHERE tbl_name = ?"""
+            params = ["gamedef"]
+            text = dataCon.ExecSQL(sql, params)
+            for t in text:
+                sql = t[0]
 
-        if sql.lower().find("cmdparams") < 0:
-            sql = """ALTER TABLE gamedef ADD COLUMN cmdparams text NOT NULL DEFAULT ''"""
+            if sql.lower().find("cmdparams") < 0:
+                sql2 = """ALTER TABLE gamedef ADD COLUMN cmdparams text NOT NULL DEFAULT ''"""
+                dataCon.ExecSQL(sql2)
+
+            if sql.lower().find("ismod") < 0:
+                sql2 = """ALTER TABLE gamedef ADD COLUMN ismod BOOLEAN NOT NULL DEFAULT false"""
+                dataCon.ExecSQL(sql2)
+                sql2 = """UPDATE gamedef SET ismod = true WHERE tabindex = 2"""
+                dataCon.ExecSQL(sql2)
+                sql2 = """UPDATE gamedef SET tabindex = -1 WHERE ismod = true"""
+                dataCon.ExecSQL(sql2)
+                sql2 = """ALTER TABLE gamedef DROP COLUMN ismod"""
+                dataCon.ExecSQL(sql2)
+
+            sql = """CREATE TABLE IF NOT EXISTS gzdoom_version(
+            id INTEGER PRIMARY KEY,
+            version text,
+            sha256 text)"""
             dataCon.ExecSQL(sql)
 
-        sql = """CREATE TABLE IF NOT EXISTS gzdoom_version(
-        id INTEGER PRIMARY KEY,
-        version text,
-        sha256 text)"""
-        dataCon.ExecSQL(sql)
-        dataCon.Commit()
+            sql = """CREATE TABLE IF NOT EXISTS config(
+                id INTEGER PRIMARY KEY,
+                param TEXT UNIQUE,
+                txtvalue TEXT,
+                numvalue INTEGER,
+                bolvalue BOOLEAN)"""
+            dataCon.ExecSQL(sql)
+
+            sql = """INSERT INTO config (param, numvalue)
+                VALUES (?, ?)"""
+            params = ['dbversion', functions.versionNumber()]
+            dataCon.ExecSQL(sql, params)
+            dataCon.Commit()
 
     def UpdateGzdoomVersion(self, version, filehash):
         dataCon = self.ConnectDb()

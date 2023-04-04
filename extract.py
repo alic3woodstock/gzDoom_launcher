@@ -204,13 +204,13 @@ def CreateDB(progress):
                                              "wads/freedoom2.wad", [fullPath]))
         elif z.GetFormat() == "mods":
             if z.TestFileName("150skins"):
-                games.append(gameDef.GameDef(i, "150 Skins", 2, gameExec, 2, 0,  # 150 Skins also works with heretic
+                games.append(gameDef.GameDef(i, "150 Skins", -1, gameExec, 2, 0,  # 150 Skins also works with heretic
                                              "", ["mods/150skins.zip"]))
             elif z.TestFileName("beaultiful"):
-                games.append(gameDef.GameDef(i, "Beautiful Doom", 2, gameExec, 1, 0,
+                games.append(gameDef.GameDef(i, "Beautiful Doom", -1, gameExec, 1, 0,
                                              "", ["mods/150skins.zip", "mods/Beautiful_Doom.pk3"]))
             elif z.TestFileName("brutal"):
-                games.append(gameDef.GameDef(i, "Brutal Doom", 2, gameExec, 1, 0,
+                games.append(gameDef.GameDef(i, "Brutal Doom", -1, gameExec, 1, 0,
                                              "", ["mods/brutal.pk3"]))
         i += 1
 
