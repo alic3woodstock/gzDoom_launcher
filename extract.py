@@ -31,8 +31,12 @@ class ZipFile:
                 if self.GetFormat() == "xz":
                     z = tarfile.open(fromFile, 'r:xz')
                     z.extractall(path)
-            except:
+
+                return True
+            except Exception as e:
+                functions.log(e)
                 print("Extracting " + self.GetName() + " failed")
+        return False
 
     def CopyTo(self, path):
         try:

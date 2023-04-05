@@ -217,13 +217,20 @@ def UpdateGzDoom(parent):
     if (not os.path.isfile(localFileName)) or (not gameData.CheckGzDoomVersion(version, localHash)):
         GetFile(file, progress, False)
 
-        zipfile = extract.ZipFile(filename, "xz")
+        if os.name == "nt":
+            zipfile = extract.ZipFile(filename, "zip")
+        else:
+            zipfile = extract.ZipFile(filename, "xz")
+
+        extractOK = False
         if zipfile.TestFileName("gzdoom"):
             if os.name == "nt":
-                zipfile.ExtractTo("gzdoom")
+                if zipfile.ExtractTo("gzdoom"):
+                    extractOK = True
             else:
                 try:
-                    zipfile.ExtractTo("temp")
+                    if zipfile.ExtractTo("temp"):
+                        extractOK = True
                     dirs = os.listdir("temp")
                     for d in dirs:
                         if d.lower().find("gzdoom") >= 0:
@@ -238,7 +245,10 @@ def UpdateGzDoom(parent):
             gameData.UpdateGzdoomVersion(version, localHash)
             if os.path.exists("temp"):
                 shutil.rmtree("temp")
-        wxdialogs.messageDialog(parent, "Gzdoom updated to version: " + version, "Update Gzdoom", wx.ICON_INFORMATION)
+        if extractOK and (os.path.isfile("gzdoom/gzdoom") or os.path.isfile('gzdoom/gzdoom.exe')):
+            wxdialogs.messageDialog(parent, "Gzdoom updated to version: " + version, "Update Gzdoom", wx.ICON_INFORMATION)
+        else:
+            wxdialogs.alertDialog("Update filed, verify gzdoomLauncher.log form more details.", "Error")
     else:
         try:
             progress.Destroy()

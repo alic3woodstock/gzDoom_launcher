@@ -34,10 +34,8 @@ class MyFrame(wx.Frame):
 
         menu = wx.MenuBar()
         fileMenu = wx.Menu()
-        # menuAddGame = fileMenu.Append(104, item = "&Add game...")
         menuManageGames = fileMenu.Append(105, item="&Manage games...")
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
-        menuDownload = fileMenu.Append(101, item="&Download")
         menuExtract = fileMenu.Append(102, item="&Reset to default games")
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
         menuClose = fileMenu.Append(103, item="&Close")
@@ -85,7 +83,7 @@ class MyFrame(wx.Frame):
             listRun[i].Bind(wx.EVT_LIST_ITEM_SELECTED, self.ListCtrlOnSelect)
 
         # Bind events for menu itens
-        self.Bind(wx.EVT_MENU, self.MenuDownloadOnClick, menuDownload)
+        # self.Bind(wx.EVT_MENU, self.MenuDownloadOnClick, menuDownload)
         self.Bind(wx.EVT_MENU, lambda event: self.MenuExtractOnClick(event, gameTab), menuExtract)
         self.Bind(wx.EVT_MENU, self.MenuCloseOnClick, menuClose)
         self.Bind(wx.EVT_MENU, lambda event: self.MenuManageGamesOnClick(event, gameTab),
@@ -218,12 +216,12 @@ class MyFrame(wx.Frame):
                 self.listMods.SetSelection(0)
         event.Skip()
 
-    def MenuDownloadOnClick(self, event):
-        try:
-            download.StartDownload(self)
-        except Exception as e:
-            functions.log(event)
-            functions.log(e)
+    # def MenuDownloadOnClick(self, event):
+    #     try:
+    #         download.StartDownload(self)
+    #     except Exception as e:
+    #         functions.log(event)
+    #         functions.log(e)
 
     def MenuExtractOnClick(self, event, tab):
         try:
