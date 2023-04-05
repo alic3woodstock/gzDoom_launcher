@@ -34,7 +34,7 @@ class ZipFile:
 
                 return True
             except Exception as e:
-                functions.log(e)
+                functions.log("ExtractTo - " + str(e))
                 print("Extracting " + self.GetName() + " failed")
         return False
 
@@ -44,7 +44,7 @@ class ZipFile:
 
             if self.GetFormat() == "zip" or self.GetFormat() == "pk3":
                 z = zipfile.ZipFile(fromFile)
-                z.testzip
+                z.testzip()
 
             if not os.path.exists(path):
                 os.mkdir(path)
@@ -52,7 +52,7 @@ class ZipFile:
             if os.path.isfile(fromFile):
                 shutil.copy(fromFile, path)
         except Exception as e:
-            functions.log(e)
+            functions.log("CopyTo - " + str(e))
             functions.log("Copying " + self.GetName() + " failed")
 
     def GetName(self):
@@ -71,7 +71,7 @@ class ZipFile:
         fromFile = "downloads/" + self.GetName()
         z = zipfile.ZipFile(fromFile)
 
-        # Mps with non standard txt
+        # Mps with non-standard txt
         if self.GetName() == "mm2.zip":
             return "Memento Mori 2"
         if self.GetName() == "av.zip":
@@ -94,7 +94,8 @@ class ZipFile:
                                 s = s.replace("'", "")
                                 s = s.replace(".wad", "")
                                 return s[start:].strip()
-        except:
+        except Exception as e:
+            functions.log("GetMapName - " + str(e))
             return self.GetName()
         return self.GetName()
 
@@ -118,7 +119,7 @@ def ExtractAll(parent):
         zipFiles.append(ZipFile(z, fileFormat))
 
     progress.SetRange(len(zipFiles) + 22)  # if everthyng works number of csv in the list is 22
-    i = 1;
+    i = 1
     for z in zipFiles:
         if z.TestFileName("blasphem"):
             z.ExtractTo("wads")
@@ -177,32 +178,35 @@ def CreateDB(progress):
 
     i = 0
     for z in zipFiles:
-        fullPath = z.GetFormat() + "/" + z.GetName()
-        if z.TestFileName("blasphem"):
-            blasphemWad = (fullPath)  # works because wad comes first in the list
-        elif z.TestFileName("bls"):
-            games.append(gameDef.GameDef(i, "Blasphem", 0, gameExec, 2, 0, blasphemWad, [fullPath]))
-        elif z.TestFileName("freedoom1"):
-            games.append(gameDef.GameDef(i, "Freedoom Phase 1", 0, gameExec, 1, 0, fullPath))
-        elif z.TestFileName("freedoom2"):
-            games.append(gameDef.GameDef(i, "Freedoom Phase 2", 0, gameExec, 1, 0, fullPath))
-        elif z.GetFormat() == "maps":
-            if z.TestFileName("htchest") or z.TestFileName("unbeliev"):
-                games.append(gameDef.GameDef(i, z.GetMapName(), 1, gameExec, 2, 0,
-                                             "wads/blasphem-0.1.7.wad", ["wads/BLSMPTXT.WAD", fullPath]))
-            else:
-                games.append(gameDef.GameDef(i, z.GetMapName(), 1, gameExec, 1, 0,
-                                             "wads/freedoom2.wad", [fullPath]))
-        elif z.GetFormat() == "mods":
-            if z.TestFileName("150skins"):
-                games.append(gameDef.GameDef(i, "150 Skins", -1, gameExec, 2, 0,  # 150 Skins also works with heretic
-                                             "", ["mods/150skins.zip"]))
-            elif z.TestFileName("beautiful"):
-                games.append(gameDef.GameDef(i, "Beautiful Doom", -1, gameExec, 1, 0,
-                                             "", ["mods/150skins.zip", "mods/Beautiful_Doom.pk3"]))
-            elif z.TestFileName("brutal"):
-                games.append(gameDef.GameDef(i, "Brutal Doom", -1, gameExec, 1, 0,
-                                             "", ["mods/brutal.pk3"]))
+        try:
+            fullPath = z.GetFormat() + "/" + z.GetName()
+            if z.TestFileName("blasphem"):
+                blasphemWad = fullPath  # works because wad comes first in the list
+            elif z.TestFileName("bls"):
+                games.append(gameDef.GameDef(i, "Blasphem", 0, gameExec, 2, 0, blasphemWad, [fullPath]))
+            elif z.TestFileName("freedoom1"):
+                games.append(gameDef.GameDef(i, "Freedoom Phase 1", 0, gameExec, 1, 0, fullPath))
+            elif z.TestFileName("freedoom2"):
+                games.append(gameDef.GameDef(i, "Freedoom Phase 2", 0, gameExec, 1, 0, fullPath))
+            elif z.GetFormat() == "maps":
+                if z.TestFileName("htchest") or z.TestFileName("unbeliev"):
+                    games.append(gameDef.GameDef(i, z.GetMapName(), 1, gameExec, 2, 0,
+                                                 "wads/blasphem-0.1.7.wad", ["wads/BLSMPTXT.WAD", fullPath]))
+                else:
+                    games.append(gameDef.GameDef(i, z.GetMapName(), 1, gameExec, 1, 0,
+                                                 "wads/freedoom2.wad", [fullPath]))
+            elif z.GetFormat() == "mods":
+                if z.TestFileName("150skins"):
+                    games.append(gameDef.GameDef(i, "150 Skins", -1, gameExec, 2, 0,  # 150 Skins also works with heretic
+                                                 "", ["mods/150skins.zip"]))
+                elif z.TestFileName("beautiful"):
+                    games.append(gameDef.GameDef(i, "Beautiful Doom", -1, gameExec, 1, 0,
+                                                 "", ["mods/150skins.zip", "mods/Beautiful_Doom.pk3"]))
+                elif z.TestFileName("brutal"):
+                    games.append(gameDef.GameDef(i, "Brutal Doom", -1, gameExec, 1, 0,
+                                                 "", ["mods/brutal.pk3"]))
+        except Exception as e:
+            functions.log("CreateDB - " + str(e))
         i += 1
 
     done = i + 21

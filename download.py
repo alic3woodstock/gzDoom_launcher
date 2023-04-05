@@ -81,6 +81,7 @@ def StartDownload(parent, showmessage=True, progress=None):
     files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/aaliens.zip", "aliens.zip"))
     files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/btsx_e1.zip", "btsx_e1.zip"))
     files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/btsx_e2.zip", "btsx_e2.zip"))
+    files.append(Url("https://www.dropbox.com/s/vi47z1a4e4c4980/Sunder%202407.zip?dl=1", "sunder.zip"))
     files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/eviternity.zip", "eviternity.zip"))
     files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/gd.zip", "gd.zip"))
     files.append(Url("https://youfailit.net/pub/idgames/themes/hr/hr.zip", "hr.zip"))
