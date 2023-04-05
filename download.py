@@ -99,7 +99,7 @@ def StartDownload(parent, showmessage=True, progress=None):
     files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/zof.zip", "zof.zip"))
 
     global totalFiles
-    totalFiles = len(files)
+    totalFiles = len(files) + 1 # include gzdoom
 
     for f in files:
         try:
@@ -212,7 +212,8 @@ def UpdateGzDoom(parent, showMessage=True, progress=None):
     if os.path.exists('downloads/' + filename):
         os.remove('downloads/' + filename)
 
-    totalFiles = 1
+    if showMessage:
+        totalFiles = 1
     gzdoomUrl = GetGzDoomUrl()
     url = gzdoomUrl[0]
     version = gzdoomUrl[1]
@@ -221,6 +222,7 @@ def UpdateGzDoom(parent, showMessage=True, progress=None):
     localHash = functions.filehash(localFileName)
 
     if (not os.path.isfile(localFileName)) or (not gameData.CheckGzDoomVersion(version, localHash)):
+        print(file.GetFilePath())
         GetFile(file, progress, False)
 
         if os.name == "nt":
