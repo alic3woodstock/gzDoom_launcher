@@ -42,7 +42,7 @@ class ZipFile:
         try:
             fromFile = "downloads/" + self._name
 
-            if (self.GetFormat() == "zip") or (self.GetFormat() == "pk3"):
+            if self.GetFormat() == "zip" or self.GetFormat() == "pk3":
                 z = zipfile.ZipFile(fromFile)
                 z.testzip
 
@@ -53,7 +53,7 @@ class ZipFile:
                 shutil.copy(fromFile, path)
         except Exception as e:
             functions.log(e)
-            print("Copying " + self.GetName() + " failed")
+            functions.log("Copying " + self.GetName() + " failed")
 
     def GetName(self):
         return self._name
@@ -100,12 +100,14 @@ class ZipFile:
 
 
 def ExtractAll(parent):
-    progress = wx.ProgressDialog("Extract and Create Database", "Extracting/Copying files...", maximum=100,
+    progress = wx.ProgressDialog("Extract and Create Database", "Extracting/Copying files...", download.MAX_RANGE,
                                  parent=parent, style=wx.PD_APP_MODAL | wx.STAY_ON_TOP)
 
+    download.StartDownload(parent, False, progress)
+    download.UpdateGzDoom(parent, False, progress)
     fileNames = os.listdir("downloads")
     progress.SetRange(len(fileNames) * 2)
-    download.StartDownload(parent, False)
+    progress.Update(0, "Extracting/Copying files...")
 
     zipFiles = []
     for z in fileNames:
@@ -118,22 +120,7 @@ def ExtractAll(parent):
     progress.SetRange(len(zipFiles) + 22)  # if everthyng works number of csv in the list is 22
     i = 1;
     for z in zipFiles:
-        if z.TestFileName("gzdoom"):
-            if os.name == "nt":
-                z.ExtractTo("gzdoom")
-            else:
-                try:
-                    z.ExtractTo("temp")
-                    dirs = os.listdir("temp")
-                    for dir in dirs:
-                        if dir.lower().find("gzdoom") >= 0:
-                            if os.path.exists("gzdoom"):
-                                shutil.rmtree("gzdoom")
-                            shutil.copytree("temp/" + dir, "gzdoom")
-                except Exception as e:
-                    functions.log(e)
-                    print("Copying gzdoom failed!")
-        elif z.TestFileName("blasphem"):
+        if z.TestFileName("blasphem"):
             z.ExtractTo("wads")
         elif z.TestFileName("freedoom"):
             z.ExtractTo("temp")
@@ -149,7 +136,7 @@ def ExtractAll(parent):
                             shutil.copy(h, "wads")
         elif z.TestFileName("pk3") or z.TestFileName("150skins"):
             z.CopyTo("mods")
-        else:
+        elif not z.TestFileName("gzdoom"):
             z.CopyTo("maps")
         progress.Update(i)
         i += 1
@@ -210,7 +197,7 @@ def CreateDB(progress):
             if z.TestFileName("150skins"):
                 games.append(gameDef.GameDef(i, "150 Skins", -1, gameExec, 2, 0,  # 150 Skins also works with heretic
                                              "", ["mods/150skins.zip"]))
-            elif z.TestFileName("beaultiful"):
+            elif z.TestFileName("beautiful"):
                 games.append(gameDef.GameDef(i, "Beautiful Doom", -1, gameExec, 1, 0,
                                              "", ["mods/150skins.zip", "mods/Beautiful_Doom.pk3"]))
             elif z.TestFileName("brutal"):

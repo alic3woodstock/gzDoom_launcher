@@ -36,22 +36,24 @@ class Url:
         return "downloads/" + self._fileName
 
 
-def StartDownload(parent, showmessage=True):
-    progress = ShowProgress(parent)
+def StartDownload(parent, showmessage=True, progress=None):
+    if not progress:
+        progress = ShowProgress(parent)
 
     if not os.path.exists("downloads"):
         os.mkdir("downloads")
 
     files = []
 
-    tmpStr = GetGzDoomUrl()[0]
+    # tmpStr = GetGzDoomUrl()[0]
+    #
+    # # GzDoom
+    # if os.name == "nt":
+    #     files.append(Url(tmpStr, "gzdoom.zip"))
+    # else:
+    #     files.append(Url(tmpStr, "gzdoom.tar.xz"))
 
-    # GzDoom
-    if os.name == "nt":
-        files.append(Url(tmpStr, "gzdoom.zip"))
-    else:
-        files.append(Url(tmpStr, "gzdoom.tar.xz"))
-        # Blasphemer
+    # Blasphemer
     files.append(
         Url("https://github.com/Blasphemer/blasphemer/releases/download/v0.1.7/blasphem-0.1.7.zip", "blasphem.zip"))
     files.append(Url("https://github.com/Blasphemer/blasphemer/releases/download/v0.1.7/blasphemer-texture-pack.zip",
@@ -152,8 +154,8 @@ def GetFile(f, progress, showmessage=True):
             progress.Update(intProgress, "File exists, skiping...")
 
         if current == totalFiles:
-            progress.Destroy()
             if showmessage:
+                progress.Destroy()
                 wxdialogs.messageDialog(message="Download complete!",
                                         title='Reset to default games', aStyle=wx.ICON_INFORMATION | wx.OK | wx.RIGHT)
 
@@ -191,8 +193,10 @@ def ShowProgress(parent):
     return progress
 
 
-def UpdateGzDoom(parent):
-    progress = ShowProgress(parent)
+def UpdateGzDoom(parent, showMessage=True, progress=None):
+    if not progress:
+        progress = ShowProgress(parent)
+
     global totalFiles
     if not os.path.exists("downloads"):
         os.mkdir("downloads")
@@ -208,8 +212,9 @@ def UpdateGzDoom(parent):
         os.remove('downloads/' + filename)
 
     totalFiles = 1
-    url = GetGzDoomUrl()[0]
-    version = GetGzDoomUrl()[1]
+    gzdoomUrl = GetGzDoomUrl()
+    url = gzdoomUrl[0]
+    version = gzdoomUrl[1]
     file = Url(url, filename)
     gameData = gameDefDb.GameDefDb()
     localHash = functions.filehash(localFileName)
@@ -238,21 +243,24 @@ def UpdateGzDoom(parent):
                                 shutil.rmtree("gzdoom")
                             shutil.copytree("temp/" + d, "gzdoom")
                     localHash = functions.filehash(localFileName)
-                    progress.Destroy()
+                    if showMessage:
+                        progress.Destroy()
                 except Exception as e:
                     functions.log(e)
                     print("Copying gzdoom failed!")
             gameData.UpdateGzdoomVersion(version, localHash)
             if os.path.exists("temp"):
                 shutil.rmtree("temp")
-        if extractOK and (os.path.isfile("gzdoom/gzdoom") or os.path.isfile('gzdoom/gzdoom.exe')):
-            wxdialogs.messageDialog(parent, "Gzdoom updated to version: " + version, "Update Gzdoom", wx.ICON_INFORMATION)
-        else:
-            wxdialogs.alertDialog("Update filed, verify gzdoomLauncher.log form more details.", "Error")
+        if showMessage:
+            if extractOK and (os.path.isfile("gzdoom/gzdoom") or os.path.isfile('gzdoom/gzdoom.exe')):
+                wxdialogs.messageDialog(parent, "Gzdoom updated to version: " + version, "Update Gzdoom", wx.ICON_INFORMATION)
+            else:
+                wxdialogs.alertDialog("Update filed, verify gzdoomLauncher.log form more details.", "Error")
     else:
-        try:
-            progress.Destroy()
-        except Exception as e:
-            functions.log(e)
-        wxdialogs.messageDialog(parent, "Gzdoom is already at latest version!", "Update Gzdoom",
-                                wx.ICON_INFORMATION)
+        if showMessage:
+            try:
+                progress.Destroy()
+            except Exception as e:
+                functions.log(e)
+            wxdialogs.messageDialog(parent, "Gzdoom is already at latest version!", "Update Gzdoom",
+                                    wx.ICON_INFORMATION)

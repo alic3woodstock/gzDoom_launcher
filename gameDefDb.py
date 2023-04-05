@@ -48,7 +48,7 @@ class GameDefDb:
 
         sql = """CREATE TABLE IF NOT EXISTS config(
             id INTEGER PRIMARY KEY,
-            param TEXT UNIQUE KEY,
+            param TEXT UNIQUE,
             txtvalue TEXT,
             numvalue INTEGER,
             bolvalue BOOLEAN)"""
