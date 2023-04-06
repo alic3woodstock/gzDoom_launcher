@@ -3,6 +3,31 @@ import functions
 import gameDef
 import modGroup
 
+CREATE_CONFIG = """CREATE TABLE IF NOT EXISTS config(
+                    id INTEGER PRIMARY KEY,
+                    param TEXT UNIQUE,
+                    txtvalue TEXT,
+                    numvalue INTEGER,
+                    bolvalue BOOLEAN)"""
+
+CREATE_TABS = """CREATE TABLE IF NOT EXISTS tabs(
+            tabindex INTEGER PRIMARY KEY,
+            label TEXT NOT NULL DEFAULT '',
+            enabled BOOLEAN NOT NULL DEFAULT true)"""
+
+CREATE_GAMEDEF = """CREATE TABLE IF NOT EXISTS gamedef(
+                id integer PRIMARY KEY AUTOINCREMENT,
+                name text,
+                tabindex integer NOT NULL,
+                gamexec text,
+                modgroup integer NOT NULL,
+                lastrunmod integer NOT NULL,
+                iwad text,
+                cmdparams text NOT NULL DEFAULT '',
+                FOREIGN KEY (modgroup) REFERENCES groups(id) ON DELETE NO ACTION,
+                FOREIGN KEY (tabindex) REFERENCES tabs(tabindex) ON DELETE NO ACTION ON UPDATE CASCADE);                
+            """
+
 
 class GameDefDb:
     _dataCon = None
@@ -27,17 +52,19 @@ class GameDefDb:
                 ('strife'),('other');
             """)
 
-        dataCon.ExecSQL("""CREATE TABLE IF NOT EXISTS gamedef(
-                id integer PRIMARY KEY AUTOINCREMENT,
-                name text,
-                tabindex integer NOT NULL,
-                gamexec text,
-                modgroup integer NOT NULL,
-                lastrunmod integer NOT NULL,
-                iwad text,
-                cmdparams text NOT NULL DEFAULT '',
-                FOREIGN KEY (modgroup) REFERENCES groups(id) ON DELETE NO ACTION);                
-            """)
+        sql = CREATE_TABS
+        dataCon.ExecSQL(sql)
+
+        sql = """REPLACE INTO tabs(tabindex, label, enabled)
+            VALUES (?,?,?)"""
+        params = [-1, "Mods", True]
+        dataCon.ExecSQL(sql, params)
+        params = [0, "Games", True]
+        dataCon.ExecSQL(sql, params)
+        params = [1, "Tabs", True]
+        dataCon.ExecSQL(sql, params)
+
+        dataCon.ExecSQL(CREATE_GAMEDEF)
 
         dataCon.ExecSQL("""CREATE TABLE IF NOT EXISTS files(
                 id integer PRIMARY KEY AUTOINCREMENT,
@@ -46,17 +73,11 @@ class GameDefDb:
                 FOREIGN KEY (gameid) REFERENCES gamedef(id) ON DELETE CASCADE);
             """)
 
-        sql = """CREATE TABLE IF NOT EXISTS config(
-            id INTEGER PRIMARY KEY,
-            param TEXT UNIQUE,
-            txtvalue TEXT,
-            numvalue INTEGER,
-            bolvalue BOOLEAN)"""
-        dataCon.ExecSQL(sql)
+        dataCon.ExecSQL(CREATE_CONFIG)
 
         sql = """REPLACE INTO config (param, numvalue)
             VALUES ('dbversion', ?)"""
-        params = [functions.versionNumber()]
+        params = [100100]
         dataCon.ExecSQL(sql, params)
 
         dataCon.Commit()
@@ -201,7 +222,9 @@ class GameDefDb:
 
     def UpdateDatabase(self):
         dataCon = self.ConnectDb()
+        dbVersion = self.CheckDbVersion()
 
+        dataCon.StartTransaction()
         sql = """SELECT sql FROM sqlite_master WHERE tbl_name = ?"""
         params = ["config"]
         text = dataCon.ExecSQL(sql, params)
@@ -211,7 +234,6 @@ class GameDefDb:
                 strTable = t[0]
 
         if strTable.lower().find("config") < 0:
-            dataCon.StartTransaction()
             sql = """SELECT sql FROM sqlite_master WHERE tbl_name = ?"""
             params = ["gamedef"]
             text = dataCon.ExecSQL(sql, params)
@@ -233,24 +255,40 @@ class GameDefDb:
                 dataCon.ExecSQL(sql2)
 
             sql = """CREATE TABLE IF NOT EXISTS gzdoom_version(
-            id INTEGER PRIMARY KEY,
-            version text,
-            sha256 text)"""
-            dataCon.ExecSQL(sql)
-
-            sql = """CREATE TABLE IF NOT EXISTS config(
                 id INTEGER PRIMARY KEY,
-                param TEXT UNIQUE,
-                txtvalue TEXT,
-                numvalue INTEGER,
-                bolvalue BOOLEAN)"""
+                version text,
+                sha256 text)"""
             dataCon.ExecSQL(sql)
 
-            sql = """REPLACE INTO config (param, numvalue)
-                VALUES (?, ?)"""
-            params = ['dbversion', functions.versionNumber()]
+            dataCon.ExecSQL(CREATE_CONFIG)
+
+        if dbVersion < 100100:
+            dataCon.ExecSQL(CREATE_TABS)
+
+            sql = """REPLACE INTO tabs(tabindex, label, enabled)
+                VALUES (?,?,?)"""
+            params = [-1, "Mods", True]
             dataCon.ExecSQL(sql, params)
-            dataCon.Commit()
+            params = [0, "Games", True]
+            dataCon.ExecSQL(sql, params)
+            params = [1, "Tabs", True]
+            dataCon.ExecSQL(sql, params)
+
+            sql = """UPDATE gamedef SET tabindex=0 WHERE id IN (
+                SELECT DISTINCT g.id FROM gamedef g LEFT JOIN tabs t on t.tabindex = g.tabindex WHERE 
+                t.tabindex IS NULL)"""
+            dataCon.ExecSQL(sql)
+
+            dataCon.ExecSQL("""ALTER TABLE gamedef RENAME TO gamedef_old""")
+            dataCon.ExecSQL(CREATE_GAMEDEF)
+            dataCon.ExecSQL("""INSERT INTO gamedef SELECT * FROM gamedef_old""")
+            dataCon.ExecSQL("""DROP TABLE gamedef_old""")
+
+        sql = """REPLACE INTO config (param, numvalue)
+            VALUES (?, ?)"""
+        params = ['dbversion', functions.versionNumber()]
+        dataCon.ExecSQL(sql, params)
+        dataCon.Commit()
 
     def UpdateGzdoomVersion(self, version, filehash):
         dataCon = self.ConnectDb()
@@ -277,3 +315,12 @@ class GameDefDb:
             return True
         else:
             return False
+
+    def CheckDbVersion(self):
+        dataCon = self.ConnectDb()
+        sql = """SELECT numvalue FROM config WHERE param = 'dbversion'"""
+        versionData = dataCon.ExecSQL(sql)
+        for v in versionData:
+            version = v[0]
+
+        return int(version)

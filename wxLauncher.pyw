@@ -12,6 +12,7 @@ import replaceWad
 import wx.lib.dialogs as wxdialogs
 import functions
 import aboutDialog
+import settings
 
 
 class MyListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
@@ -38,10 +39,11 @@ class MyFrame(wx.Frame):
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
         menuExtract = fileMenu.Append(102, item="&Reset to default games")
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
-        menuClose = fileMenu.Append(103, item="&Close")
-        menu.Append(fileMenu, "&File")
-        fileMenu.Append(id=wx.ID_SEPARATOR, item="")
+        menuSettings = fileMenu.Append(104, item="&Settings...")
         menuAbout = fileMenu.Append(109, item="&About...")
+        fileMenu.Append(id=wx.ID_SEPARATOR, item="")
+        menuClose = fileMenu.Append(103, item="&Exit")
+        menu.Append(fileMenu, "&File")
 
         utilMenu = wx.Menu()
         menuReplaceDoom = utilMenu.Append(106, item="Replace &Doom maps wad...")
@@ -93,6 +95,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, lambda event: self.MenuReplaceHereticOnClick(event, gameTab),
                   menuReplaceHeretic)
         self.Bind(wx.EVT_MENU, self.MenuUpdageGzDoomOnClick, menuUpdateGzDoom)
+        self.Bind(wx.EVT_MENU, self.SettingsMenuOnClick, menuSettings)
         self.Bind(wx.EVT_MENU, self.AboutMenuOnClick, menuAbout)
 
         listRun[0].AppendColumn('Levels')
@@ -302,6 +305,15 @@ class MyFrame(wx.Frame):
         except Exception as e:
             functions.log(event)
             functions.log(e)
+
+    def SettingsMenuOnClick(self, event):
+        try:
+            settingsMenuDialog = settings.MyDialog(self, "Settings")
+            settingsMenuDialog.ShowModal()
+        except Exception as e:
+            functions.log(event)
+            functions.log(e)
+
 
     def ReadDB(self):
         gameData = gameDefDb.GameDefDb()

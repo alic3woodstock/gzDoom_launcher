@@ -4,7 +4,7 @@ import os
 
 LOGLEVEL = logging.DEBUG
 FORMAT = '%(levelname)s: %(asctime)s - %(message)s'
-APPVERSION = "1.00.01"
+APPVERSION = "1.01.00"
 AUTHOR = "Copyright 2022-2023 © Alice Woodstock"
 
 
