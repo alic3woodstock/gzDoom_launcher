@@ -43,63 +43,50 @@ def StartDownload(parent, showmessage=True, progress=None):
     if not os.path.exists("downloads"):
         os.mkdir("downloads")
 
-    files = []
+    files = [
+        # Blasphemer
+        Url("https://github.com/Blasphemer/blasphemer/releases/download/v0.1.7/blasphem-0.1.7.zip", "blasphem.zip"),
+        Url("https://github.com/Blasphemer/blasphemer/releases/download/v0.1.7/blasphemer-texture-pack.zip",
+            "blasphemer-texture-pack.zip"),
 
-    # tmpStr = GetGzDoomUrl()[0]
-    #
-    # # GzDoom
-    # if os.name == "nt":
-    #     files.append(Url(tmpStr, "gzdoom.zip"))
-    # else:
-    #     files.append(Url(tmpStr, "gzdoom.tar.xz"))
+        # Freedoom
+        Url("https://github.com/freedoom/freedoom/releases/download/v0.12.1/freedoom-0.12.1.zip", "freedoom.zip"),
 
-    # Blasphemer
-    files.append(
-        Url("https://github.com/Blasphemer/blasphemer/releases/download/v0.1.7/blasphem-0.1.7.zip", "blasphem.zip"))
-    files.append(Url("https://github.com/Blasphemer/blasphemer/releases/download/v0.1.7/blasphemer-texture-pack.zip",
-                     "blasphemer-texture-pack.zip"))
+        # 150skins
+        Url("https://doomshack.org/wads/150skins.zip", "150skins.zip"),
 
-    # Freedoom
-    files.append(
-        Url("https://github.com/freedoom/freedoom/releases/download/v0.12.1/freedoom-0.12.1.zip", "freedoom.zip"))
+        # Beautiful Doom
+        Url("https://github.com/jekyllgrim/Beautiful-Doom/releases/download/7.1.6/Beautiful_Doom_716.pk3",
+            "Beautiful_Doom.pk3"),
 
-    # 150skins
-    files.append(Url("https://doomshack.org/wads/150skins.zip", "150skins.zip"))
-
-    # Beautiful Doom
-    files.append(Url("https://github.com/jekyllgrim/Beautiful-Doom/releases/download/7.1.6/Beautiful_Doom_716.pk3",
-                     "Beautiful_Doom.pk3"))
-
-    # Brutal Doom
-    files.append(
+        # Brutal Doom
         Url("https://github.com/BLOODWOLF333/Brutal-Doom-Community-Expansion/releases/download/V21.11.2/brutalv21.11"
             ".2.pk3",
-            "brutal.pk3"))
+            "brutal.pk3"), Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/av.zip", "av.zip"),
 
-    # maps
-    files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/av.zip", "av.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/aaliens.zip", "aliens.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/btsx_e1.zip", "btsx_e1.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/btsx_e2.zip", "btsx_e2.zip"))
-    files.append(Url("https://www.dropbox.com/s/vi47z1a4e4c4980/Sunder%202407.zip?dl=1", "sunder.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/eviternity.zip", "eviternity.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/gd.zip", "gd.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/themes/hr/hr.zip", "hr.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/themes/hr/hr2final.zip", "hr2final.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/levels/heretic/Ports/htchest.zip", "htchest.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/themes/mm/mm_allup.zip", "mm_allup.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/themes/mm/mm2.zip", "mm2.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/pl2.zip", "pl2.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/scythe.zip", "scythe.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/scythe2.zip", "scythe2.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/s-u/scythex.zip", "scythex.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/sunlust.zip", "sunlust.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/levels/heretic/s-u/unbeliev.zip", "unbeliev.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/valiant.zip", "valiant.zip"))
-    files.append(Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/zof.zip", "zof.zip"))
+        # maps
+        Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/aaliens.zip", "aliens.zip"),
+        Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/btsx_e1.zip", "btsx_e1.zip"),
+        Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/btsx_e2.zip", "btsx_e2.zip"),
+        Url("https://www.dropbox.com/s/vi47z1a4e4c4980/Sunder%202407.zip?dl=1", "sunder.zip"),
+        Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/eviternity.zip", "eviternity.zip"),
+        Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/gd.zip", "gd.zip"),
+        Url("https://youfailit.net/pub/idgames/themes/hr/hr.zip", "hr.zip"),
+        Url("https://youfailit.net/pub/idgames/themes/hr/hr2final.zip", "hr2final.zip"),
+        Url("https://youfailit.net/pub/idgames/levels/heretic/Ports/htchest.zip", "htchest.zip"),
+        Url("https://youfailit.net/pub/idgames/themes/mm/mm_allup.zip", "mm_allup.zip"),
+        Url("https://youfailit.net/pub/idgames/themes/mm/mm2.zip", "mm2.zip"),
+        Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/pl2.zip", "pl2.zip"),
+        Url("https://youfailit.net/pub/idgames/levels/doom2/megawads/scythe.zip", "scythe.zip"),
+        Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/scythe2.zip", "scythe2.zip"),
+        Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/s-u/scythex.zip", "scythex.zip"),
+        Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/sunlust.zip", "sunlust.zip"),
+        Url("https://youfailit.net/pub/idgames/levels/heretic/s-u/unbeliev.zip", "unbeliev.zip"),
+        Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/valiant.zip", "valiant.zip"),
+        Url("https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/zof.zip", "zof.zip")]
 
     global totalFiles
-    totalFiles = len(files) + 1 # include gzdoom
+    totalFiles = len(files) + 1  # gzdoom will be downloaded by another function
 
     for f in files:
         try:
@@ -256,7 +243,8 @@ def UpdateGzDoom(parent, showMessage=True, progress=None):
                 shutil.rmtree("temp")
         if showMessage:
             if extractOK and (os.path.isfile("gzdoom/gzdoom") or os.path.isfile('gzdoom/gzdoom.exe')):
-                wxdialogs.messageDialog(parent, "Gzdoom updated to version: " + version, "Update Gzdoom", wx.ICON_INFORMATION)
+                wxdialogs.messageDialog(parent, "Gzdoom updated to version: " + version, "Update Gzdoom",
+                                        wx.ICON_INFORMATION)
             else:
                 wxdialogs.alertDialog("Update filed, verify gzdoomLauncher.log form more details.", "Error")
     else:
