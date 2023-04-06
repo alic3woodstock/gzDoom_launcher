@@ -114,7 +114,7 @@ class MyFrame(wx.Frame):
         if listRun[0].GetItemCount() <= 0:
             tempItem = wx.ListItem()
             tempItem.SetId(0)
-            tempItem.SetText("No games found, click to default games...")
+            tempItem.SetText('No games found, click "Reset to default games"...')
             listRun[0].InsertItem(tempItem)
 
         listRun[0].Select(0)
@@ -215,13 +215,6 @@ class MyFrame(wx.Frame):
             else:
                 self.listMods.SetSelection(0)
         event.Skip()
-
-    # def MenuDownloadOnClick(self, event):
-    #     try:
-    #         download.StartDownload(self)
-    #     except Exception as e:
-    #         functions.log(event)
-    #         functions.log(e)
 
     def MenuExtractOnClick(self, event, tab):
         try:
