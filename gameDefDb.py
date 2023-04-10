@@ -8,7 +8,7 @@ CREATE_CONFIG = """CREATE TABLE IF NOT EXISTS config(
                     param TEXT UNIQUE,
                     txtvalue TEXT,
                     numvalue INTEGER,
-                    bolvalue BOOLEAN)"""
+                    boolvalue BOOLEAN)"""
 
 CREATE_TABS = """CREATE TABLE IF NOT EXISTS tabs(
             tabindex INTEGER PRIMARY KEY,
@@ -318,9 +318,26 @@ class GameDefDb:
 
     def CheckDbVersion(self):
         dataCon = self.ConnectDb()
-        sql = """SELECT numvalue FROM config WHERE param = 'dbversion'"""
-        versionData = dataCon.ExecSQL(sql)
-        for v in versionData:
-            version = v[0]
+        sql = """SELECT sql FROM sqlite_master WHERE tbl_name = ?"""
+        params = ["config"]
+        text = dataCon.ExecSQL(sql, params)
+        strTable = ""
+        for t in text:
+            if t[0]:
+                strTable = t[0]
+        if strTable.lower().find("config") < 0:
+            return 0
+        else:
+            sql = """SELECT numvalue FROM config WHERE param = 'dbversion'"""
+            versionData = dataCon.ExecSQL(sql)
+            for v in versionData:
+                version = v[0]
 
-        return int(version)
+            return int(version)
+
+    def ReadConfig(self, valueType = "text"):
+        dataCon = self.ConnectDb()
+        if valueType == "num":
+            sql = """SELECT numvalue"""
+        elif valueType == "bool":
+            sql = """SELECT boolvalue"""

@@ -39,7 +39,7 @@ class MyFrame(wx.Frame):
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
         menuExtract = fileMenu.Append(102, item="&Reset to default games")
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
-        menuSettings = fileMenu.Append(104, item="&Settings...")
+        # menuSettings = fileMenu.Append(104, item="&Settings...")
         menuAbout = fileMenu.Append(109, item="&About...")
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
         menuClose = fileMenu.Append(103, item="&Exit")
@@ -95,7 +95,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, lambda event: self.MenuReplaceHereticOnClick(event, gameTab),
                   menuReplaceHeretic)
         self.Bind(wx.EVT_MENU, self.MenuUpdageGzDoomOnClick, menuUpdateGzDoom)
-        self.Bind(wx.EVT_MENU, self.SettingsMenuOnClick, menuSettings)
+        # self.Bind(wx.EVT_MENU, self.SettingsMenuOnClick, menuSettings)
         self.Bind(wx.EVT_MENU, self.AboutMenuOnClick, menuAbout)
 
         listRun[0].AppendColumn('Levels')
@@ -313,7 +313,6 @@ class MyFrame(wx.Frame):
         except Exception as e:
             functions.log(event)
             functions.log(e)
-
 
     def ReadDB(self):
         gameData = gameDefDb.GameDefDb()
