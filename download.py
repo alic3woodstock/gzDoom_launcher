@@ -53,7 +53,7 @@ def StartDownload(parent, showmessage=True, progress=None):
         Url("https://github.com/freedoom/freedoom/releases/download/v0.12.1/freedoom-0.12.1.zip", "freedoom.zip"),
 
         # 150skins
-        Url("https://doomshack.org/wads/150skins.zip", "150skins.zip"),
+        Url("https://awxdeveloper.edu.eu.org/downloads/150skins.zip", "150skins.zip"), #my personal wordpress site
 
         # Beautiful Doom
         Url("https://github.com/jekyllgrim/Beautiful-Doom/releases/download/7.1.6/Beautiful_Doom_716.pk3",
