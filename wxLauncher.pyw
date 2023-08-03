@@ -13,7 +13,7 @@ import wx.lib.dialogs as wxdialogs
 import functions
 import aboutDialog
 import settings
-
+import gameTabConfig
 
 class MyListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
     def __init__(self, parent, ID, pos=wx.DefaultPosition,
@@ -39,7 +39,7 @@ class MyFrame(wx.Frame):
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
         menuExtract = fileMenu.Append(102, item="&Reset to default games")
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
-        # menuSettings = fileMenu.Append(104, item="&Settings...")
+        menuSettings = fileMenu.Append(104, item="&Settings...")
         menuAbout = fileMenu.Append(109, item="&About...")
         fileMenu.Append(id=wx.ID_SEPARATOR, item="")
         menuClose = fileMenu.Append(103, item="&Exit")
@@ -54,12 +54,37 @@ class MyFrame(wx.Frame):
         self.SetMenuBar(menu)
 
         gameTab = wx.Notebook(panel)
-        listRun = [MyListCtrl(gameTab, ID=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER),
-                   MyListCtrl(gameTab, ID=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)]
+        myListCtrl = []
+        tabData = gameDefDb.GameDefDb()
+        tabConfigs = []
+
+        if not os.path.exists('games.sqlite3'):
+            gameData = gameDefDb.GameDefDb()
+            gameData.CreateGameTable()
+
+        try:
+            gameDefDb.GameDefDb().UpdateDatabase()
+        except Exception as e:
+            functions.log(e)
+            wxdialogs.alertDialog(self, "Erro ao atualizar o banco de dados!")
+
+        tabConfig = tabData.SelctGameTabConfigByIndex(0)
+        if not tabConfig.GetName().strip():
+            tabConfig = gameTabConfig.GameTabConfig(0, "Games", True)
+            tabData.UpdateGameTabConfig(tabConfig)
+
+        tabConfigs = tabData.SelectAllGameTabConfigs()
+        # print(len(tabConfigs))
+
+        for i in range(len(tabConfigs)):
+            myListCtrl.append(MyListCtrl(gameTab, ID=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER))
+        listRun = myListCtrl
         self.listMods = wx.ComboBox(panel, style=wx.CB_READONLY)
         self.listRun = listRun
-        gameTab.InsertPage(0, listRun[0], 'Games', 1)
-        gameTab.InsertPage(1, listRun[1], 'Maps', 1)
+        for t in tabConfigs:
+            if t.IsEnabled():
+                gameTab.InsertPage(t.GetIndex(), listRun[t.GetIndex()], t.GetName(), 1)
+        # gameTab.InsertPage(1, listRun[1], 'Maps', 1)
 
         btnOk = wx.Button(panel, wx.ID_ANY, 'Run Game')
         box = wx.BoxSizer(wx.VERTICAL)
@@ -80,7 +105,7 @@ class MyFrame(wx.Frame):
         # Bind Events
         self.Bind(wx.EVT_BUTTON, lambda event: self.BtnOkOnPress(event, gameTab), btnOk)
         panel.Bind(wx.EVT_CHAR_HOOK, lambda event: self.PanelOnKeyHook(event, gameTab))
-        for i in range(2):
+        for i in range(len(listRun)):
             listRun[i].Bind(wx.EVT_LEFT_DCLICK, self.ListCtrlOnDClick)
             listRun[i].Bind(wx.EVT_LIST_ITEM_SELECTED, self.ListCtrlOnSelect)
 
@@ -95,24 +120,20 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, lambda event: self.MenuReplaceHereticOnClick(event, gameTab),
                   menuReplaceHeretic)
         self.Bind(wx.EVT_MENU, self.MenuUpdageGzDoomOnClick, menuUpdateGzDoom)
-        # self.Bind(wx.EVT_MENU, self.SettingsMenuOnClick, menuSettings)
+        self.Bind(wx.EVT_MENU, self.SettingsMenuOnClick, menuSettings)
         self.Bind(wx.EVT_MENU, self.AboutMenuOnClick, menuAbout)
-
-        listRun[0].AppendColumn('Levels')
-        listRun[1].AppendColumn('Levels')
-
-        if not os.path.exists('games.sqlite3'):
-            gameData = gameDefDb.GameDefDb()
-            gameData.CreateGameTable()
+        for i in range(len(listRun)):
+            listRun[i].AppendColumn('Levels')
 
         self.ReadDB()
-        if listRun[1].GetColumnWidth(0) >= listRun[0].GetColumnWidth(0):
-            columnWidth = listRun[1].GetColumnWidth(0)
-        else:
-            columnWidth = listRun[0].GetColumnWidth(0)
 
-        listRun[0].resizeColumn(columnWidth)
-        listRun[1].resizeColumn(columnWidth)
+        columnWidth = listRun[0].GetColumnWidth(0)
+        for i in range(1, len(listRun)):
+            if listRun[i].GetColumnWidth(0) >= listRun[i-1].GetColumnWidth(0):
+                columnWidth = listRun[i].GetColumnWidth(0)
+
+        for i in range(len(listRun)):
+            listRun[i].resizeColumn(columnWidth)
 
         if listRun[0].GetItemCount() <= 0:
             tempItem = wx.ListItem()
@@ -129,12 +150,6 @@ class MyFrame(wx.Frame):
         box.SetSizeHints(self)
         self.Centre()
         self.Show(True)
-
-        try:
-            gameDefDb.GameDefDb().UpdateDatabase()
-        except Exception as e:
-            functions.log(e)
-            wxdialogs.alertDialog(self, "Erro ao atualizar o banco de dados!")
 
     def MenuCloseOnClick(self, event):
         try:
@@ -317,8 +332,9 @@ class MyFrame(wx.Frame):
     def ReadDB(self):
         gameData = gameDefDb.GameDefDb()
         tempItens = gameData.SelectAllGames()
-        self.listRun[0].DeleteAllItems()
-        self.listRun[1].DeleteAllItems()
+        for l in self.listRun:
+            l.DeleteAllItems()
+
         self.itens = []
 
         # Show itens in alphabetical order.

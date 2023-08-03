@@ -2,6 +2,7 @@ import dataConnect
 import functions
 import gameDef
 import modGroup
+import gameTabConfig
 
 CREATE_CONFIG = """CREATE TABLE IF NOT EXISTS config(
                     id INTEGER PRIMARY KEY,
@@ -290,6 +291,26 @@ class GameDefDb:
         dataCon.ExecSQL(sql, params)
         dataCon.Commit()
 
+        sql = """SELECT DISTINCT tabindex FROM gamedef WHERE tabindex >= 0"""
+        tempResult = dataCon.ExecSQL(sql)
+        indexes = []
+        for t in tempResult:
+            indexes.append(t[0])
+
+        for i in indexes:
+            tabConfig = self.SelctGameTabConfigByIndex(i)
+            if not tabConfig.GetName().strip():
+                tabConfig.SetIndex(i)
+                if i == 0:
+                    tabConfig.SetName("Games")
+                    tabConfig.SetEnabled(True)
+                else:
+                    tabConfig.SetName("Tab" + str(i))
+                self.UpdateGameTabConfig(tabConfig)
+
+        dataCon.CloseConnection()
+
+
     def UpdateGzdoomVersion(self, version, filehash):
         dataCon = self.ConnectDb()
         dataCon.StartTransaction()
@@ -335,9 +356,84 @@ class GameDefDb:
 
             return int(version)
 
-    def ReadConfig(self, valueType = "text"):
+    def ReadConfig(self, param = "", valuetype ="text"):
         dataCon = self.ConnectDb()
-        if valueType == "num":
+        if valuetype == "num":
             sql = """SELECT numvalue"""
-        elif valueType == "bool":
+            defaultValue = 0
+        elif valuetype == "bool":
             sql = """SELECT boolvalue"""
+            defaultValue = False
+        else:
+            sql = """SELECT textvalue"""
+            defaultValue = ""
+            
+        sql += """ FROM config WHERE param = ?"""
+        params = [param]
+        result = dataCon.ExecSQL(sql, params)
+        returnValue = defaultValue
+        for r in result:
+            returnValue = r[0]
+            break
+        dataCon.CloseConnection()
+        return  returnValue
+
+
+    def WriteConfig(self, param = "", value = "", valuetype = "text"):
+        dataCon = self.ConnectDb()
+        sql = """REPLACE INTO config (param,"""
+        if valuetype == "num":
+            sql += """numvalue)"""
+            if (value == ""):
+                value = 0
+        elif valuetype == "bool":
+            sql += """boolvalue)"""
+            if (value == ""):
+                value = False
+        else:
+            sql += """textvalue)"""
+
+        sql += """ VALUES(?,?)"""
+        params = [param, value]
+        dataCon.StartTransaction()
+        dataCon.ExecSQL(sql, params)
+        dataCon.Commit()
+        dataCon.CloseConnection()
+
+    def SelctGameTabConfigByIndex(self, tabIndex):
+        sql = """SELECT txtvalue, boolvalue FROM config WHERE param LIKE 'tab%' AND numvalue = ?"""
+        params = [tabIndex]
+        dataCon = self.ConnectDb()
+        tabs = dataCon.ExecSQL(sql, params)
+        tabConfig = gameTabConfig.GameTabConfig(tabIndex,"",False)
+        for t in tabs:
+            tabConfig.SetName(t[0])
+            tabConfig.SetEnabled(t[1])
+
+        dataCon.CloseConnection()
+
+        return tabConfig
+
+    def UpdateGameTabConfig(self, gameTabConfig):
+        if not (gameTabConfig is None):
+            dataCon = self.ConnectDb()
+            sql = """REPLACE INTO config(param, numvalue, txtvalue, boolvalue) 
+             VALUES(?, ?, ?, ?)"""
+            params = ["tab" + str(gameTabConfig.GetIndex() + 1),
+                      gameTabConfig.GetIndex(),
+                      gameTabConfig.GetName(),
+                      gameTabConfig.IsEnabled()]
+            dataCon.StartTransaction()
+            dataCon.ExecSQL(sql, params)
+            dataCon.Commit()
+            dataCon.CloseConnection()
+
+    def SelectAllGameTabConfigs(self):
+        dataCon = self.ConnectDb()
+        tabConfigs = []
+        sql = """SELECT numvalue, txtvalue, boolvalue FROM config WHERE param LIKE 'tab%' ORDER BY numvalue"""
+        result = dataCon.ExecSQL(sql)
+        for r in result:
+            tabConfigs.append(gameTabConfig.GameTabConfig(r[0], r[1], r[2]))
+        dataCon.CloseConnection()
+        return  tabConfigs

@@ -1,4 +1,5 @@
 import wx
+import gameDefDb
 
 TEXT_HEIGHT = 300
 
@@ -34,11 +35,15 @@ class MyDialog(wx.Dialog):
             gridTabs.Add(line[1], 0, wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border=4)
 
         # Boolean options
-        chkCheckUpdates = wx.CheckBox(panel, label="Check for GZDoom updates on startup")
+        self.chkCheckUpdates = wx.CheckBox(panel, label="Check for GZDoom updates on startup")
 
         # Buttons
         btnCancel = wx.Button(panel, wx.ID_CANCEL)
         btnOK = wx.Button(panel, wx.ID_OK)
+
+        # Bind Events
+        self.Bind(wx.EVT_BUTTON, self.BtnOKOnClick, btnOK)
+
 
         boxV = wx.BoxSizer(wx.VERTICAL)
         boxButtons = wx.BoxSizer(wx.HORIZONTAL)
@@ -48,7 +53,7 @@ class MyDialog(wx.Dialog):
         boxV.AddSpacer(4)
         boxV.Add(wx.StaticLine(panel, id=wx.ID_ANY, style=wx.LI_HORIZONTAL), 0, wx.EXPAND)
         boxV.AddSpacer(4)
-        boxV.Add(chkCheckUpdates)
+        boxV.Add(self.chkCheckUpdates)
         boxV.Add(wx.StaticLine(panel, id=wx.ID_ANY, style=wx.LI_HORIZONTAL), 0, wx.EXPAND)
         boxButtons.Add(btnOK, 0, wx.ALL, border=4)
         boxButtons.Add(btnCancel, 0, wx.ALL, border=4)
@@ -56,3 +61,13 @@ class MyDialog(wx.Dialog):
         boxV.Add(boxButtons, 0, wx.ALIGN_RIGHT)
         panel.SetSizer(boxV)
         boxV.SetSizeHints(self)
+
+        settingsDb = gameDefDb.GameDefDb()
+
+        checkUpdate = settingsDb.ReadConfig("checkupdate", "bool")
+        self.chkCheckUpdates.SetValue(checkUpdate)
+
+    def BtnOKOnClick(self, event):
+        settingsDb = gameDefDb.GameDefDb()
+        settingsDb.WriteConfig("checkupdate", self.chkCheckUpdates.GetValue(), "bool")
+        self.Close()
