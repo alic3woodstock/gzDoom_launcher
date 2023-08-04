@@ -114,6 +114,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.MenuUpdageGzDoomOnClick, menuUpdateGzDoom)
         self.Bind(wx.EVT_MENU, lambda event: self.SettingsMenuOnClick(event, gameTab), menuSettings)
         self.Bind(wx.EVT_MENU, self.AboutMenuOnClick, menuAbout)
+        self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.GameTabOnPageChange, gameTab)
 
         self.ReadDB()
 
@@ -180,10 +181,11 @@ class MyFrame(wx.Frame):
                 item = i
 
         for i in self.itens:
-            if (i.GetTab() < 0) and (i.GetGroup().GetGroupId() == item.GetGroup().GetGroupId()):
-                self.listMods.Append(i.GetItem().GetText(), i)
-                if item.GetLastMod() == i.GetItem().GetData():
-                    self.listMods.SetSelection(self.listMods.GetCount() - 1)
+            if isinstance(item, gameDef.GameDef):
+                if (i.GetTab() < 0) and (i.GetGroup().GetGroupId() == item.GetGroup().GetGroupId()):
+                    self.listMods.Append(i.GetItem().GetText(), i)
+                    if item.GetLastMod() == i.GetItem().GetData():
+                        self.listMods.SetSelection(self.listMods.GetCount() - 1)
 
     def PanelOnKeyHook(self, event, tab):
         event.DoAllowNextEvent()
@@ -218,6 +220,7 @@ class MyFrame(wx.Frame):
                                              aStyle=wx.ICON_WARNING | wx.YES | wx.NO | wx.RIGHT)
             if result.accepted:
                 extract.ExtractAll(self)
+                self.listRun = self.ConfigGameList(tab)
                 self.ReadDB()
                 gameList = tab.GetChildren()[tab.GetSelection()]
                 gameList.Select(0)
@@ -301,22 +304,15 @@ class MyFrame(wx.Frame):
         try:
             settingsMenuDialog = settings.MyDialog(self, "Settings")
             settingsMenuDialog.ShowModal()
-
-            tabData = gameDefDb.GameDefDb()
-            tabConfigs = tabData.SelectAllGameTabConfigs()
-
-            tab.DeleteAllPages()
-            self.listRun = []
-
-            for t in tabConfigs:
-                if t.IsEnabled():
-                    self.listRun.append(
-                        MyListCtrl(tab, ID=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER,
-                                   index=t.GetIndex()
-                                   ))
-                    tab.AddPage(self.listRun[-1], t.GetName(), 1)
-
+            self.listRun = self.ConfigGameList(tab)
             self.ReadDB()
+        except Exception as e:
+            functions.log(event)
+            functions.log(e)
+
+    def GameTabOnPageChange(self, event):
+        try:
+            event.GetEventObject().GetChildren()[0].Select(0)
         except Exception as e:
             functions.log(event)
             functions.log(e)
@@ -364,7 +360,7 @@ class MyFrame(wx.Frame):
                 if i == 0:
                     tempItem.SetText('No games found, click "Reset to default games"...')
                 else:
-                    tempItem.SetText('No games was added to this tab')
+                    tempItem.SetText('Empty tab')
                 l.InsertItem(tempItem)
             i += 1
 
@@ -387,6 +383,7 @@ class MyFrame(wx.Frame):
 
         tabConfigs = tabData.SelectAllGameTabConfigs()
 
+        gameTab.DeleteAllPages()
         listRun = []
         for t in tabConfigs:
             if t.IsEnabled():
