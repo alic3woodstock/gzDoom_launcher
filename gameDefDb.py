@@ -56,13 +56,13 @@ class GameDefDb:
         sql = CREATE_TABS
         dataCon.ExecSQL(sql)
 
-        sql = """REPLACE INTO tabs(tabindex, label, enabled)
+        sql = """INSERT or IGNORE INTO tabs(tabindex, label, enabled)
             VALUES (?,?,?)"""
         params = [-1, "Mods", True]
         dataCon.ExecSQL(sql, params)
         params = [0, "Games", True]
         dataCon.ExecSQL(sql, params)
-        params = [1, "Tabs", True]
+        params = [1, "Maps", True]
         dataCon.ExecSQL(sql, params)
 
         dataCon.ExecSQL(CREATE_GAMEDEF)
@@ -78,7 +78,7 @@ class GameDefDb:
 
         sql = """REPLACE INTO config (param, numvalue)
             VALUES ('dbversion', ?)"""
-        params = [100100]
+        params = [10100]
         dataCon.ExecSQL(sql, params)
 
         dataCon.Commit()
@@ -263,7 +263,7 @@ class GameDefDb:
 
             dataCon.ExecSQL(CREATE_CONFIG)
 
-        if dbVersion < 100100:
+        if dbVersion < 10100:
             dataCon.ExecSQL(CREATE_TABS)
 
             sql = """REPLACE INTO tabs(tabindex, label, enabled)
@@ -272,7 +272,7 @@ class GameDefDb:
             dataCon.ExecSQL(sql, params)
             params = [0, "Games", True]
             dataCon.ExecSQL(sql, params)
-            params = [1, "Tabs", True]
+            params = [1, "Maps", True]
             dataCon.ExecSQL(sql, params)
 
             sql = """UPDATE gamedef SET tabindex=0 WHERE id IN (
@@ -290,23 +290,6 @@ class GameDefDb:
         params = ['dbversion', functions.versionNumber()]
         dataCon.ExecSQL(sql, params)
         dataCon.Commit()
-
-        sql = """SELECT DISTINCT tabindex FROM gamedef WHERE tabindex >= 0"""
-        tempResult = dataCon.ExecSQL(sql)
-        indexes = []
-        for t in tempResult:
-            indexes.append(t[0])
-
-        for i in indexes:
-            tabConfig = self.SelctGameTabConfigByIndex(i)
-            if not tabConfig.GetName().strip():
-                tabConfig.SetIndex(i)
-                if i == 0:
-                    tabConfig.SetName("Games")
-                    tabConfig.SetEnabled(True)
-                else:
-                    tabConfig.SetName("Tab" + str(i))
-                self.UpdateGameTabConfig(tabConfig)
 
         dataCon.CloseConnection()
 
@@ -401,7 +384,7 @@ class GameDefDb:
         dataCon.CloseConnection()
 
     def SelctGameTabConfigByIndex(self, tabIndex):
-        sql = """SELECT txtvalue, boolvalue FROM config WHERE param LIKE 'tab%' AND numvalue = ?"""
+        sql = """SELECT label, enabled FROM tabs WHERE tabindex = ?"""
         params = [tabIndex]
         dataCon = self.ConnectDb()
         tabs = dataCon.ExecSQL(sql, params)
@@ -417,10 +400,9 @@ class GameDefDb:
     def UpdateGameTabConfig(self, gameTabConfig):
         if not (gameTabConfig is None):
             dataCon = self.ConnectDb()
-            sql = """REPLACE INTO config(param, numvalue, txtvalue, boolvalue) 
-             VALUES(?, ?, ?, ?)"""
-            params = ["tab" + str(gameTabConfig.GetIndex() + 1),
-                      gameTabConfig.GetIndex(),
+            sql = """REPLACE INTO tabs(tabindex, label, enabled) 
+             VALUES(?, ?, ?)"""
+            params = [gameTabConfig.GetIndex(),
                       gameTabConfig.GetName(),
                       gameTabConfig.IsEnabled()]
             dataCon.StartTransaction()
@@ -431,7 +413,7 @@ class GameDefDb:
     def SelectAllGameTabConfigs(self):
         dataCon = self.ConnectDb()
         tabConfigs = []
-        sql = """SELECT numvalue, txtvalue, boolvalue FROM config WHERE param LIKE 'tab%' ORDER BY numvalue"""
+        sql = """SELECT tabindex, label, enabled FROM tabs WHERE tabindex >= 0 ORDER BY tabindex"""
         result = dataCon.ExecSQL(sql)
         for r in result:
             tabConfigs.append(gameTabConfig.GameTabConfig(r[0], r[1], r[2]))

@@ -1,5 +1,7 @@
 import wx
 import gameDefDb
+import gameTabConfig
+import wx.lib.dialogs as wx_dialogs
 
 TEXT_HEIGHT = 300
 
@@ -24,10 +26,11 @@ class MyDialog(wx.Dialog):
             self.chkTabs.append(wx.CheckBox(panel, label="Tab " + str(i) + ":"))
             self.txtTabs.append(wx.TextCtrl(panel, size=(TEXT_HEIGHT, wx.DefaultCoord)))
 
+        self.chkTabs[0].Disable()
+
         lines = []
 
         for j in range(9):
-            self.txtTabs[j].Enable(False)
             lines.append([self.chkTabs[j], self.txtTabs[j]])
 
         for line in lines:
@@ -66,8 +69,26 @@ class MyDialog(wx.Dialog):
 
         checkUpdate = settingsDb.ReadConfig("checkupdate", "bool")
         self.chkCheckUpdates.SetValue(checkUpdate)
+        tabConfigs = settingsDb.SelectAllGameTabConfigs()
+        for t in tabConfigs:
+            self.chkTabs[t.GetIndex()].SetValue(t.IsEnabled())
+            self.txtTabs[t.GetIndex()].SetValue(t.GetName())
+
 
     def BtnOKOnClick(self, event):
-        settingsDb = gameDefDb.GameDefDb()
-        settingsDb.WriteConfig("checkupdate", self.chkCheckUpdates.GetValue(), "bool")
-        self.Close()
+        canSave = True
+
+        for i in range(9):
+            if (self.chkTabs[i].GetValue()) and (not self.txtTabs[i].GetValue().strip()):
+                wx_dialogs.alertDialog(self, "Enabled tab title can not be blank")
+                canSave = False
+
+        if canSave:
+            settingsDb = gameDefDb.GameDefDb()
+            for i in range(9):
+                tabConfig = gameTabConfig.GameTabConfig(i, self.txtTabs[i].GetValue().strip(),
+                                                        self.chkTabs[i].GetValue())
+                settingsDb.UpdateGameTabConfig(tabConfig)
+
+            settingsDb.WriteConfig("checkupdate", self.chkCheckUpdates.GetValue(), "bool")
+            self.Close()
