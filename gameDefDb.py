@@ -402,11 +402,20 @@ class GameDefDb:
             dataCon = self.ConnectDb()
             sql = """REPLACE INTO tabs(tabindex, label, enabled) 
              VALUES(?, ?, ?)"""
-            params = [gameTabConfig.GetIndex(),
-                      gameTabConfig.GetName(),
-                      gameTabConfig.IsEnabled()]
             dataCon.StartTransaction()
-            dataCon.ExecSQL(sql, params)
+
+            try:
+                for g in gameTabConfig:
+                    params = [g.GetIndex(),
+                              g.GetName(),
+                              g.IsEnabled()]
+                    dataCon.ExecSQL(sql, params)
+            except TypeError:
+                params = [gameTabConfig.GetIndex(),
+                          gameTabConfig.GetName(),
+                          gameTabConfig.IsEnabled()]
+                dataCon.ExecSQL(sql, params)
+
             dataCon.Commit()
             dataCon.CloseConnection()
 

@@ -169,23 +169,7 @@ class MyFrame(wx.Frame):
         event.Skip()
 
     def ListCtrlOnSelect(self, event):
-        self.listMods.Clear()
-        self.listMods.Insert("None                    ", 0, gameDef.GameDef(-1, "None", 2))
-        self.listMods.SetSelection(0)
-
-        item = ""
-        tempItem = event.GetEventObject().GetItem(event.GetEventObject().GetFirstSelected())
-
-        for i in self.itens:
-            if i.GetItem().GetData() == tempItem.GetData():
-                item = i
-
-        for i in self.itens:
-            if isinstance(item, gameDef.GameDef):
-                if (i.GetTab() < 0) and (i.GetGroup().GetGroupId() == item.GetGroup().GetGroupId()):
-                    self.listMods.Append(i.GetItem().GetText(), i)
-                    if item.GetLastMod() == i.GetItem().GetData():
-                        self.listMods.SetSelection(self.listMods.GetCount() - 1)
+        self.RefreshhModList(event.GetEventObject())
 
     def PanelOnKeyHook(self, event, tab):
         event.DoAllowNextEvent()
@@ -264,26 +248,27 @@ class MyFrame(wx.Frame):
                 item = i
                 i.SetLastMod(mod.GetItem().GetData())
 
-        if item.GetIWad().strip() == "":
-            command = item.GetExec() + " "
-        else:
-            command = item.GetExec() + " -iWad " + item.GetIWad()
+        if isinstance(item, gameDef.GameDef):
+            if item.GetIWad().strip() == "":
+                command = item.GetExec() + " "
+            else:
+                command = item.GetExec() + " -iWad " + item.GetIWad()
 
-        for file in item.GetFiles():
-            command += " -file " + file
-
-        if mod.GetItem().GetData() >= 0:
-            for file in mod.GetFiles():
+            for file in item.GetFiles():
                 command += " -file " + file
 
-        if item.GetCmdParams().strip() != "":
-            command += item.GetCmdParams().strip()
+            if mod.GetItem().GetData() >= 0:
+                for file in mod.GetFiles():
+                    command += " -file " + file
 
-        functions.log(command, False)
-        os.popen(command)
-        gameData = gameDefDb.GameDefDb()
-        gameData.UpdateLastRunMod(item, mod)
-        listCtrl.SetFocus()
+            if item.GetCmdParams().strip() != "":
+                command += item.GetCmdParams().strip()
+
+            functions.log(command, False)
+            os.popen(command)
+            gameData = gameDefDb.GameDefDb()
+            gameData.UpdateLastRunMod(item, mod)
+            listCtrl.SetFocus()
 
     def MenuUpdageGzDoomOnClick(self, event):
         try:
@@ -312,7 +297,10 @@ class MyFrame(wx.Frame):
 
     def GameTabOnPageChange(self, event):
         try:
-            event.GetEventObject().GetChildren()[0].Select(0)
+            tab = event.GetEventObject()
+            gameList = tab.GetChildren()[tab.GetSelection()]
+            gameList.Select(0)
+            self.RefreshhModList(gameList)
         except Exception as e:
             functions.log(event)
             functions.log(e)
@@ -397,6 +385,27 @@ class MyFrame(wx.Frame):
                 listRun[-1].AppendColumn('Levels')
 
         return listRun
+
+    def RefreshhModList(self, listRun):
+        self.listMods.Clear()
+        self.listMods.Insert("None                    ", 0, gameDef.GameDef(-1, "None", 2))
+        self.listMods.SetSelection(0)
+
+        item = ""
+        tempItem = listRun.GetItem(listRun.GetFirstSelected())
+
+        for i in self.itens:
+            if i.GetItem().GetData() == tempItem.GetData():
+                item = i
+
+        for i in self.itens:
+            if isinstance(item, gameDef.GameDef):
+                if (i.GetTab() < 0) and (i.GetGroup().GetGroupId() == item.GetGroup().GetGroupId()):
+                    self.listMods.Append(i.GetItem().GetText(), i)
+                    if item.GetLastMod() == i.GetItem().GetData():
+                        self.listMods.SetSelection(self.listMods.GetCount() - 1)
+
+
 
 
 app = wx.App(False)
