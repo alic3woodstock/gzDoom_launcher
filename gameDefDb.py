@@ -428,3 +428,12 @@ class GameDefDb:
             tabConfigs.append(gameTabConfig.GameTabConfig(r[0], r[1], r[2]))
         dataCon.CloseConnection()
         return  tabConfigs
+
+    def CleanGameTabs(self):
+        dataCon = self.ConnectDb()
+        sql = """DELETE FROM tabs WHERE tabindex NOT IN (SELECT DISTINCT(tabindex)
+         FROM gamedef) AND label == '' AND enabled = false"""
+        dataCon.StartTransaction()
+        dataCon.ExecSQL(sql)
+        dataCon.Commit()
+        dataCon.CloseConnection()

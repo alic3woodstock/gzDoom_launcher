@@ -290,7 +290,10 @@ class MyFrame(wx.Frame):
             settingsMenuDialog = settings.MyDialog(self, "Settings")
             settingsMenuDialog.ShowModal()
             self.listRun = self.ConfigGameList(tab)
+            tab.SetSelection(0)
             self.ReadDB()
+            if self.listRun[0].GetFirstSelected() < 0:
+                self.listRun[0].Select(0)
         except Exception as e:
             functions.log(event)
             functions.log(e)
@@ -354,8 +357,9 @@ class MyFrame(wx.Frame):
 
         columnWidth = self.listRun[0].GetColumnWidth(0)
         for i in range(1, len(self.listRun)):
-            if self.listRun[i].GetColumnWidth(0) >= self.listRun[i-1].GetColumnWidth(0):
-                columnWidth = self.listRun[i].GetColumnWidth(0)
+            if self.listRun[i].GetItemCount() > 0:
+                if self.listRun[i].GetColumnWidth(0) >= self.listRun[i-1].GetColumnWidth(0):
+                    columnWidth = self.listRun[i].GetColumnWidth(0)
 
         for l in self.listRun:
             l.resizeColumn(columnWidth)
