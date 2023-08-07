@@ -90,10 +90,8 @@ class MyDialog(wx.Dialog):
             for i in range(9):
                 tabConfig = gameTabConfig.GameTabConfig(i, self.txtTabs[i].GetValue().strip(),
                                                         self.chkTabs[i].GetValue())
-                if self.txtTabs[i].GetValue().strip():
-                    tabConfigList.append(tabConfig)
+                tabConfigList.append(tabConfig)
             settingsDb.UpdateGameTabConfig(tabConfigList)
-            settingsDb.CleanGameTabs()
 
             settingsDb.WriteConfig("checkupdate", self.chkCheckUpdates.GetValue(), "bool")
             self.Close()

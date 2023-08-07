@@ -24,15 +24,24 @@ class MyDialog(wx.Dialog):
         super(MyDialog, self).__init__(parent, title=title, size=(500, wx.DefaultCoord))
         panel = wx.Panel(self)
 
-        # "Name","Tab Index","Executable","Group","Last run mod","iWad","file1"
-
+        gameData = gameDefDb.GameDefDb()
+        # "Name", "Is Mod" "Tab Index","Executable","Group","Last run mod","iWad","file1"
         # Name
         lblName = wx.StaticText(panel, label="Name:")
         self.txtName = wx.TextCtrl(panel, size=(TEXT_HEIGHT, wx.DefaultCoord))
 
+        lblMod = wx.StaticText(panel, label="")
+        self.chkMod = wx.CheckBox(panel, label="Is as Mod",)
+
         # Tab Index
-        lblType = wx.StaticText(panel, label="Type:")
-        self.cbxType = wx.ComboBox(panel, style=wx.CB_READONLY, choices=["Game", "Map", "Mod"])
+        lblType = wx.StaticText(panel, label="Tab:")
+        self.cbxType = wx.ComboBox(panel, style=wx.CB_READONLY)
+        tabConfig = gameData.SelectAllGameTabConfigs()
+        for t in tabConfig:
+            if t.GetName().strip():
+                self.cbxType.Append(t.GetName(), t)
+            else:
+                self.cbxType.Append("(no title)", t)
         self.cbxType.Select(0)
 
         # Executable
@@ -48,8 +57,7 @@ class MyDialog(wx.Dialog):
         # Mod Group
         lblGroup = wx.StaticText(panel, label="Mod Group:")
         self.cbxGroup = wx.ComboBox(panel, style=wx.CB_READONLY)
-        groupData = gameDefDb.GameDefDb()
-        groups = groupData.SelectAllGroups()
+        groups = gameData.SelectAllGroups()
         for g in groups:
             self.cbxGroup.Append(g.GetGroupName(), g)
         self.cbxGroup.Select(0)
@@ -57,7 +65,7 @@ class MyDialog(wx.Dialog):
         # iWAD
         lblWad = wx.StaticText(panel, label="Wad:")
         self.txtWad = wx.TextCtrl(panel, size=(TEXT_HEIGHT, wx.DefaultCoord))
-        btnFindWad = SmallButton(panel, label='...', size=(36, self.txtExec.GetSize().GetHeight()))
+        self.btnFindWad = SmallButton(panel, label='...', size=(36, self.txtExec.GetSize().GetHeight()))
 
         # Command line parameters
         lblCmdPar = wx.StaticText(panel, label="Cmd. Parameters:")
@@ -80,7 +88,15 @@ class MyDialog(wx.Dialog):
 
         if game:
             self.txtName.write(game.GetItem().GetText())
-            self.cbxType.Select(game.GetTab())
+            if game.GetTab() >= 0:
+                self.chkMod.SetValue(False)
+                self.cbxType.Select(game.GetTab())
+            else:
+                self.chkMod.SetValue(True)
+                self.cbxType.Enable(False)
+                self.txtWad.Enable(False)
+                self.btnFindWad.Enable(False)
+
             self.txtExec.write(game.GetExec())
             self.txtWad.write(game.GetIWad())
 
@@ -96,9 +112,9 @@ class MyDialog(wx.Dialog):
             self.txtCmdPar.write(game.GetCmdParams())
 
         # Bind Events
-        self.Bind(wx.EVT_COMBOBOX, self.CbxTypeOnChange, self.cbxType)
+        self.Bind(wx.EVT_CHECKBOX, self.ChkModOnChange, self.chkMod)
         self.Bind(wx.EVT_BUTTON, self.BtnFindExecOnClick, btnFindExec)
-        self.Bind(wx.EVT_BUTTON, self.BtnFindWadOnClick, btnFindWad)
+        self.Bind(wx.EVT_BUTTON, self.BtnFindWadOnClick, self.btnFindWad)
         self.Bind(wx.EVT_BUTTON, self.BtnFindFilesOnClick, btnFindFiles)
         self.Bind(wx.EVT_BUTTON, self.BtnAddFileOnClick, btnAddFile)
         self.Bind(wx.EVT_BUTTON, self.BtnOKOnClick, btnOK)
@@ -107,11 +123,11 @@ class MyDialog(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.BtnClearGridOnClick, btnClearGrid)
 
         # Align componentes
-        gridData = wx.FlexGridSizer(8, 0, 4, 4)
+        gridData = wx.FlexGridSizer(10, 0, 5, 5)
         gridData.AddGrowableCol(0)
         gridData.AddGrowableCol(1)
 
-        lines = [[lblName, self.txtName], [lblType, self.cbxType]]
+        lines = [[lblName, self.txtName], [lblMod, self.chkMod], [lblType, self.cbxType]]
         boxExec = wx.BoxSizer(wx.HORIZONTAL)
         boxExec.Add(self.txtExec)
         boxExec.Add(btnFindExec)
@@ -120,7 +136,7 @@ class MyDialog(wx.Dialog):
 
         boxWad = wx.BoxSizer(wx.HORIZONTAL)
         boxWad.Add(self.txtWad)
-        boxWad.Add(btnFindWad)
+        boxWad.Add(self.btnFindWad)
         lines.append([lblWad, boxWad])
 
         lines.append([lblCmdPar, self.txtCmdPar])
@@ -172,13 +188,13 @@ class MyDialog(wx.Dialog):
                 canSave = False
 
             if canSave:
-                if self.txtWad.GetLineText(0).strip() != "" and self.cbxType.GetSelection() <= 1:
+                if self.chkMod.IsChecked():
+                    self.txtWad.Clear()
+                elif self.txtWad.GetLineText(0).strip():
                     if not os.path.isfile(self.txtWad.GetLineText(0)):
                         wx_dialogs.alertDialog(self, message='Invalid wad!',
                                                title='Alert')
                         canSave = False
-                else:
-                    self.txtWad.Clear()
 
             if canSave:
                 if self.txtFiles.GetLineText(0) != '':
@@ -207,9 +223,15 @@ class MyDialog(wx.Dialog):
 
             groupId = self.cbxGroup.GetClientData(self.cbxGroup.GetSelection()).GetGroupId()
             groupName = self.cbxGroup.GetStringSelection()
+
+            if self.chkMod.IsChecked():
+                tabIndex = -1
+            else:
+                tabIndex = self.cbxType.GetClientData(self.cbxType.GetSelection()).GetIndex()
+
             game = gameDef.GameDef(0,
                                    self.txtName.GetLineText(0),
-                                   self.cbxType.GetSelection(),
+                                   tabIndex,
                                    gameExec,
                                    groupId,
                                    0,
@@ -233,11 +255,10 @@ class MyDialog(wx.Dialog):
                 wx_dialogs.alertDialog(self, message='Failed to write data!')
                 functions.log(e)
 
-    def CbxTypeOnChange(self, event):
-        if event.GetEventObject().GetSelection() > 1:
-            self.txtWad.Enable(False)
-        else:
-            self.txtWad.Enable(True)
+    def ChkModOnChange(self, event):
+        self.cbxType.Enable(not event.GetEventObject().IsChecked())
+        self.txtWad.Enable(not event.GetEventObject().IsChecked())
+        self.btnFindWad.Enable(not event.GetEventObject().IsChecked())
 
     def BtnFindExecOnClick(self, event):
         exeFile = wx_dialogs.fileDialog(parent=self, title='Open', style=wx.FD_OPEN)

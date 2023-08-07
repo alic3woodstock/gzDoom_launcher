@@ -371,7 +371,7 @@ class MyFrame(wx.Frame):
         tabConfig = tabData.SelctGameTabConfigByIndex(0)
         if not tabConfig.GetName().strip():
             tabConfig = gameTabConfig.GameTabConfig(0, "Games", True)
-            tabData.UpdateGameTabConfig(tabConfig)
+            tabData.UpdateGameTabConfig([tabConfig])
 
         tabConfigs = tabData.SelectAllGameTabConfigs()
 
