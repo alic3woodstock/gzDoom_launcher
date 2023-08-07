@@ -132,7 +132,7 @@ class MyFrame(wx.Frame):
         try:
             self.Close()
         except Exception as e:
-            functions.log(event)
+            functions.log('MenuCloseOnClick')
             functions.log(e)
 
     def MenuAddGameOnClick(self, event, tab):
@@ -143,7 +143,7 @@ class MyFrame(wx.Frame):
             gameList = tab.GetChildren()[tab.GetSelection()]
             gameList.Select(0)
         except Exception as e:
-            functions.log(event)
+            functions.log('MenuAddGameOnClick')
             functions.log(e)
 
     def MenuManageGamesOnClick(self, event, tab):
@@ -154,14 +154,14 @@ class MyFrame(wx.Frame):
             gameList = tab.GetChildren()[tab.GetSelection()]
             gameList.Select(0)
         except Exception as e:
-            functions.log(event)
+            functions.log('MenuManageGamesOnClick')
             functions.log(e)
 
     def BtnOkOnPress(self, event, tab):
         try:
             self.LaunchGame(tab.GetChildren()[tab.GetSelection()])
         except Exception as e:
-            functions.log(event)
+            functions.log('BtnOkOnPressent')
             functions.log(e)
 
     def ListCtrlOnDClick(self, event):
@@ -209,7 +209,7 @@ class MyFrame(wx.Frame):
                 gameList = tab.GetChildren()[tab.GetSelection()]
                 gameList.Select(0)
         except Exception as e:
-            functions.log(event)
+            functions.log('MenuExtractOnClick')
             functions.log(e)
 
     def MenuReplaceDoomOnClick(self, event, tab):
@@ -220,7 +220,7 @@ class MyFrame(wx.Frame):
             gameList = tab.GetChildren()[tab.GetSelection()]
             gameList.Select(0)
         except Exception as e:
-            functions.log(event)
+            functions.log('MenuReplaceDoomOnClick')
             functions.log(e)
 
     def MenuReplaceHereticOnClick(self, event, tab):
@@ -231,7 +231,7 @@ class MyFrame(wx.Frame):
             gameList = tab.GetChildren()[tab.GetSelection()]
             gameList.Select(0)
         except Exception as e:
-            functions.log(event)
+            functions.log('MenuReplaceHereticOnClick')
             functions.log(e)
 
     def LaunchGame(self, listCtrl):
@@ -274,7 +274,7 @@ class MyFrame(wx.Frame):
         try:
             download.UpdateGzDoom(self)
         except Exception as e:
-            functions.log(event)
+            functions.log('MenuUpdageGzDoomOnClick')
             functions.log(e)
 
     def AboutMenuOnClick(self, event):
@@ -282,7 +282,7 @@ class MyFrame(wx.Frame):
             aboutMenuDialog = aboutDialog.MyDialog(self, "About")
             aboutMenuDialog.ShowModal()
         except Exception as e:
-            functions.log(event)
+            functions.log('AboutMenuOnClick')
             functions.log(e)
 
     def SettingsMenuOnClick(self, event, tab):
@@ -292,20 +292,22 @@ class MyFrame(wx.Frame):
             self.listRun = self.ConfigGameList(tab)
             tab.SetSelection(0)
             self.ReadDB()
+
             if self.listRun[0].GetFirstSelected() < 0:
                 self.listRun[0].Select(0)
         except Exception as e:
-            functions.log(event)
+            functions.log('SettingsMenuOnClick')
             functions.log(e)
 
     def GameTabOnPageChange(self, event):
         try:
             tab = event.GetEventObject()
             gameList = tab.GetChildren()[tab.GetSelection()]
-            gameList.Select(0)
-            self.RefreshhModList(gameList)
+            if gameList.GetItemCount() > 0:
+                gameList.Select(0)
+                self.RefreshhModList(gameList)
         except Exception as e:
-            functions.log(event)
+            functions.log('GameTabOnPageChange')
             functions.log(e)
 
     def ReadDB(self):
