@@ -33,15 +33,15 @@ class Url:
         return self._fileName
 
     def GetFilePath(self):
-        return "downloads/" + self._fileName
+        return functions.downloadPath + self._fileName
 
 
 def StartDownload(parent, showmessage=True, progress=None):
     if not progress:
         progress = ShowProgress(parent)
 
-    if not os.path.exists("downloads"):
-        os.mkdir("downloads")
+    if not os.path.exists(functions.downloadPath):
+        os.mkdir(functions.downloadPath)
 
     files = [
         # Blasphemer
@@ -186,18 +186,18 @@ def UpdateGzDoom(parent, showMessage=True, progress=None):
         progress = ShowProgress(parent)
 
     global totalFiles
-    if not os.path.exists("downloads"):
-        os.mkdir("downloads")
+    if not os.path.exists(functions.downloadPath):
+        os.mkdir(functions.downloadPath)
 
     if os.name == "nt":
         filename = "gzdoom.zip"
-        localFileName = ".\\gzdoom\\gzdoom.exe"
     else:
         filename = "gzdoom.tar.xz"
-        localFileName = "./gzdoom/gzdoom"
 
-    if os.path.exists('downloads/' + filename):
-        os.remove('downloads/' + filename)
+    localFileName = functions.gzDoomExec
+
+    if os.path.exists(functions.downloadPath + filename):
+        os.remove(functions.downloadPath + filename)
 
     if showMessage:
         totalFiles = 1
@@ -219,28 +219,28 @@ def UpdateGzDoom(parent, showMessage=True, progress=None):
         extractOK = False
         if zipfile.TestFileName("gzdoom"):
             if os.name == "nt":
-                if zipfile.ExtractTo("gzdoom"):
+                if zipfile.ExtractTo(functions.gzDoomPath):
                     extractOK = True
             else:
                 try:
-                    if zipfile.ExtractTo("temp"):
+                    if zipfile.ExtractTo(functions.tempDir):
                         extractOK = True
-                    dirs = os.listdir("temp")
+                    dirs = os.listdir(functions.tempDir)
                     for d in dirs:
                         if d.lower().find("gzdoom") >= 0:
-                            if os.path.exists("gzdoom"):
-                                shutil.rmtree("gzdoom")
-                            shutil.copytree("temp/" + d, "gzdoom")
+                            if os.path.exists(functions.gzDoomPath):
+                                shutil.rmtree(functions.gzDoomPath)
+                            shutil.copytree(functions.tempDir + d, functions.gzDoomPath)
                     localHash = functions.filehash(localFileName)
                     if showMessage:
                         progress.Destroy()
                 except Exception as e:
                     functions.log(e)
             gameData.UpdateGzdoomVersion(version, localHash)
-            if os.path.exists("temp"):
-                shutil.rmtree("temp")
+            if os.path.exists(functions.tempDir):
+                shutil.rmtree(functions.tempDir)
         if showMessage:
-            if extractOK and (os.path.isfile("gzdoom/gzdoom") or os.path.isfile('gzdoom/gzdoom.exe')):
+            if extractOK and (os.path.isfile(functions.gzDoomExec) or os.path.isfile(functions.gzDoomExec)):
                 wxdialogs.messageDialog(parent, "Gzdoom updated to version: " + version, "Update Gzdoom",
                                         wx.ICON_INFORMATION)
             else:
@@ -255,18 +255,18 @@ def UpdateGzDoom(parent, showMessage=True, progress=None):
                                     wx.ICON_INFORMATION)
 
 def CheckGzDoomVersion():
-    if not os.path.exists("downloads"):
-        os.mkdir("downloads")
+    if not os.path.exists(functions.downloadPath):
+        os.mkdir(functions.downloadPath)
 
     if os.name == "nt":
         filename = "gzdoom.zip"
-        localFileName = ".\\gzdoom\\gzdoom.exe"
     else:
         filename = "gzdoom.tar.xz"
-        localFileName = "./gzdoom/gzdoom"
 
-    if os.path.exists('downloads/' + filename):
-        os.remove('downloads/' + filename)
+    localFileName = functions.gzDoomExec
+
+    if os.path.exists(functions.downloadPath + filename):
+        os.remove(functions.downloadPath + filename)
 
     gzdoomUrl = GetGzDoomUrl()
     url = gzdoomUrl[0]

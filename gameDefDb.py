@@ -37,7 +37,7 @@ class GameDefDb:
         return self._dataCon
 
     def ConnectDb(self):
-        self._dataCon = dataConnect.SqliteDB('games.sqlite3')
+        self._dataCon = dataConnect.SqliteDB(functions.dbPath)
         return self._dataCon
 
     def CreateGameTable(self):

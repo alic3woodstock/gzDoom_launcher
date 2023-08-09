@@ -48,10 +48,7 @@ class MyDialog(wx.Dialog):
         lblExec = wx.StaticText(panel, label="Game Exec.:")
         self.txtExec = wx.TextCtrl(panel, size=(TEXT_HEIGHT, wx.DefaultCoord))
         if not game:
-            if os.name == 'nt':
-                self.txtExec.write('gzdoom\\gzdoom.exe')
-            else:
-                self.txtExec.write('gzdoom/gzdoom')
+            self.txtExec.write(functions.gzDoomExec)
         btnFindExec = SmallButton(panel, label='...', size=(36, self.txtExec.GetSize().GetHeight()))
 
         # Mod Group
@@ -207,7 +204,7 @@ class MyDialog(wx.Dialog):
                         canSave = False
                         break
             if canSave:
-                if not os.path.isfile('games.sqlite3'):
+                if not os.path.isfile(functions.dbPath):
                     wx_dialogs.alertDialog(self, message='Database not found, press extract before add a game!')
                     canSave = False
         except Exception as e:

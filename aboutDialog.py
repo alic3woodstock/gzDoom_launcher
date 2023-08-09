@@ -7,7 +7,7 @@ class MyDialog(wx.Dialog):
         super(MyDialog, self).__init__(parent, title=title, size=(500, wx.DefaultCoord))
         panel = wx.Panel(self)
 
-        png = wx.Image('pentagrama.png', wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+        png = wx.Image(functions.pentagram, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
         pentagram = wx.StaticBitmap(panel, -1, png, (10, 5), (png.GetWidth(), png.GetHeight()))
 
         btnClose = wx.Button(panel, wx.ID_CLOSE)

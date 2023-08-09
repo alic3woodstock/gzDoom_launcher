@@ -37,6 +37,7 @@ class MyListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
 class MyFrame(wx.Frame):
     def __init__(self, parent, title):
         self.itens = []
+        functions.setDataPath()
         wx.Frame.__init__(self, parent, title=title)
 
         panel = wx.Panel(self, wx.ID_ANY)
@@ -67,7 +68,7 @@ class MyFrame(wx.Frame):
         gameTab = wx.Notebook(panel)
         tabConfigs = []
 
-        if not os.path.exists('games.sqlite3'):
+        if not os.path.exists(functions.dbPath):
             gameData = gameDefDb.GameDefDb()
             gameData.CreateGameTable()
 

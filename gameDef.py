@@ -1,4 +1,6 @@
 import wx
+
+import functions
 import modGroup
 
 
@@ -59,8 +61,11 @@ class GameDef:
         self._cmdParams = cmdParams
 
     # Id,Name,Tab Index,Exe,Group,Last run mod,iWad,files...
-    def __init__(self, listId, name, tab, gameExec='./gzdoom/gzdoom', groupId=1, lastMod=0, wad='freedoom1.wad',
+    def __init__(self, listId, name, tab, gameExec = "", groupId=1, lastMod=0, wad='freedoom1.wad',
                  files=None, groupName=None, cmdParams=""):
+        if not gameExec.strip():
+            gameExec = functions.gzDoomExec
+
         if files is None:
             files = []
         self._item = wx.ListItem()
