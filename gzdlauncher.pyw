@@ -14,6 +14,7 @@ import functions
 import aboutDialog
 import settings
 import gameTabConfig
+import updateGzdoom
 
 class MyListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
     def __init__(self, parent, ID, pos=wx.DefaultPosition,
@@ -118,15 +119,19 @@ class MyFrame(wx.Frame):
 
         self.ReadDB()
 
-        self.listRun[0].Select(0)
-        gameTab.SetSelection(0)
-        self.listRun[0].SetFocus()
-        self.listRun[0].Focus(0)
-
         panel.SetSizer(box)
         box.SetSizeHints(self)
         self.Centre()
         self.Show(True)
+
+        updateDialog = updateGzdoom.MyDialog(self, "Update GzDoom")
+        if not download.CheckGzDoomVersion():
+            updateDialog.ShowModal()
+
+        self.listRun[0].Select(0)
+        gameTab.SetSelection(0)
+        self.listRun[0].SetFocus()
+        self.listRun[0].Focus(0)
 
     def MenuCloseOnClick(self, event):
         try:

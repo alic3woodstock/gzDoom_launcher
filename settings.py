@@ -66,7 +66,6 @@ class MyDialog(wx.Dialog):
         boxV.SetSizeHints(self)
 
         settingsDb = gameDefDb.GameDefDb()
-
         checkUpdate = settingsDb.ReadConfig("checkupdate", "bool")
         self.chkCheckUpdates.SetValue(checkUpdate)
         tabConfigs = settingsDb.SelectAllGameTabConfigs()

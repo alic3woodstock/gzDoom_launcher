@@ -84,6 +84,8 @@ class GameDefDb:
         dataCon.Commit()
         dataCon.CloseConnection()
 
+        self.WriteConfig("checkupdate", True, "bool")
+
     def DeleteGameTable(self):
         dataCon = self.ConnectDb()
         dataCon.StartTransaction()
@@ -295,26 +297,12 @@ class GameDefDb:
 
 
     def UpdateGzdoomVersion(self, version, filehash):
-        dataCon = self.ConnectDb()
-        dataCon.StartTransaction()
-        sql = """REPLACE INTO gzdoom_version(id, version, sha256)
-        VALUES (?,?,?)"""
-        params = [1, version, filehash]
-        dataCon.ExecSQL(sql, params)
-        dataCon.Commit()
+        self.WriteConfig('gzdversion', version, 'text')
+        self.WriteConfig('gzdhash', filehash, 'text')
 
     def CheckGzDoomVersion(self, version, filehash):
-        dataCon = self.ConnectDb()
-        dataCon.StartTransaction()
-        dataVersion = '0'
-        dataHash = '0'
-        sql = """SELECT * FROM gzdoom_version WHERE id = ?"""
-        params = [1]
-        fileData = dataCon.ExecSQL(sql, params)
-        for data in fileData:
-            dataVersion = data[1]
-            dataHash = data[2]
-
+        dataVersion = self.ReadConfig('gzdversion','text')
+        dataHash = self.ReadConfig('gzdhash','text')
         if dataVersion == version and dataHash == filehash:
             return True
         else:
@@ -348,7 +336,7 @@ class GameDefDb:
             sql = """SELECT boolvalue"""
             defaultValue = False
         else:
-            sql = """SELECT textvalue"""
+            sql = """SELECT txtvalue"""
             defaultValue = ""
             
         sql += """ FROM config WHERE param = ?"""
@@ -374,7 +362,7 @@ class GameDefDb:
             if (value == ""):
                 value = False
         else:
-            sql += """textvalue)"""
+            sql += """txtvalue)"""
 
         sql += """ VALUES(?,?)"""
         params = [param, value]

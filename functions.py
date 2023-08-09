@@ -2,7 +2,7 @@ import logging
 import hashlib
 import os
 
-LOGLEVEL = logging.DEBUG
+LOGLEVEL = logging.ERROR
 FORMAT = '%(levelname)s: %(asctime)s - %(message)s'
 APPVERSION = "1.02.00"
 AUTHOR = "Copyright 2022-2023 © Alice Woodstock"

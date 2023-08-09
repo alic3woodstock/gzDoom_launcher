@@ -209,7 +209,6 @@ def UpdateGzDoom(parent, showMessage=True, progress=None):
     localHash = functions.filehash(localFileName)
 
     if (not os.path.isfile(localFileName)) or (not gameData.CheckGzDoomVersion(version, localHash)):
-        print(file.GetFilePath())
         GetFile(file, progress, False)
 
         if os.name == "nt":
@@ -237,7 +236,6 @@ def UpdateGzDoom(parent, showMessage=True, progress=None):
                         progress.Destroy()
                 except Exception as e:
                     functions.log(e)
-                    print("Copying gzdoom failed!")
             gameData.UpdateGzdoomVersion(version, localHash)
             if os.path.exists("temp"):
                 shutil.rmtree("temp")
@@ -255,3 +253,25 @@ def UpdateGzDoom(parent, showMessage=True, progress=None):
                 functions.log(e)
             wxdialogs.messageDialog(parent, "Gzdoom is already at latest version!", "Update Gzdoom",
                                     wx.ICON_INFORMATION)
+
+def CheckGzDoomVersion():
+    if not os.path.exists("downloads"):
+        os.mkdir("downloads")
+
+    if os.name == "nt":
+        filename = "gzdoom.zip"
+        localFileName = ".\\gzdoom\\gzdoom.exe"
+    else:
+        filename = "gzdoom.tar.xz"
+        localFileName = "./gzdoom/gzdoom"
+
+    if os.path.exists('downloads/' + filename):
+        os.remove('downloads/' + filename)
+
+    gzdoomUrl = GetGzDoomUrl()
+    url = gzdoomUrl[0]
+    version = gzdoomUrl[1]
+    file = Url(url, filename)
+    gameData = gameDefDb.GameDefDb()
+    localHash = functions.filehash(localFileName)
+    return (os.path.isfile(localFileName)) and (gameData.CheckGzDoomVersion(version, localHash))
