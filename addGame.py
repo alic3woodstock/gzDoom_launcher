@@ -258,7 +258,11 @@ class MyDialog(wx.Dialog):
         self.btnFindWad.Enable(not event.GetEventObject().IsChecked())
 
     def BtnFindExecOnClick(self, event):
-        exeFile = wx_dialogs.fileDialog(parent=self, title='Open', style=wx.FD_OPEN)
+        if os.name == "nt":
+            wcard = '*.exe'
+        else:
+            wcard = '*'
+        exeFile = wx_dialogs.fileDialog(parent=self, title='Open', wildcard=wcard, style=wx.FD_OPEN)
         try:
             exeP = exeFile.paths[0]  # if cancel rises an exception
             self.txtExec.Clear()
