@@ -170,8 +170,7 @@ def GetGzDoomUrl():
         start = tmpStr.lower().find('linux')
     start = tmpStr.find("/ZDoom/gzdoom/releases/download", start - 200, )
     tmpStr = tmpStr[start:]
-    end = tmpStr.lower().find(' rel=')
-    print(tmpStr[:end])
+    end = tmpStr.lower().find('" rel=')
 
     tmpStr = "https://github.com" + tmpStr[:end].strip()
     functions.log(tmpStr, False)
@@ -208,7 +207,6 @@ def UpdateGzDoom(parent, showMessage=True, progress=None):
     gzdoomUrl = GetGzDoomUrl()
     url = gzdoomUrl[0]
     version = gzdoomUrl[1]
-    print(gzdoomUrl)
     file = Url(url, filename)
     gameData = gameDefDb.GameDefDb()
     localHash = functions.filehash(localFileName)
@@ -237,8 +235,8 @@ def UpdateGzDoom(parent, showMessage=True, progress=None):
                                 shutil.rmtree(functions.gzDoomPath)
                             shutil.copytree(functions.tempDir + d, functions.gzDoomPath)
                     localHash = functions.filehash(localFileName)
-                    if showMessage:
-                        progress.Destroy()
+                    # if showMessage:
+                    #     progress.Destroy()
                 except Exception as e:
                     functions.log(e)
             gameData.UpdateGzdoomVersion(version, localHash)
@@ -252,12 +250,13 @@ def UpdateGzDoom(parent, showMessage=True, progress=None):
                 wxdialogs.alertDialog(parent, "Update filed, verify gzdoomLauncher.log form more details.", "Error")
     else:
         if showMessage:
-            try:
-                progress.Destroy()
-            except Exception as e:
-                functions.log(e)
             wxdialogs.messageDialog(parent, "Gzdoom is already at latest version!", "Update Gzdoom",
                                     wx.ICON_INFORMATION)
+    if showMessage:
+        try:
+            progress.Destroy()
+        except Exception as e:
+            functions.log(e)
 
 def CheckGzDoomVersion():
     if not os.path.exists(functions.downloadPath):

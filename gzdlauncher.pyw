@@ -125,9 +125,11 @@ class MyFrame(wx.Frame):
         self.Centre()
         self.Show(True)
 
-        updateDialog = updateGzdoom.MyDialog(self, "Update GzDoom")
-        if not download.CheckGzDoomVersion():
-            updateDialog.ShowModal()
+        settingsDb = gameDefDb.GameDefDb()
+        if settingsDb.ReadConfig("checkupdate", "bool"):
+            updateDialog = updateGzdoom.MyDialog(self, "Update GzDoom")
+            if not download.CheckGzDoomVersion():
+                updateDialog.ShowModal()
 
         self.listRun[0].Select(0)
         gameTab.SetSelection(0)

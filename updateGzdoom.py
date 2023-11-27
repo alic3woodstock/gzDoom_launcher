@@ -15,6 +15,7 @@ class MyDialog(wx.Dialog):
         self.chkCheckUpdates = wx.CheckBox(panel, label="Check for GZDoom updates on startup")
 
         # Bind Events
+        self.Bind(wx.EVT_CLOSE, self.OnClose, self)
         self.Bind(wx.EVT_BUTTON, self.BtnYesClick, btnYes)
         self.Bind(wx.EVT_BUTTON, self.BtnNoClick, btnNo)
 
@@ -35,10 +36,15 @@ class MyDialog(wx.Dialog):
         self.chkCheckUpdates.SetValue(checkUpdate)
 
     def BtnYesClick(self, event):
-        settingsDb = gameDefDb.GameDefDb()
-        settingsDb.WriteConfig("checkupdate", self.chkCheckUpdates.GetValue(), "bool")
         self.Close()
         download.UpdateGzDoom(self)
 
     def BtnNoClick(self, event):
         self.Close()
+
+    def OnClose(self, event):
+        try:
+            settingsDb = gameDefDb.GameDefDb()
+            settingsDb.WriteConfig("checkupdate", self.chkCheckUpdates.GetValue(), "bool")
+        finally:
+            event.Skip()
