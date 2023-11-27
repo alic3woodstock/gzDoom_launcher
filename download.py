@@ -161,15 +161,19 @@ def GetGzDoomUrl():
 
     r = requests.get(tmpStr)
     tmpStr = r.text
+
+    start = tmpStr.find("/ZDoom/gzdoom/releases/download")
+    tmpStr = tmpStr[start:]
     if os.name == "nt":
-        start = tmpStr.find('Windows-64bit.zip"')
-        start = tmpStr.find("/ZDoom/gzdoom/releases/download", start - 200, )
-        end = tmpStr.find('Windows-64bit.zip', start) + 17
+        start = tmpStr.lower().find('windows-64bit.zip')
     else:
-        start = tmpStr.find('LinuxPortable.tar.xz"')
-        start = tmpStr.find("/ZDoom/gzdoom/releases/download", start - 200, )
-        end = tmpStr.find('LinuxPortable.tar.xz', start) + 20
-    tmpStr = "https://github.com" + tmpStr[start:end].strip()
+        start = tmpStr.lower().find('linux')
+    start = tmpStr.find("/ZDoom/gzdoom/releases/download", start - 200, )
+    tmpStr = tmpStr[start:]
+    end = tmpStr.lower().find(' rel=')
+    print(tmpStr[:end])
+
+    tmpStr = "https://github.com" + tmpStr[:end].strip()
     functions.log(tmpStr, False)
     return [tmpStr, version]
 
@@ -204,6 +208,7 @@ def UpdateGzDoom(parent, showMessage=True, progress=None):
     gzdoomUrl = GetGzDoomUrl()
     url = gzdoomUrl[0]
     version = gzdoomUrl[1]
+    print(gzdoomUrl)
     file = Url(url, filename)
     gameData = gameDefDb.GameDefDb()
     localHash = functions.filehash(localFileName)
@@ -244,7 +249,7 @@ def UpdateGzDoom(parent, showMessage=True, progress=None):
                 wxdialogs.messageDialog(parent, "Gzdoom updated to version: " + version, "Update Gzdoom",
                                         wx.ICON_INFORMATION)
             else:
-                wxdialogs.alertDialog("Update filed, verify gzdoomLauncher.log form more details.", "Error")
+                wxdialogs.alertDialog(parent, "Update filed, verify gzdoomLauncher.log form more details.", "Error")
     else:
         if showMessage:
             try:
