@@ -17,6 +17,7 @@ modPath = "mods/"
 gzDoomExec = "gzdoom/gzdoom"
 logFile = "gzdlauncher.log"
 pentagram = "pentagrama.png"
+rootFolder = ""
 
 def log(text, error=True):
     logging.basicConfig(filename = logFile, encoding='utf-8', level=LOGLEVEL, format=FORMAT)
@@ -56,6 +57,7 @@ def setDataPath():
 
     dataPath = os.path.realpath(__file__)
     pentagram = dataPath.replace("functions.py", "pentagrama.png")
+    rootFolder = dataPath.replace("functions.py", "")
     dataPath = dataPath.replace("functions.py", "data")
 
     #global paths
