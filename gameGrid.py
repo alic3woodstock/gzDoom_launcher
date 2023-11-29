@@ -28,7 +28,7 @@ class GameGrid(TabbedPanelItem):
         gameButton.size_hint = (1, None)
         gameButton.height = 42
         gameButton.bind(state=self.btnCfg_on_state)
-
+        rectBtnActive(gameButton)
     def btnCfg_on_state(self, widget, state):
         if widget.state == 'down':
             for c in self.content.children:
