@@ -1,22 +1,24 @@
 import kivy
 import functions
+import os
 
 kivy.require('1.0.7')
 
 from kivy.app import App
-from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.stacklayout import StackLayout
-from kivy.uix.tabbedpanel import TabbedPanelHeader, TabbedPanelItem
-from kivy.uix.button import Button
-
-from kivyFunctions import rectBtnActive
-from kivy.graphics import Color, Rectangle
+from kivyFunctions import change_color
 from gameGrid import GameGrid
 from gameDef import GameDef
+from kivy.uix.anchorlayout import AnchorLayout
+from kivy.uix.tabbedpanel import TabbedPanelHeader, TabbedPanelItem
+from kivy.uix.button import Button
+from kivy.graphics import Color, Rectangle
+
 
 class FrmGzdlauncher(StackLayout):
     def on_kv_post(self, widget):
         pass
+
     def btnCfg_on_state(self, widget):
         panel = self.ids.panelSettings
         if widget.state == 'down':
@@ -27,13 +29,18 @@ class FrmGzdlauncher(StackLayout):
             panel.width = 0
             self.ids.btnManage.text = ''
             self.ids.btnReset.text = ''
-        rectBtnActive(widget)
 
     def btnManage_on_press(self, widget):
-        rectBtnActive(widget)
+        change_color(widget)
+
 
 class GzdLauncher(App):
     def build(self):
+        os.environ['KIVY_DEFAULT_FONT'] = ("[‘FreeMono’, "
+                                           "‘fonts/FreeMono.ttf’, "
+                                           "‘fonts/FreeMonoOblique.ttf’, "
+                                           "‘fonts/FreeMonoBold.ttf’, "
+                                           "‘fonts/FreeMonoBoldOblique.ttf’]")
         frmGzLauncher = FrmGzdlauncher()
         self.gameTabs = frmGzLauncher.ids.gameTabs
         return frmGzLauncher
@@ -46,11 +53,8 @@ class GzdLauncher(App):
         gameGrid = GameGrid()
         gameGrid.insertGame(GameDef(0, 1, 'Teste Game 1', 0))
         gameGrid.insertGame(GameDef(1, 2, 'Teste Game 2', 0))
-        gameGrid.test = 'Games'
+        gameGrid.text = 'Games'
         self.gameTabs.add_widget(gameGrid)
-
-
-
 
 
 if __name__ == '__main__':

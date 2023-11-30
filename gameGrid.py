@@ -2,7 +2,7 @@ from kivy.graphics import Color, Rectangle
 from kivy.uix.tabbedpanel import TabbedPanelItem
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.stacklayout import StackLayout
-from kivyFunctions import rectBtnActive
+from kivyFunctions import change_color
 
 class GameButton(ToggleButton):
     def __init__(self, game = None, **kwargs):
@@ -11,16 +11,13 @@ class GameButton(ToggleButton):
 
 class GameGrid(TabbedPanelItem):
     def __init__(self, **kwargs):
-        super(TabbedPanelItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.orientation = 'lr-tb'
         self.games = []
         self.container = StackLayout()
         self.container.orientation = 'lr-tb'
         self.add_widget(self.container)
-        # with self.canvas:
-        #     Color('white')
-        #     Rectangle(pos=self.pos, size=self.size)
-
+        change_color(self)
 
     def insertGame(self, game = None):
         gameButton = GameButton(game, text=game.name)
@@ -28,11 +25,11 @@ class GameGrid(TabbedPanelItem):
         gameButton.size_hint = (1, None)
         gameButton.height = 42
         gameButton.bind(state=self.btnCfg_on_state)
-        rectBtnActive(gameButton)
+        change_color(gameButton)
     def btnCfg_on_state(self, widget, state):
         if widget.state == 'down':
             for c in self.content.children:
                 if c != widget:
                     c.state = 'normal'
 
-        rectBtnActive(widget)
+        change_color(widget)

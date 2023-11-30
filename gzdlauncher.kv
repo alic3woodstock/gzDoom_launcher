@@ -1,109 +1,107 @@
 #:kivy 1.0
+#:import MyToggleButton,MyButton myButton.MyToggleButton
 
 <FrmGzdlauncher>:
-    anchor_y: 'top'
-    anchor_x: 'left'
+    orientation: 'lr-tb'
     BoxLayout:
-        orientation: 'vertical'
-        BoxLayout:
-            canvas:
-                Color:
-                    rgba: [0, 0, 0, 1]
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-                Color:
-                    rgba: [0.8, 0.8, 0.8, 1]
-                Rectangle:
-                    pos: (self.x, self.y)
-                    size: (self.width, 4)
-            id: mainMenu
-            orientation: 'horizontal'
-            size_hint: (1, None)
-            height: 42
-            padding: (0, 0, 2, 4)
-            ToggleButton:
-                id: btnCfg
-                background_color: 'black'
-                size_hint: (None, 1)
-                text: 'Config'
-                on_state: root.btnCfg_on_state(self)
+        canvas:
+            Color:
+                rgba: [0, 0, 0, 1]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+            Color:
+                rgba: [0.8, 0.8, 0.8, 1]
+            Rectangle:
+                pos: (self.x, self.y)
+                size: (self.width, 4)
+        id: mainMenu
+        orientation: 'horizontal'
+        size_hint: (1, None)
+        height: 42
+        padding: (0, 0, 2, 4)
+        MyToggleButton:
+            id: btnCfg
+            background_color: 'black'
+            size_hint: (None, 1)
+            text: 'Config'
+            on_state: root.btnCfg_on_state(self)
 
-        BoxLayout:
-            BoxLayout:
-                canvas:
-                    Color:
-                        rgba: [1, 1, 1, 1]
-                    Rectangle:
-                        pos: self.pos
-                        size: self.size
-                    Color:
-                        rgba: [0, 0, 0, 1]
-                    Rectangle:
-                        pos: (self.x + 4, self.y + 4)
-                        size: (self.width - 8, self.height - 4)
-
-                id: panelSettings
-                orientation: 'vertical'
-                size_hint: (None, 1)
-                width: 0
-                padding: [6, 4, 4, 4]
-                Button:
-                    id: btnManage
-                    background_color: 'black'
-                    text: ''
-                    size_hint: (1, None)
-                    height: 42
-                    on_state: root.btnManage_on_press(self)
-                Label:
-                    text: ''
-                    size_hint: (1, None)
-                    height: 2
-                    canvas:
-                        Color:
-                            rgba: [1, 1, 1, 1]
-                        Rectangle:
-                            pos: self.pos
-                            size: self.size
-                Button:
-                    id: btnReset
-                    background_color: 'black'
-                    text: ''
-                    size_hint: (1, None)
-                    height: 42
-                    on_state: root.btnManage_on_press(self)
-                Label:
-                    text: ''
-                    size_hint: (1, None)
-                    height: 2
-                    canvas:
-                        Color:
-                            rgba: [1, 1, 1, 1]
-                        Rectangle:
-                            pos: self.pos
-                            size: self.size
-
-                BoxLayout:
-
-            BoxLayout:
-                id: gamePanel
-                orientation: 'vertical'
-                canvas:
-                    Color:
-                        rgba: [1, 1, 1, 1]
-                    Rectangle:
-                        pos: self.pos
-                        size: (self.width, 4)
-                TabbedPanel:
-                    id: gameTabs
-                    do_default_tab: False
-
+    BoxLayout:
         BoxLayout:
             canvas:
                 Color:
                     rgba: [1, 1, 1, 1]
                 Rectangle:
                     pos: self.pos
+                    size: self.size
+                Color:
+                    rgba: [0, 0, 0, 1]
+                Rectangle:
+                    pos: (self.x + 4, self.y + 4)
+                    size: (self.width - 8, self.height - 4)
+
+            id: panelSettings
+            orientation: 'vertical'
+            size_hint: (None, 1)
+            width: 0
+            padding: [6, 4, 4, 4]
+            Button:
+                id: btnManage
+                background_color: 'black'
+                text: ''
+                size_hint: (1, None)
+                height: 42
+                on_state: root.btnManage_on_press(self)
+            Label:
+                text: ''
+                size_hint: (1, None)
+                height: 2
+                canvas:
+                    Color:
+                        rgba: [1, 1, 1, 1]
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+            Button:
+                id: btnReset
+                background_color: 'black'
+                text: ''
+                size_hint: (1, None)
+                height: 42
+                on_state: root.btnManage_on_press(self)
+            Label:
+                text: ''
+                size_hint: (1, None)
+                height: 2
+                canvas:
+                    Color:
+                        rgba: [1, 1, 1, 1]
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+
+            BoxLayout:
+
+        BoxLayout:
+            id: gamePanel
+            orientation: 'vertical'
+            canvas:
+                Color:
+                    rgba: [1, 1, 1, 1]
+                Rectangle:
+                    pos: self.pos
                     size: (self.width, 4)
-            size_hint: (1, None)
-            height: 64
+            TabbedPanel:
+                id: gameTabs
+                do_default_tab: False
+
+    BoxLayout:
+        canvas:
+            Color:
+                rgba: [1, 1, 1, 1]
+            Rectangle:
+                pos: self.pos
+                size: (self.width, 4)
+        size_hint: (1, None)
+        height: 64
