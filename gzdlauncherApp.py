@@ -21,6 +21,9 @@ class FrmGzdlauncher(StackLayout):
 
     def btnCfg_on_state(self, widget):
         panel = self.ids.panelSettings
+        topPanel = self.ids.mainMenu
+        print(panel.height)
+        print(topPanel.height)
         if widget.state == 'down':
             panel.width = 200
             self.ids.btnManage.text = 'Manage Games'
@@ -31,7 +34,7 @@ class FrmGzdlauncher(StackLayout):
             self.ids.btnReset.text = ''
 
     def btnManage_on_press(self, widget):
-        change_color(widget)
+        print('Manage Games 1')
 
 
 class GzdLauncher(App):

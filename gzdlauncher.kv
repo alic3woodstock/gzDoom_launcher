@@ -4,6 +4,7 @@
 <FrmGzdlauncher>:
     orientation: 'lr-tb'
     BoxLayout:
+        id: mainMenu
         canvas:
             Color:
                 rgba: [0, 0, 0, 1]
@@ -15,7 +16,6 @@
             Rectangle:
                 pos: (self.x, self.y)
                 size: (self.width, 4)
-        id: mainMenu
         orientation: 'horizontal'
         size_hint: (1, None)
         height: 42
@@ -27,8 +27,10 @@
             text: 'Config'
             on_state: root.btnCfg_on_state(self)
 
-    BoxLayout:
-        BoxLayout:
+    StackLayout:
+        StackLayout:
+            id: panelSettings
+            orientation: 'lr-tb'
             canvas:
                 Color:
                     rgba: [1, 1, 1, 1]
@@ -38,21 +40,19 @@
                 Color:
                     rgba: [0, 0, 0, 1]
                 Rectangle:
-                    pos: (self.x + 4, self.y + 4)
-                    size: (self.width - 8, self.height - 4)
+                    pos: (self.x + 4, self.y + 4 + mainMenu.height)
+                    size: (self.width - 8, self.height - 4 - mainMenu.height)
 
-            id: panelSettings
-            orientation: 'vertical'
             size_hint: (None, 1)
             width: 0
             padding: [6, 4, 4, 4]
-            Button:
+            MyButton:
                 id: btnManage
                 background_color: 'black'
                 text: ''
                 size_hint: (1, None)
                 height: 42
-                on_state: root.btnManage_on_press(self)
+                on_press: root.btnManage_on_press(self)
             Label:
                 text: ''
                 size_hint: (1, None)
@@ -63,7 +63,7 @@
                     Rectangle:
                         pos: self.pos
                         size: self.size
-            Button:
+            MyButton:
                 id: btnReset
                 background_color: 'black'
                 text: ''
@@ -81,11 +81,9 @@
                         pos: self.pos
                         size: self.size
 
-            BoxLayout:
-
-        BoxLayout:
+        StackLayout:
             id: gamePanel
-            orientation: 'vertical'
+            orientation: 'lr-tb'
             canvas:
                 Color:
                     rgba: [1, 1, 1, 1]
