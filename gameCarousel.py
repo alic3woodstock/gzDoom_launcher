@@ -48,6 +48,11 @@ class CarouselButton(ToggleButton):
         if self.state == 'normal':
             self.background_color = normal_color
             self.color = border_color
+            borders = GetBorders(self)
+            with self.canvas.after:
+                Color(border_color)
+                Line(points=[borders.top_left, borders.bottom_left, borders.bottom_right, borders.top_right],
+                     width=1)
         else:
             with self.canvas.after:
                 Color(border_color)
