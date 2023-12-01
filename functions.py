@@ -54,6 +54,7 @@ def setDataPath():
     global gzDoomExec
     global logFile
     global pentagram
+    global rootFolder
 
     dataPath = os.path.realpath(__file__)
     pentagram = dataPath.replace("functions.py", "pentagrama.png")

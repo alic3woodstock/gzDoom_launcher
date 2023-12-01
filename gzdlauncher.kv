@@ -1,25 +1,17 @@
 #:kivy 1.0
-#:import MyToggleButton,MyButton myButton.MyToggleButton
+#:import MyToggleButton,MyButtonBorder myButton.MyButtonBorder
+#:import MyStackLayout,MyBoxLayout myLayout.MyStackLayout
+#:import GameCarousel gameCarousel.GameCarousel
 
 <FrmGzdlauncher>:
-    orientation: 'lr-tb'
-    BoxLayout:
+    orientation: 'vertical'
+    padding: (1, 1)
+    MyStackLayout:
         id: mainMenu
-        canvas:
-            Color:
-                rgba: [0, 0, 0, 1]
-            Rectangle:
-                pos: self.pos
-                size: self.size
-            Color:
-                rgba: [0.8, 0.8, 0.8, 1]
-            Rectangle:
-                pos: (self.x, self.y)
-                size: (self.width, 4)
-        orientation: 'horizontal'
         size_hint: (1, None)
         height: 42
         padding: (0, 0, 2, 4)
+        borders: ['bottom']
         MyToggleButton:
             id: btnCfg
             background_color: 'black'
@@ -27,79 +19,46 @@
             text: 'Config'
             on_state: root.btnCfg_on_state(self)
 
-    StackLayout:
-        StackLayout:
+    BoxLayout:
+        id: mainBox
+        orientation: 'horizontal'
+        MyStackLayout:
             id: panelSettings
             orientation: 'lr-tb'
-            canvas:
-                Color:
-                    rgba: [1, 1, 1, 1]
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-                Color:
-                    rgba: [0, 0, 0, 1]
-                Rectangle:
-                    pos: (self.x + 4, self.y + 4 + mainMenu.height)
-                    size: (self.width - 8, self.height - 4 - mainMenu.height)
-
             size_hint: (None, 1)
             width: 0
-            padding: [6, 4, 4, 4]
-            MyButton:
+            padding: [2, 2, 2, 0]
+            borders: ['left', 'right', 'bottom']
+            MyButtonBorder:
                 id: btnManage
                 background_color: 'black'
                 text: ''
                 size_hint: (1, None)
                 height: 42
                 on_press: root.btnManage_on_press(self)
-            Label:
-                text: ''
-                size_hint: (1, None)
-                height: 2
-                canvas:
-                    Color:
-                        rgba: [1, 1, 1, 1]
-                    Rectangle:
-                        pos: self.pos
-                        size: self.size
-            MyButton:
+            MyButtonBorder:
                 id: btnReset
                 background_color: 'black'
                 text: ''
                 size_hint: (1, None)
                 height: 42
                 on_state: root.btnManage_on_press(self)
-            Label:
-                text: ''
-                size_hint: (1, None)
-                height: 2
-                canvas:
-                    Color:
-                        rgba: [1, 1, 1, 1]
-                    Rectangle:
-                        pos: self.pos
-                        size: self.size
 
-        StackLayout:
+        MyBoxLayout:
             id: gamePanel
-            orientation: 'lr-tb'
-            canvas:
-                Color:
-                    rgba: [1, 1, 1, 1]
-                Rectangle:
-                    pos: self.pos
-                    size: (self.width, 4)
-            TabbedPanel:
+            orientation: 'vertical'
+            borders: ['left', 'right', 'bottom']
+            GameCarousel:
                 id: gameTabs
                 do_default_tab: False
 
-    BoxLayout:
-        canvas:
-            Color:
-                rgba: [1, 1, 1, 1]
-            Rectangle:
-                pos: self.pos
-                size: (self.width, 4)
+    MyStackLayout:
         size_hint: (1, None)
         height: 64
+        orientation: 'rl-tb'
+        padding: (8, 10, 8, 8)
+        borders: ['left', 'right', 'bottom']
+        MyButtonBorder:
+            size_hint: (None, 1)
+            width: 128
+            text: 'Run Game'
