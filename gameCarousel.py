@@ -3,7 +3,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.togglebutton import ToggleButton
 from kivy.graphics import Color, Line, Callback, Rectangle
 from kivy.uix.label import CoreLabel
-from myLayout import MyStackLayout
+from myLayout import MyStackLayout, MyBoxLayout
 from kivyFunctions import border_color, normal_color, GetBorders
 from gameGrid import GameGrid
 from gameDefDb import GameDefDb
@@ -22,10 +22,9 @@ class GameCarousel(BoxLayout):
         self.add_widget(carousel)
         self.carousel = carousel
         self.topPanel = topPanel
-        self.gameTabs = []
 
     def add_tab(self, name, tabId=0):
-        index = len(self.gameTabs)
+        index = len(self.carousel.slides)
         btnTitle = CarouselButton(index)
         btnTitle.text = name
         btnTitle.width = 200
@@ -33,22 +32,23 @@ class GameCarousel(BoxLayout):
         btnTitle.bind(on_press=self.btnTitle_on_press)
         self.topPanel.add_widget(btnTitle)
         gameGrid = GameGrid()
-        self.carousel.add_widget(gameGrid)
-        self.gameTabs.append(GameTab(tabId, tabId, btnTitle, gameGrid))
+        gameTab = GameTab(tabId, tabId, btnTitle, gameGrid)
+        self.carousel.add_widget(gameTab)
 
     def select_tab(self, tabId):
-        for gameTab in self.gameTabs:
+        for gameTab in self.carousel.slides:
             if gameTab.tabId == tabId:
                 gameTab.btnTitle.state = 'down'
 
     def insert_game(self, game=None):
         if game:
-            for gameTab in self.gameTabs:
+            for gameTab in self.carousel.slides:
                 if gameTab.tabId == game.tab:
                     gameTab.gameGrid.insert_game(game)
 
     def clear_tabs(self):
-        self.gameTabs.clear()
+        self.carousel.clear_widgets()
+        self.topPanel.clear_widgets()
 
 
     def btnTitle_on_state(self, widget, state):
@@ -56,7 +56,7 @@ class GameCarousel(BoxLayout):
             for c in self.topPanel.children:
                 if c != widget:
                     c.state = 'normal'
-            self.carousel.load_slide(self.gameTabs[widget.tabIndex].gameGrid)
+            self.carousel.load_slide(self.carousel.slides[widget.tabIndex])
 
     def btnTitle_on_press(self, widget):
         if widget.state == 'normal':
@@ -100,12 +100,16 @@ class CarouselButton(ToggleButton):
                 text = label.texture
                 Rectangle(pos=self.pos, size=self.size, texture=text)
 
-class GameTab():
-    def __init__(self, tabId, tabIndex=0, btnTitle=None, grid=None):
+class GameTab(BoxLayout):
+    def __init__(self, tabId, tabIndex=0, btnTitle=None, grid=None, **kwargs):
+        super().__init__(**kwargs)
+        self.lineWidth = 1
+        self.padding = 16
         self.tabId = tabId # tab id in database
         self.tabIndex = tabIndex # tab index in carousel
         self.btnTitle = btnTitle
         self.gameGrid = grid
+        self.add_widget(grid)
         
 class MyCarousel(Carousel):
     def __init__(self, **kwargs):
@@ -113,7 +117,7 @@ class MyCarousel(Carousel):
 
     def on_index(self, *args):
         super().on_index(*args)
-        if self.parent.gameTabs and len(self.parent.gameTabs) > args[1]:
-            tab = self.parent.gameTabs[args[1]]
+        if len(self.slides) > 0:
+            tab = self.slides[args[1]]
             if tab.btnTitle.state == 'normal':
                 tab.btnTitle.state = 'down'

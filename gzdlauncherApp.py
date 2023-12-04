@@ -87,7 +87,6 @@ class GzdLauncher(App):
         self.icon = functions.pentagram
 
         self.ReadDB()
-        # self.ReadDB()
 
     def ReadDB(self):
         self.gameTabs.clear_tabs()

@@ -1,11 +1,13 @@
 from kivy.uix.layout import Layout
 from kivy.uix.stacklayout import StackLayout
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.scrollview import ScrollView
 from kivy.graphics import Color, Line, Callback
 from kivyFunctions import border_color, GetBorders
 
 class MyLayout(Layout):
     borders = ['top', 'left', 'bottom', 'right']
+    lineWidth = 2
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -26,7 +28,7 @@ class MyLayout(Layout):
                         points=[borderPos.top_left, borderPos.top_right]
                     else:
                         points=[borderPos.bottom_left, borderPos.bottom_right]
-                    Line(points=points, width=2)
+                    Line(points=points, width=self.lineWidth)
 
     def update_layout(self, instr):
         self.draw_border()

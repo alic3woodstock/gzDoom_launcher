@@ -43,6 +43,8 @@ class GameGrid(MyBoxLayout):
 
     def btnCfg_on_state(self, widget, state):
         if widget.state == 'down':
+            if self.container.height > self.height:
+                self.scroll.scroll_to(widget)
             for c in self.container.children:
                 if c != widget:
                     c.state = 'normal'
