@@ -15,7 +15,7 @@ class GameCarousel(BoxLayout):
         topPanel.size_hint = (1, None)
         topPanel.height = 64
         topPanel.padding = (8, 18, 8, 0)
-        carousel = Carousel()
+        carousel = MyCarousel()
         self.orientation = 'vertical'
         self.add_widget(topPanel)
         self.add_widget(carousel)
@@ -105,3 +105,14 @@ class GameTab():
         self.tabIndex = tabIndex # tab index in carousel
         self.btnTitle = btnTitle
         self.gameGrid = grid
+        
+class MyCarousel(Carousel):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def on_index(self, *args):
+        super().on_index(*args)
+        if self.parent.gameTabs and len(self.parent.gameTabs) > args[1]:
+            tab = self.parent.gameTabs[args[1]]
+            if tab.btnTitle.state == 'normal':
+                tab.btnTitle.state = 'down'
