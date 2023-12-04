@@ -11,6 +11,7 @@ from kivy.graphics import Color, Line, Callback
 from gameGrid import GameGrid
 from gameDef import GameDef
 from kivyFunctions import border_color, GetBorders
+from gameDefDb import GameDefDb
 
 
 class FrmGzdlauncher(BoxLayout):
@@ -57,7 +58,21 @@ class GzdLauncher(App):
         self.title = "GZDoom Launcher"
         self.icon = functions.pentagram
 
-        self.gameTabs.AddTab('Testamento Longo')
+        self.ReadDB()
+
+    def ReadDB(self):
+        self.gameTabs.clear_tabs()
+        gameData = GameDefDb()
+        dbTabs = gameData.SelectAllGameTabConfigs()
+        games = gameData.SelectAllGames()
+        for tab in dbTabs:
+            if tab.IsEnabled():
+                self.gameTabs.add_tab(tab.GetName(), tab.GetIndex())
+
+        for game in games:
+            self.gameTabs.insert_game(game)
+
+        self.gameTabs.select_tab(0)
 
 if __name__ == '__main__':
     GzdLauncher().run()

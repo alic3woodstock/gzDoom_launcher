@@ -19,14 +19,17 @@ class GameGrid(BoxLayout):
         self.add_widget(self.container)
         # kivyFunctions.change_color(self, use_alternative_color=True)
 
-    def insertGame(self, game=None):
+    def insert_game(self, game=None):
         gameButton = GameButton(game, text=game.name)
         self.container.add_widget(gameButton)
         gameButton.size_hint = (1, None)
         gameButton.height = 42
         gameButton.bind(state=self.btnCfg_on_state)
-        self.background_color = [0, 0, 0, 0]
+        gameButton.bind(on_press=self.btnCfg_on_press)
+        # self.background_color = [0, 0, 0, 0]
         change_color(gameButton)
+        if len(self.container.children) == 1:
+            gameButton.state = 'down'
 
     def btnCfg_on_state(self, widget, state):
         if widget.state == 'down':
@@ -35,6 +38,11 @@ class GameGrid(BoxLayout):
                     c.state = 'normal'
 
         change_color(widget)
+
+    def btnCfg_on_press(self, widget):
+        if widget.state == 'normal':
+            widget.state = 'down'
+
 
     def on_state(self, widget, state):
         if widget.state == 'normal':

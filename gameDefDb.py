@@ -128,10 +128,10 @@ class GameDefDb:
         for game in gameData:
             g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6], [], game[7],
                                 game[8])
-            g.SetFiles([])
+            g.files = []
             fileData = dataCon.ExecSQL("""SELECT file FROM files WHERE gameid = ?""", [game[0]])
             for f in fileData:
-                g.GetFiles().append(f[0])
+                g.files.append(f[0])
             games.append(g)
         dataCon.CloseConnection()
         return games
