@@ -31,11 +31,15 @@ class FrmGzdlauncher(BoxLayout):
             gameTabs.carousel.load_previous()
         elif keycode[1] == 'right':
             gameTabs.carousel.load_next()
+        elif keycode[1] == 'down':
+            gameTabs.carousel.current_slide.children[0].load_next_game()
+        elif keycode[1] == 'up':
+            gameTabs.carousel.current_slide.children[0].load_previous_game()
 
         # Keycode is composed of an integer + a string
         # If we hit escape, release the keyboard
         if keycode[1] == 'escape':
-            keyboard.release()
+            exit()
 
         # Return True to accept the key. Otherwise, it will be used by
         # the system.
@@ -83,6 +87,7 @@ class GzdLauncher(App):
         self.icon = functions.pentagram
 
         self.ReadDB()
+        # self.ReadDB()
 
     def ReadDB(self):
         self.gameTabs.clear_tabs()
