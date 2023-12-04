@@ -16,6 +16,7 @@ class GameCarousel(BoxLayout):
         topPanel.height = 64
         topPanel.padding = (8, 18, 8, 0)
         carousel = MyCarousel()
+        carousel.anim_move_duration = 0.3
         self.orientation = 'vertical'
         self.add_widget(topPanel)
         self.add_widget(carousel)

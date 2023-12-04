@@ -26,10 +26,11 @@ class FrmGzdlauncher(BoxLayout):
         self._keyboard = None
 
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+        gameTabs = self.ids.gameTabs
         if keycode[1] == 'left':
-            print('left')
+            gameTabs.carousel.load_previous()
         elif keycode[1] == 'right':
-            print('right')
+            gameTabs.carousel.load_next()
 
         # Keycode is composed of an integer + a string
         # If we hit escape, release the keyboard
