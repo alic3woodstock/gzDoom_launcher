@@ -117,14 +117,18 @@ class GameDefDb:
         dataCon.Commit()
         dataCon.CloseConnection()
 
-    def SelectAllGames(self):
+    def SelectAllGames(self, desc=False):
         games = []
 
         dataCon = self.ConnectDb()
-        gameData = dataCon.ExecSQL("""SELECT a.id, a.name, a.tabindex, a.gamexec, a.modgroup, a.lastrunmod, 
+        sql = """SELECT a.id, a.name, a.tabindex, a.gamexec, a.modgroup, a.lastrunmod, 
             a.iwad, b.groupname, a.cmdparams 
             FROM gamedef a LEFT JOIN groups b ON b.id = a.modgroup 
-            ORDER BY tabindex,name;""")
+            ORDER BY tabindex,name"""
+        if desc:
+            sql += """ DESC"""
+
+        gameData = dataCon.ExecSQL(sql)
         for game in gameData:
             g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6], [], game[7],
                                 game[8])

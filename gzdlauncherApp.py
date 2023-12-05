@@ -35,6 +35,10 @@ class FrmGzdlauncher(BoxLayout):
             gameTabs.carousel.current_slide.children[0].load_next_game()
         elif keycode[1] == 'up':
             gameTabs.carousel.current_slide.children[0].load_previous_game()
+        elif keycode[1] == 'pagedown':
+            gameTabs.carousel.current_slide.children[0].page_down()
+        elif keycode[1] == 'pageup':
+            gameTabs.carousel.current_slide.children[0].page_up()
 
         # Keycode is composed of an integer + a string
         # If we hit escape, release the keyboard
@@ -92,7 +96,7 @@ class GzdLauncher(App):
         self.gameTabs.clear_tabs()
         gameData = GameDefDb()
         dbTabs = gameData.SelectAllGameTabConfigs()
-        games = gameData.SelectAllGames()
+        games = gameData.SelectAllGames(desc=True)
         for tab in dbTabs:
             if tab.IsEnabled():
                 self.gameTabs.add_tab(tab.GetName(), tab.GetIndex())
