@@ -51,19 +51,18 @@ class GameGrid(MyBoxLayout):
             for c in self.container.children:
                 if c != widget:
                     c.state = 'normal'
+            self.on_change_selection(widget)
 
         change_color(widget)
+
 
     def btnCfg_on_press(self, widget):
         if widget.state == 'normal':
             widget.state = 'down'
 
+    def on_change_selection(self, widget):
+        pass
 
-    def on_state(self, widget, state):
-        if widget.state == 'normal':
-            self.background_color = 'black'
-        else:
-            self.background_color = 'white'
 
     def get_game_btn(self):
         for gameBtn in self.container.children:

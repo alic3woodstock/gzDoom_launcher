@@ -56,6 +56,7 @@ class GameCarousel(BoxLayout):
         btnTitle.bind(on_press=self.btnTitle_on_press)
         self.topPanel.add_widget(btnTitle)
         gameGrid = GameGrid()
+        gameGrid.on_change_selection = self.grid_on_change_selection
         gameTab = GameTab(tabId, tabId, btnTitle, gameGrid)
         self.carousel.add_widget(gameTab)
 
@@ -67,10 +68,7 @@ class GameCarousel(BoxLayout):
     def insert_game(self, game=None):
         if game:
             if game.tab < 0:
-                modButton = ModButton(game)
                 self.modList.append(game)
-                self.dropDown.add_widget(modButton)
-                modButton.bind(on_press=self.btnDrop_on_press)
             else:
                 for gameTab in self.carousel.slides:
                     if gameTab.tabId == game.tab:
@@ -99,20 +97,23 @@ class GameCarousel(BoxLayout):
     def dropDown_on_select(self, widget, data):
         self.mainBtnDrop.text = data.name
         self.mainBtnDrop.game = data
-        tmpGameList = []
-        for tmpGame in self.modList:
-            if not tmpGame == data:
-                tmpGameList.append(tmpGame)
-        i = 0
-        for gameBtn in widget.children[0].children:
-            gameBtn.game = tmpGameList[i]
-            gameBtn.text = gameBtn.game.name
-            i += 1
 
-        print(tmpGameList)
+    def grid_on_change_selection(self, widget):
+        self.dropDown.clear_widgets()
 
-        print(widget.children[0].children)
+        modButton = ModButton(self.modList[0])
+        modButton.bind(on_press=self.btnDrop_on_press)
+        self.dropDown.add_widget(modButton)
 
+        for game in self.modList:
+            if not game == self.modList[0]:
+                if game.group.GetGroupId() == widget.game.group.GetGroupId():
+                    modButton = ModButton(game)
+                    modButton.bind(on_press=self.btnDrop_on_press)
+                    self.dropDown.add_widget(modButton)
+
+        self.mainBtnDrop.game = self.modList[0]
+        self.mainBtnDrop.text = self.modList[0].name
 
 class CarouselButton(ToggleButton):
 
