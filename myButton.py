@@ -25,6 +25,7 @@ class MyToggleButton(ToggleButtonBehavior, MyButton):
 class MyButtonBorder(MyButton):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.size_hint = (1, None)
         self.canvas.add(Callback(self.update_button))
 
     def draw_border(self, value=0):

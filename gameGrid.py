@@ -7,11 +7,13 @@ from kivy.uix.scrollview import ScrollView
 from myLayout import MyBoxLayout
 from kivyFunctions import change_color
 
+button_height = 42
 
 class GameButton(ToggleButton):
     def __init__(self, game=None, **kwargs):
         super(ToggleButton, self).__init__(**kwargs)
         self.game = game
+        self.size_hint = (1, None)
 
 
 class GameGrid(MyBoxLayout):
@@ -33,8 +35,7 @@ class GameGrid(MyBoxLayout):
     def insert_game(self, game=None):
         gameButton = GameButton(game, text=game.name)
         self.container.add_widget(gameButton)
-        gameButton.size_hint = (1, None)
-        gameButton.height = 42
+        gameButton.height = button_height
         self.container.height += gameButton.height
         gameButton.bind(state=self.btnCfg_on_state)
         gameButton.bind(on_press=self.btnCfg_on_press)
@@ -62,7 +63,6 @@ class GameGrid(MyBoxLayout):
         if widget.state == 'normal':
             self.background_color = 'black'
         else:
-            self.background_color = [0.5, 0.5, 0.5]
             self.background_color = 'white'
 
     def get_game_btn(self):
@@ -78,7 +78,6 @@ class GameGrid(MyBoxLayout):
 
     def select_game_index(self, index):
         if index < len(self.container.children) and index >= 0:
-            print(index)
             self.container.children[index].state = 'down'
 
     def load_next_game(self):
@@ -92,9 +91,9 @@ class GameGrid(MyBoxLayout):
             self.select_game_index(index - 1)
 
     def page_down(self):
-        sBottom = self.scroll.viewport_size[1] / 42
+        sBottom = self.scroll.viewport_size[1] / button_height
         sBottom = round(self.scroll.vbar[0] * sBottom)
-        qtdByView = round(self.scroll.height / 42)
+        qtdByView = round(self.scroll.height / button_height)
         if sBottom <= 0:
             self.select_game_index(len(self.container.children) - 1)
         else:
@@ -109,9 +108,9 @@ class GameGrid(MyBoxLayout):
                 self.select_game_index(index2)
 
     def page_up(self):
-        sBottom = self.scroll.viewport_size[1] / 42
+        sBottom = self.scroll.viewport_size[1] / button_height
         sBottom = round(self.scroll.vbar[0] * sBottom)
-        qtdByView = round(self.scroll.height / 42)
+        qtdByView = round(self.scroll.height / button_height)
         sTop = len(self.container.children) - sBottom - qtdByView
         if sTop <= 0:
             self.select_game_index(0)

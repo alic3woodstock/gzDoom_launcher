@@ -1,12 +1,16 @@
 from kivy.uix.carousel import Carousel
+from kivy.uix.carousel import Carousel
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.togglebutton import ToggleButton
 from kivy.graphics import Color, Line, Callback, Rectangle
-from kivy.uix.label import CoreLabel
-from myLayout import MyStackLayout, MyBoxLayout
+from kivy.uix.label import CoreLabel, Label
+from kivy.uix.dropdown import DropDown
+
+from myLayout import MyStackLayout
 from kivyFunctions import border_color, normal_color, GetBorders
-from gameGrid import GameGrid
-from gameDefDb import GameDefDb
+from gameGrid import GameGrid, button_height
+from myButton import MyButtonBorder
+from gameDef import GameDef
 
 class GameCarousel(BoxLayout):
     def __init__(self, **kwargs):
@@ -17,11 +21,31 @@ class GameCarousel(BoxLayout):
         topPanel.padding = (8, 18, 8, 0)
         carousel = MyCarousel()
         carousel.anim_move_duration = 0.3
+        spinnerBox = BoxLayout()
+        spinnerBox.padding = [7, 0, 15, 16]
+        spinnerBox.size_hint = (1, None)
+        spinnerBox.height = button_height + spinnerBox.padding[3]
+        label = Label(text='Mod:')
+        label.size_hint = (None, 1)
+        print(label.texture_size)
+        spinnerBox.add_widget(label)
+        dropDown = DropDown()
+        dropDown.size_hint = (1, None)
+        dropDown.sync_height = True
+        dropDown.height = button_height
+        dropDown.bind(on_select=self.dropDown_on_select)
+        mainBtnDrop = ModButton(GameDef(0, '-- None --', -1), text='None', height=button_height)
+        self.modList = [mainBtnDrop.game]
+        mainBtnDrop.bind(on_release=dropDown.open)
+        spinnerBox.add_widget(mainBtnDrop)
         self.orientation = 'vertical'
         self.add_widget(topPanel)
         self.add_widget(carousel)
+        self.add_widget(spinnerBox)
         self.carousel = carousel
         self.topPanel = topPanel
+        self.dropDown = dropDown
+        self.mainBtnDrop = mainBtnDrop
 
     def add_tab(self, name, tabId=0):
         index = len(self.carousel.slides)
@@ -42,9 +66,15 @@ class GameCarousel(BoxLayout):
 
     def insert_game(self, game=None):
         if game:
-            for gameTab in self.carousel.slides:
-                if gameTab.tabId == game.tab:
-                    gameTab.gameGrid.insert_game(game)
+            if game.tab < 0:
+                modButton = ModButton(game)
+                self.modList.append(game)
+                self.dropDown.add_widget(modButton)
+                modButton.bind(on_press=self.btnDrop_on_press)
+            else:
+                for gameTab in self.carousel.slides:
+                    if gameTab.tabId == game.tab:
+                        gameTab.gameGrid.insert_game(game)
 
     def clear_tabs(self):
         self.carousel.clear_widgets()
@@ -57,10 +87,32 @@ class GameCarousel(BoxLayout):
                 if c != widget:
                     c.state = 'normal'
             self.carousel.load_slide(self.carousel.slides[widget.tabIndex])
+            # print(self.dropDown.children)
 
     def btnTitle_on_press(self, widget):
         if widget.state == 'normal':
             widget.state = 'down'
+
+    def btnDrop_on_press(self, widget):
+        self.dropDown.select(widget.game)
+
+    def dropDown_on_select(self, widget, data):
+        self.mainBtnDrop.text = data.name
+        self.mainBtnDrop.game = data
+        tmpGameList = []
+        for tmpGame in self.modList:
+            if not tmpGame == data:
+                tmpGameList.append(tmpGame)
+        i = 0
+        for gameBtn in widget.children[0].children:
+            gameBtn.game = tmpGameList[i]
+            gameBtn.text = gameBtn.game.name
+            i += 1
+
+        print(tmpGameList)
+
+        print(widget.children[0].children)
+
 
 class CarouselButton(ToggleButton):
 
@@ -121,3 +173,11 @@ class MyCarousel(Carousel):
             tab = self.slides[args[1]]
             if tab.btnTitle.state == 'normal':
                 tab.btnTitle.state = 'down'
+
+class ModButton(MyButtonBorder):
+    def __init__(self, game, **kwargs):
+        super().__init__(**kwargs)
+        self.game = game
+        self.height = button_height
+        if game:
+            self.text = game.name
