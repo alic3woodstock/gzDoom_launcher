@@ -65,6 +65,9 @@ class GameGrid(MyBoxLayout):
             if gameBtn.state == 'down':
                 return gameBtn
 
+    def get_game(self):
+        return self.get_game_btn().game
+
     def get_index(self):
         if len(self.container.children) > 0:
             for i in range(len(self.container.children)):

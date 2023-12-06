@@ -2,6 +2,7 @@ import kivy
 import kivy
 import functions
 import os
+import subprocess
 
 kivy.require('2.1.0')
 
@@ -41,6 +42,8 @@ class FrmGzdlauncher(BoxLayout):
             gameTabs.carousel.current_slide.children[0].page_up()
         elif keycode[1] == 'spacebar':
             gameTabs.spacebar()
+        elif keycode[1] == 'enter':
+            self.run_game()
 
         # Keycode is composed of an integer + a string
         # If we hit escape, release the keyboard
@@ -74,6 +77,31 @@ class FrmGzdlauncher(BoxLayout):
     def btnManage_on_press(self, widget):
         print('Manage Games 1')
 
+    def btnRun_on_press(self, widget):
+        self.run_game()
+
+    def run_game(self):
+        gameTabs = self.ids.gameTabs
+        game = gameTabs.get_run_params()
+        if game[0]:
+            command = [functions.gzDoomExec]
+            if game[0].iWad.strip() != "":
+                command.append('-iwad')
+                command.append(game[0].iWad.strip())
+
+            for file in game[0].files:
+                command.append('-file')
+                command.append(file.strip())
+
+            if game[1]:
+                for file in game[1].files:
+                    command.append('-file')
+                    command.append(file.strip())
+
+            for cmd in list(game[0].cmdParams):
+                command.append(cmd)
+
+            subprocess.run(command, shell=True)
 
 
 class GzdLauncher(App):

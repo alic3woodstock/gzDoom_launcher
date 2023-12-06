@@ -67,6 +67,7 @@ class GameCarousel(BoxLayout):
         for gameTab in self.carousel.slides:
             if gameTab.tabId == tabId:
                 gameTab.btnTitle.state = 'down'
+                self.carousel.on_index()
 
     def insert_game(self, game=None):
         if game:
@@ -143,6 +144,9 @@ class GameCarousel(BoxLayout):
                 else:
                     self.dropDown.select(btn[gameCount - 1].game)
                 return
+
+    def get_run_params(self):
+        return [self.carousel.current_slide.gameGrid.get_game(), self.mainBtnDrop.game]
 
 class CarouselButton(ToggleButton):
 
