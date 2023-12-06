@@ -3,6 +3,7 @@ from kivy.uix.stacklayout import StackLayout
 from kivy.uix.scrollview import ScrollView
 from myLayout import MyBoxLayout
 from kivyFunctions import change_color, button_height
+from gameDef import GameDef
 
 
 class GameButton(ToggleButton):
@@ -26,9 +27,15 @@ class GameGrid(MyBoxLayout):
         self.container.height = 0
         self.scroll.add_widget(self.container)
         self.add_widget(self.scroll)
+        self.empty_game = GameDef(id=0, name='Empty Tab', tab=-2)
+        self.empty_game.exec = ''
+        self.insert_game(self.empty_game)
         # kivyFunctions.change_color(self, use_alternative_color=True)
 
     def insert_game(self, game=None):
+        if self.empty_game and game != self.empty_game:
+            self.remove_game(self.empty_game)
+            self.empty_game = None
         gameButton = GameButton(game, text=game.name)
         self.container.add_widget(gameButton)
         gameButton.height = button_height
@@ -121,3 +128,9 @@ class GameGrid(MyBoxLayout):
                     self.select_game_index(0)
             else:
                 self.select_game_index(sTop)
+
+    def remove_game(self, game):
+        for btn in self.container.children:
+            if game == btn.game:
+                self.container.remove_widget(btn)
+                self.container.height = button_height * len(self.container.children)

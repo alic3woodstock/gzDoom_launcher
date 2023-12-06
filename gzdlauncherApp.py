@@ -43,7 +43,7 @@ class FrmGzdlauncher(BoxLayout):
         elif keycode[1] == 'spacebar':
             gameTabs.spacebar()
         elif keycode[1] == 'enter':
-            self.run_game()
+            self.run_game(gameTabs.get_run_params())
 
         # Keycode is composed of an integer + a string
         # If we hit escape, release the keyboard
@@ -78,30 +78,51 @@ class FrmGzdlauncher(BoxLayout):
         print('Manage Games 1')
 
     def btnRun_on_press(self, widget):
-        self.run_game()
+        self.run_game(self.ids.gameTabs.get_run_params())
 
-    def run_game(self):
-        gameTabs = self.ids.gameTabs
-        game = gameTabs.get_run_params()
+    def run_game(self, game):
         if game[0]:
-            command = [functions.gzDoomExec]
-            if game[0].iWad.strip() != "":
-                command.append('-iwad')
-                command.append(game[0].iWad.strip())
+            command = []
+            if game[0].exec.strip() != "":
+                command.append(game[0].exec)
 
-            for file in game[0].files:
-                command.append('-file')
-                command.append(file.strip())
+                if game[0].iWad.strip() != "":
+                    command.append('-iwad')
+                    command.append(game[0].iWad.strip())
 
-            if game[1]:
-                for file in game[1].files:
+                for file in game[0].files:
                     command.append('-file')
                     command.append(file.strip())
 
-            for cmd in list(game[0].cmdParams):
-                command.append(cmd)
+                if game[1]:
+                    for file in game[1].files:
+                        command.append('-file')
+                        command.append(file.strip())
 
-            subprocess.run(command, shell=True)
+                for cmd in list(game[0].cmdParams):
+                    command.append(cmd)
+
+                if len(command) > 0:
+                    result = subprocess.run(command, shell=True)
+                    if result.returncode == 0:
+                        gameDefDb = GameDefDb()
+                        gameDefDb.UpdateLastRunMod(game[0], game[1])
+                        game[0].lastMod = game[1].id
+
+    def ReadDB(self):
+        gameTabs = self.ids.gameTabs
+        gameTabs.clear_tabs()
+        gameData = GameDefDb()
+        dbTabs = gameData.SelectAllGameTabConfigs()
+        games = gameData.SelectAllGames(desc=True)
+        for tab in dbTabs:
+            if tab.IsEnabled():
+                gameTabs.add_tab(tab.GetName(), tab.GetIndex())
+
+        for game in games:
+            gameTabs.insert_game(game)
+
+        gameTabs.select_tab(0)
 
 
 class GzdLauncher(App):
@@ -111,30 +132,15 @@ class GzdLauncher(App):
                                            "‘fonts/FreeMonoOblique.ttf’, "
                                            "‘fonts/FreeMonoBold.ttf’, "
                                            "‘fonts/FreeMonoBoldOblique.ttf’]")
-        frmGzLauncher = FrmGzdlauncher()
-        self.gameTabs = frmGzLauncher.ids.gameTabs
-        return frmGzLauncher
+        self.frmGzLauncher = FrmGzdlauncher()
+        return self.frmGzLauncher
 
     def on_start(self):
         functions.setDataPath()
         self.title = "GZDoom Launcher"
         self.icon = functions.pentagram
+        self.frmGzLauncher.ReadDB()
 
-        self.ReadDB()
-
-    def ReadDB(self):
-        self.gameTabs.clear_tabs()
-        gameData = GameDefDb()
-        dbTabs = gameData.SelectAllGameTabConfigs()
-        games = gameData.SelectAllGames(desc=True)
-        for tab in dbTabs:
-            if tab.IsEnabled():
-                self.gameTabs.add_tab(tab.GetName(), tab.GetIndex())
-
-        for game in games:
-            self.gameTabs.insert_game(game)
-
-        self.gameTabs.select_tab(0)
 
 if __name__ == '__main__':
     GzdLauncher().run()

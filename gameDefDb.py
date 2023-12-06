@@ -143,8 +143,7 @@ class GameDefDb:
     def UpdateLastRunMod(self, game, mod):
         dataCon = self.ConnectDb()
         dataCon.StartTransaction()
-        dataCon.ExecSQL("""UPDATE gamedef SET lastrunmod=? WHERE id=?""", [mod.GetItem().GetData(),
-                                                                           game.GetItem().GetData()])
+        dataCon.ExecSQL("""UPDATE gamedef SET lastrunmod=? WHERE id=?""", [mod.id, game.id])
         dataCon.Commit()
 
     def DeleteGame(self, game):

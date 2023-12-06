@@ -117,18 +117,19 @@ class GameCarousel(BoxLayout):
         modButton.bind(on_press=self.btnDrop_on_press)
         self.dropDown.add_widget(modButton)
 
-        for game in self.modList:
-            if game.group.GetGroupId() == widget.game.group.GetGroupId():
-                modButton = ModButton(game)
-                modButton.bind(on_press=self.btnDrop_on_press)
-                self.dropDown.add_widget(modButton)
-
-        if widget and widget.game.lastMod > 0:
+        if widget:
             for game in self.modList:
-                if game.id == widget.game.lastMod:
-                    self.mainBtnDrop.game = game
-                    self.mainBtnDrop.text = game.name
-                    return
+                if game.group.GetGroupId() == widget.game.group.GetGroupId():
+                    modButton = ModButton(game)
+                    modButton.bind(on_press=self.btnDrop_on_press)
+                    self.dropDown.add_widget(modButton)
+
+            if widget.game.lastMod > 0:
+                for game in self.modList:
+                    if game.id == widget.game.lastMod:
+                        self.mainBtnDrop.game = game
+                        self.mainBtnDrop.text = game.name
+                        return
 
         self.mainBtnDrop.game = self.noMod
         self.mainBtnDrop.text = self.noMod.name
@@ -227,5 +228,6 @@ class MainModButton(DropMainButton):
 class MyCarousel(Carousel):
     def on_index(self, *args):
         super().on_index(*args)
-        self.parent.grid_on_change_selection(self.current_slide.gameGrid.get_game_btn())
-        self.current_slide.btnTitle.state = 'down'
+        if self.current_slide:
+            self.parent.grid_on_change_selection(self.current_slide.gameGrid.get_game_btn())
+            self.current_slide.btnTitle.state = 'down'
