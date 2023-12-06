@@ -39,6 +39,8 @@ class FrmGzdlauncher(BoxLayout):
             gameTabs.carousel.current_slide.children[0].page_down()
         elif keycode[1] == 'pageup':
             gameTabs.carousel.current_slide.children[0].page_up()
+        elif keycode[1] == 'spacebar':
+            gameTabs.spacebar()
 
         # Keycode is composed of an integer + a string
         # If we hit escape, release the keyboard

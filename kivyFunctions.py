@@ -19,3 +19,6 @@ def change_color(widget):
         widget.background_color = highlight_color
         # widget.color = 'white'
     widget.color = 'white'
+
+
+button_height = 42

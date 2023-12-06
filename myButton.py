@@ -45,3 +45,14 @@ class MyButtonBorder(MyButton):
         self.canvas.ask_update()
 
 
+class DropMainButton(ToggleButtonBehavior, MyButtonBorder):
+
+    def draw_border(self, value=0):
+        super().draw_border(value)
+        with self.canvas.after:
+            Color(kivyFunctions.border_color)
+            center = self.y + self.height // 2
+            point1 = (self.x + self.width - 32, center + 4)
+            point2 = (self.x + self.width - 24, center - 4)
+            point3 = (self.x + self.width - 16, center + 4)
+            Line(points=[point1, point2, point3], width=1.5)

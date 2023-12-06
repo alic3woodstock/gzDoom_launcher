@@ -7,9 +7,9 @@ from kivy.uix.label import CoreLabel, Label
 from kivy.uix.dropdown import DropDown
 
 from myLayout import MyStackLayout
-from kivyFunctions import border_color, normal_color, GetBorders
-from gameGrid import GameGrid, button_height
-from myButton import MyButtonBorder
+from kivyFunctions import border_color, normal_color, GetBorders, button_height
+from gameGrid import GameGrid
+from myButton import MyButtonBorder, DropMainButton
 from gameDef import GameDef
 
 class GameCarousel(BoxLayout):
@@ -34,9 +34,12 @@ class GameCarousel(BoxLayout):
         dropDown.sync_height = True
         dropDown.height = button_height
         dropDown.bind(on_select=self.dropDown_on_select)
-        mainBtnDrop = ModButton(GameDef(0, '-- None --', -1), text='None', height=button_height)
-        self.modList = [mainBtnDrop.game]
+        dropDown.bind(on_dismiss=self.dropDown_on_dismiss)
+        mainBtnDrop = MainModButton(game=GameDef(0, '-- None --', -1), text='None',
+                                    height=button_height)
         mainBtnDrop.bind(on_release=dropDown.open)
+        self.noMod = mainBtnDrop.game
+        self.modList = []
         spinnerBox.add_widget(mainBtnDrop)
         self.orientation = 'vertical'
         self.add_widget(topPanel)
@@ -69,10 +72,14 @@ class GameCarousel(BoxLayout):
         if game:
             if game.tab < 0:
                 self.modList.append(game)
+                self.modList.sort(key=self.list_sort)
             else:
                 for gameTab in self.carousel.slides:
                     if gameTab.tabId == game.tab:
                         gameTab.gameGrid.insert_game(game)
+
+    def list_sort(self, game):
+        return game.name
 
     def clear_tabs(self):
         self.carousel.clear_widgets()
@@ -97,23 +104,45 @@ class GameCarousel(BoxLayout):
     def dropDown_on_select(self, widget, data):
         self.mainBtnDrop.text = data.name
         self.mainBtnDrop.game = data
+        self.mainBtnDrop.state = 'normal'
+
+    def dropDown_on_dismiss(self, widget):
+        self.mainBtnDrop.state = 'normal'
 
     def grid_on_change_selection(self, widget):
         self.dropDown.clear_widgets()
 
-        modButton = ModButton(self.modList[0])
+        modButton = ModButton(self.noMod)
         modButton.bind(on_press=self.btnDrop_on_press)
         self.dropDown.add_widget(modButton)
 
         for game in self.modList:
-            if not game == self.modList[0]:
-                if game.group.GetGroupId() == widget.game.group.GetGroupId():
-                    modButton = ModButton(game)
-                    modButton.bind(on_press=self.btnDrop_on_press)
-                    self.dropDown.add_widget(modButton)
+            if game.group.GetGroupId() == widget.game.group.GetGroupId():
+                modButton = ModButton(game)
+                modButton.bind(on_press=self.btnDrop_on_press)
+                self.dropDown.add_widget(modButton)
 
-        self.mainBtnDrop.game = self.modList[0]
-        self.mainBtnDrop.text = self.modList[0].name
+        if widget and widget.game.lastMod > 0:
+            for game in self.modList:
+                if game.id == widget.game.lastMod:
+                    self.mainBtnDrop.game = game
+                    self.mainBtnDrop.text = game.name
+                    return
+
+        self.mainBtnDrop.game = self.noMod
+        self.mainBtnDrop.text = self.noMod.name
+        return
+
+    def spacebar(self):
+        gameCount = len(self.dropDown.children[0].children)
+        for i in range(gameCount):
+            btn = self.dropDown.children[0].children
+            if btn[i].game.id == self.mainBtnDrop.game.id:
+                if i > 0:
+                    self.dropDown.select(btn[i-1].game)
+                else:
+                    self.dropDown.select(btn[gameCount - 1].game)
+                return
 
 class CarouselButton(ToggleButton):
 
@@ -182,3 +211,17 @@ class ModButton(MyButtonBorder):
         self.height = button_height
         if game:
             self.text = game.name
+
+class MainModButton(DropMainButton):
+    def __init__(self, game, **kwargs):
+        super().__init__(**kwargs)
+        self.game = game
+        self.height = button_height
+        if game:
+            self.text = game.name
+
+class MyCarousel(Carousel):
+    def on_index(self, *args):
+        super().on_index(*args)
+        self.parent.grid_on_change_selection(self.current_slide.gameGrid.get_game_btn())
+        self.current_slide.btnTitle.state = 'down'

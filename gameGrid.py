@@ -1,13 +1,9 @@
-import math
-
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.stacklayout import StackLayout
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.scrollview import ScrollView
 from myLayout import MyBoxLayout
-from kivyFunctions import change_color
+from kivyFunctions import change_color, button_height
 
-button_height = 42
 
 class GameButton(ToggleButton):
     def __init__(self, game=None, **kwargs):
