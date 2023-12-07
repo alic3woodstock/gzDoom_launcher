@@ -1,5 +1,3 @@
-import wx
-
 import functions
 import modGroup
 

@@ -1,5 +1,4 @@
 import kivy
-import kivy
 import functions
 import os
 import subprocess
@@ -8,10 +7,11 @@ kivy.require('2.1.0')
 
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
-from kivy.graphics import Color, Line, Callback
 from kivy.core.window import Window
-from kivyFunctions import border_color, GetBorders
+from kivy.clock import Clock
+from myButton import topMenuButton
 from gameDefDb import GameDefDb
+from menu import Menu
 
 
 class FrmGzdlauncher(BoxLayout):
@@ -20,6 +20,29 @@ class FrmGzdlauncher(BoxLayout):
         self._keyboard = Window.request_keyboard(
             self._keyboard_closed, self, 'text')
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
+
+        menuApp = Menu()
+        menuApp.bind(on_select=self.menuApp_on_select)
+        btnMenuApp = topMenuButton(menuApp, text='Application')
+        self.ids.mainMenu.add_widget(btnMenuApp)
+
+        menuGames = Menu()
+        menuGames.bind(on_select=self.menuGames_on_select)
+        btnMenuGames = topMenuButton(menuGames, text='Games')
+        self.ids.mainMenu.add_widget(btnMenuGames)
+
+        menuGames.add_item('Manage')
+        menuGames.add_item('Reset to Default')
+        menuGames.add_item('Replace Doom Wad')
+        menuGames.add_item('Replace Heretic Wad')
+
+        menuApp.add_item('Update GZDoom')
+        menuApp.add_item('About')
+        menuApp.add_item('Exit')
+
+        self.menuApp = menuApp
+        self.menuGames = menuGames
+        Window.bind(mouse_pos=self.mouse_pos)
 
     def _keyboard_closed(self):
         print('My keyboard have been closed!')
@@ -54,29 +77,6 @@ class FrmGzdlauncher(BoxLayout):
         # the system.
         return True
 
-    def main_menu_cb(self, inter):
-        main_menu = self.ids.mainMenu
-        p = GetBorders(main_menu)
-        main_menu.canvas.clear()
-        with main_menu.canvas.after:
-            Color(border_color)
-            Line(points=[p.bottom_left, p.bottom_right])
-
-
-    def btnCfg_on_state(self, widget):
-        panel = self.ids.panelSettings
-        if widget.state == 'down':
-            panel.width = 200
-            self.ids.btnManage.text = 'Manage Games'
-            self.ids.btnReset.text = 'Reset to default games'
-        else:
-            panel.width = 0
-            self.ids.btnManage.text = ''
-            self.ids.btnReset.text = ''
-
-    def btnManage_on_press(self, widget):
-        print('Manage Games 1')
-
     def btnRun_on_press(self, widget):
         self.run_game(self.ids.gameTabs.get_run_params())
 
@@ -108,6 +108,11 @@ class FrmGzdlauncher(BoxLayout):
                         gameDefDb = GameDefDb()
                         gameDefDb.UpdateLastRunMod(game[0], game[1])
                         game[0].lastMod = game[1].id
+    def menuGames_on_select(self, widget, data):
+        pass
+
+    def menuApp_on_select(self, widget, data):
+        pass
 
     def ReadDB(self):
         gameTabs = self.ids.gameTabs
@@ -124,6 +129,30 @@ class FrmGzdlauncher(BoxLayout):
 
         gameTabs.select_tab(0)
 
+    def mouse_pos(self, *args):
+        if not self.get_root_window():
+            return  # do proceed if I'm not displayed <=> If have no parent
+        pos = args[1]
+        x = pos[0]
+        newY = pos[1] * Window.dpi / 96
+        topPanel = self.ids.mainMenu
+        pressed = False
+        btnPressed = None
+        for btn in topPanel.children:
+            if btn.state == 'down':
+                pressed = True
+                btnPressed = btn
+        if pressed and topPanel.collide_point(x, newY):
+            for btn in topPanel.children:
+                if btn.x <= x <= (btn.x + btn.width):
+                    if btn.state == 'normal':
+                        btn.state = 'down'
+                        btnPressed.dropdown.dismiss()
+                        btn.on_state = self.dummy_function
+                        Clock.schedule_once(btn.on_release, 0.1)
+
+    def dummy_function(self, widget, value):
+        pass
 
 class GzdLauncher(App):
     def build(self):

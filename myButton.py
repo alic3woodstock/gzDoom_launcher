@@ -1,25 +1,19 @@
 from kivy.uix.behaviors.togglebutton import ToggleButtonBehavior
 from kivy.uix.button import Button
 from kivy.graphics import Color, Line, Callback
-
-import kivyFunctions
-from kivyFunctions import change_color
+from kivyFunctions import change_color, border_color
 
 
 class MyButton(Button):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        kivyFunctions.change_color(self)
+        change_color(self)
 
     def on_state(self, instance, value):
         change_color(self)
 
 class MyToggleButton(ToggleButtonBehavior, MyButton):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    def on_state(self, widget, value):
-        change_color(self)
+    pass
 
 
 class MyButtonBorder(MyButton):
@@ -28,11 +22,11 @@ class MyButtonBorder(MyButton):
         self.size_hint = (1, None)
         self.canvas.add(Callback(self.update_button))
 
-    def draw_border(self, value=0):
+    def draw_border(self):
         self.canvas.after.clear()
         if self.width > 2:
             with self.canvas.after:
-                Color(kivyFunctions.border_color)
+                Color(border_color)
                 point1 = self.pos
                 point2 = (self.x + self.width, self.y)
                 point3 = (self.x + self.width, self.y + self.height)
@@ -45,14 +39,24 @@ class MyButtonBorder(MyButton):
         self.canvas.ask_update()
 
 
-class DropMainButton(ToggleButtonBehavior, MyButtonBorder):
+class DropdownItem(ToggleButtonBehavior, MyButtonBorder):
 
-    def draw_border(self, value=0):
-        super().draw_border(value)
+    def draw_border(self):
+        super().draw_border()
         with self.canvas.after:
-            Color(kivyFunctions.border_color)
+            Color(border_color)
             center = self.y + self.height // 2
             point1 = (self.x + self.width - 32, center + 4)
             point2 = (self.x + self.width - 24, center - 4)
             point3 = (self.x + self.width - 16, center + 4)
             Line(points=[point1, point2, point3], width=1.5)
+
+class topMenuButton(MyToggleButton):
+    def __init__(self, dropdown, **kwargs):
+        super().__init__(**kwargs)
+        self.size_hint = (None, 1)
+        self.dropdown = dropdown
+
+    def on_release(self, value=0):
+        self.dropdown.open(self)
+

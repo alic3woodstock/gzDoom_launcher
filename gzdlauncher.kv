@@ -12,37 +12,10 @@
         height: 42
         padding: (0, 0, 2, 4)
         borders: ['bottom']
-        MyToggleButton:
-            id: btnCfg
-            background_color: 'black'
-            size_hint: (None, 1)
-            text: 'Config'
-            on_state: root.btnCfg_on_state(self)
 
     BoxLayout:
         id: mainBox
         orientation: 'horizontal'
-        MyStackLayout:
-            id: panelSettings
-            orientation: 'lr-tb'
-            size_hint: (None, 1)
-            width: 0
-            padding: [2, 2, 2, 0]
-            borders: ['left', 'right', 'bottom']
-            MyButtonBorder:
-                id: btnManage
-                background_color: 'black'
-                text: ''
-                size_hint: (1, None)
-                height: 42
-                on_press: root.btnManage_on_press(self)
-            MyButtonBorder:
-                id: btnReset
-                background_color: 'black'
-                text: ''
-                size_hint: (1, None)
-                height: 42
-                on_state: root.btnManage_on_press(self)
 
         MyBoxLayout:
             id: gamePanel

@@ -9,7 +9,7 @@ from kivy.uix.dropdown import DropDown
 from myLayout import MyStackLayout
 from kivyFunctions import border_color, normal_color, GetBorders, button_height
 from gameGrid import GameGrid
-from myButton import MyButtonBorder, DropMainButton
+from myButton import MyButtonBorder, DropdownItem
 from gameDef import GameDef
 
 class GameCarousel(BoxLayout):
@@ -217,7 +217,7 @@ class ModButton(MyButtonBorder):
         if game:
             self.text = game.name
 
-class MainModButton(DropMainButton):
+class MainModButton(DropdownItem):
     def __init__(self, game, **kwargs):
         super().__init__(**kwargs)
         self.game = game
