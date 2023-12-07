@@ -25,7 +25,7 @@ class Menu(DropDown):
     def add_item(self, text):
         index = len(self.layout.children)
         menuItem = MenuItem(index=index, text=text)
-        menuItem.bind(on_press=lambda btn: self.select(menuItem.index))
+        menuItem.bind(on_press=lambda btn: self.select(menuItem))
         self.layout.height = button_height * (index + 1)
         self.layout.add_widget(menuItem)
 
@@ -38,6 +38,10 @@ class Menu(DropDown):
         super().open(widget)
         self.topButton = self.attach_to
         self.topButton.state = 'down'
+        self.width = 0
+        for btn in self.layout.children:
+            if btn.texture_size[0] > self.width:
+                self.width = btn.texture_size[0] + 16
 
 class MenuItem(Button):
     def __init__(self, index, **kwargs):

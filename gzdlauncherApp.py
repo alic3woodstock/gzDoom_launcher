@@ -11,6 +11,7 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from myButton import topMenuButton
 from gameDefDb import GameDefDb
+from myPopup import MyPopup, Dialog
 from menu import Menu
 
 
@@ -31,7 +32,7 @@ class FrmGzdlauncher(BoxLayout):
         btnMenuGames = topMenuButton(menuGames, text='Games')
         self.ids.mainMenu.add_widget(btnMenuGames)
 
-        menuGames.add_item('Manage')
+        menuGames.add_item('Manage Games')
         menuGames.add_item('Reset to Default')
         menuGames.add_item('Replace Doom Wad')
         menuGames.add_item('Replace Heretic Wad')
@@ -42,6 +43,7 @@ class FrmGzdlauncher(BoxLayout):
 
         self.menuApp = menuApp
         self.menuGames = menuGames
+        self.popup = MyPopup()
         Window.bind(mouse_pos=self.mouse_pos)
 
     def _keyboard_closed(self):
@@ -109,10 +111,18 @@ class FrmGzdlauncher(BoxLayout):
                         gameDefDb.UpdateLastRunMod(game[0], game[1])
                         game[0].lastMod = game[1].id
     def menuGames_on_select(self, widget, data):
-        pass
+        self.popup.title = data.text
+        if data.index == 1:
+            dialog = Dialog(self.popup,
+                            text="This will reset game database to the default values. \n"
+                                 + "Do you want to continue?",
+                            txtCancel='No', txtOk='Yes')
+            self.popup.content = dialog
+        self.popup.open()
 
     def menuApp_on_select(self, widget, data):
-        pass
+        self.popup.title = data.text
+        self.popup.open()
 
     def ReadDB(self):
         gameTabs = self.ids.gameTabs
