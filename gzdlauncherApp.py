@@ -3,7 +3,18 @@ import functions
 import os
 import subprocess
 
+from kivy.config import Config
 kivy.require('2.1.0')
+Config.set('kivy', 'default_font', '["RobotoMono", '
+                                   '"fonts/RobotoMono-Regular.ttf", '
+                                   '"fonts/RobotoMono-Italic.ttf", '
+                                   '"fonts/RobotoMono-Bold.ttf", '
+                                   '"fonts/RobotoMono-BoldItalic.ttf"]')
+
+Config.set('graphics', 'minimum_width', '640')
+Config.set('graphics', 'minimum_height', '480')
+Config.set('graphics', 'width', '800')
+Config.set('graphics', 'height', '600')
 
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
@@ -166,12 +177,9 @@ class FrmGzdlauncher(BoxLayout):
 
 class GzdLauncher(App):
     def build(self):
-        os.environ['KIVY_DEFAULT_FONT'] = ("[‘FreeMono’, "
-                                           "‘fonts/FreeMono.ttf’, "
-                                           "‘fonts/FreeMonoOblique.ttf’, "
-                                           "‘fonts/FreeMonoBold.ttf’, "
-                                           "‘fonts/FreeMonoBoldOblique.ttf’]")
         self.frmGzLauncher = FrmGzdlauncher()
+        # Window.minimum_width = 640
+        # Window.minimum_height = 480
         return self.frmGzLauncher
 
     def on_start(self):

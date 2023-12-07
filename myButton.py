@@ -56,7 +56,10 @@ class topMenuButton(MyToggleButton):
         super().__init__(**kwargs)
         self.size_hint = (None, 1)
         self.dropdown = dropdown
+        self.canvas.add(Callback(self.update_button))
 
     def on_release(self, value=0):
         self.dropdown.open(self)
 
+    def update_button(self, instr):
+        self.width = self.texture_size[0] + 16
