@@ -1,9 +1,13 @@
 from kivy.uix.popup import Popup
-from kivy.uix.label import Label, CoreLabel
+from kivy.uix.label import Label
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.image import Image
 from kivy.graphics import Callback, Rectangle, Color
 from myLayout import MyStackLayout, MyBoxLayout
 from myButton import MyButtonBorder
 from kivyFunctions import normal_color, border_color
+from functions import rootFolder
 
 class MyPopup(Popup):
 
@@ -19,16 +23,34 @@ class MyPopup(Popup):
         self.separator_height = 2
 
 class Dialog(MyBoxLayout):
-    def __init__(self, dialog, text='', txtOk='OK', txtCancel='Cancel', **kwargs):
+    def __init__(self, dialog, text='', txtOk='OK', txtCancel='Cancel', icon='', **kwargs):
         super().__init__(**kwargs)
         self.dialog = dialog
         self.orientation = 'vertical'
         self.clear_widgets()
 
+
+        textLayout = GridLayout()
+        textLayout.cols = 3
+        textLayout.padding = (16, 0, 16, 0)
         label = Label(text=text)
         self.size = label.size
-        self.add_widget(label)
         self.label = label
+        self.icon = None
+        if icon != '':
+            separator = BoxLayout()
+            separator.size_hint = (None, 1)
+            separator.width = 32
+            if icon == 'exclamation':
+                icon = Image(source=rootFolder + 'images/icon_exclamation.png')
+            icon.fit_mode = 'scale-down'
+            icon.size_hint = (None, 1)
+            icon.width = 48
+            self.icon = icon
+            textLayout.add_widget(icon)
+            textLayout.add_widget(separator)
+        textLayout.add_widget(label)
+        self.add_widget(textLayout)
 
         boxButtons = MyStackLayout()
         boxButtons.size_hint = (1, None)
@@ -64,7 +86,10 @@ class Dialog(MyBoxLayout):
 
     def update_layout(self, instr):
         label = self.label
-        self.dialog.width = label.texture_size[0] + 64
+        if self.icon:
+            self.dialog.width = label.texture_size[0] + self.icon.width + 64
+        else:
+            self.dialog.width = label.texture_size[0] + 64
         self.dialog.height = self.dialog.initialHeight + label.texture_size[1] + 64
         self.dialog.height += self.boxButtons.height
         self.draw_title()

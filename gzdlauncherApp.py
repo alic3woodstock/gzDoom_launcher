@@ -127,11 +127,13 @@ class FrmGzdlauncher(BoxLayout):
             dialog = Dialog(self.popup,
                             text="This will reset game database to the default values. \n"
                                  + "Do you want to continue?",
-                            txtCancel='No', txtOk='Yes')
+                            txtCancel='No', txtOk='Yes', icon='exclamation')
             self.popup.content = dialog
         self.popup.open()
 
     def menuApp_on_select(self, widget, data):
+        if data.index == 2:
+            exit()
         self.popup.title = data.text
         self.popup.open()
 
