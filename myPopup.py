@@ -159,3 +159,7 @@ class Progress(ModalWindow):
         self.label.width = self.label.texture_size[0]
         self.progress.size = self.label.size
         super().update_layout(instr)
+
+    def update_progress(self, value, message):
+        self.progress.value = value
+        self.progress.message = message

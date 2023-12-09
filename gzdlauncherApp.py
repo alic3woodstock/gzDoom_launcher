@@ -1,6 +1,8 @@
+from functools import partial
+from threading import Thread
+
 import kivy
 import functions
-import os
 import subprocess
 
 from kivy.config import Config
@@ -11,6 +13,7 @@ Config.set('kivy', 'default_font', '["RobotoMono", '
                                    '"fonts/RobotoMono-Bold.ttf", '
                                    '"fonts/RobotoMono-BoldItalic.ttf"]')
 
+Config.set('kivy', 'kivy_clock', 'free_all')
 Config.set('graphics', 'minimum_width', '640')
 Config.set('graphics', 'minimum_height', '480')
 Config.set('graphics', 'width', '800')
@@ -24,7 +27,7 @@ from myButton import topMenuButton
 from gameDefDb import GameDefDb
 from myPopup import MyPopup, Dialog, Progress
 from menu import Menu
-
+from gameFile import GameFile
 
 class FrmGzdlauncher(BoxLayout):
     def __init__(self, **kwargs):
@@ -135,6 +138,14 @@ class FrmGzdlauncher(BoxLayout):
     def btnYes1_onPress(self, widget):
         progress = Progress(self.popup, text='Starting')
         self.popup.content = progress
+        gameFile = GameFile()
+        Clock.schedule_interval_free(partial(self.progress_update, progress, gameFile), 0.1)
+        thread = Thread(target=gameFile.extractAll)
+        thread.start()
+
+    def progress_update(self, progress, gameFile, *args):
+        progress.update_progress(gameFile.value, gameFile.message)
+        print(gameFile.value)
 
     def menuApp_on_select(self, widget, data):
         if data.index == 2:
