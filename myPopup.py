@@ -1,7 +1,9 @@
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+from kivy.uix.progressbar import ProgressBar
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
 from kivy.graphics import Callback, Rectangle, Color
 from myLayout import MyStackLayout, MyBoxLayout
@@ -24,8 +26,10 @@ class MyPopup(Popup):
 
 class ModalWindow(MyBoxLayout):
 
-    def __int__(self, **kwargs):
-        super().__int__(**kwargs)
+    def __init__(self, dialog,  **kwargs):
+        super().__init__( **kwargs)
+        self.dialog = dialog
+        self.orientation = 'vertical'
         self.clear_widgets()
         self.canvas.add(Callback(self.update_layout))
         self.dialog.auto_dismiss = False
@@ -58,9 +62,7 @@ class ModalWindow(MyBoxLayout):
 
 class Dialog(ModalWindow):
     def __init__(self, dialog, text='', txtOk='OK', txtCancel='Cancel', icon='', **kwargs):
-        self.dialog = dialog
-        self.orientation = 'vertical'
-        super().__init__(**kwargs)
+        super().__init__(dialog, **kwargs)
 
         textLayout = GridLayout()
         textLayout.cols = 3
@@ -126,4 +128,34 @@ class Dialog(ModalWindow):
     def btnCancel_on_press(self, widget):
         self.dialog.dismiss()
 
+class Progress(ModalWindow):
 
+    def __init__(self,  dialog, max=100,  text='', **kwargs):
+        super().__init__(dialog, **kwargs)
+        self.padding = [16, 0, 16, 0]
+
+        layout1 = AnchorLayout()
+        layout1.anchor_x = 'left'
+        layout1.anchor_y = 'bottom'
+        label = Label(text=text)
+        label.height = 32
+        label.size_hint = (None, None)
+        layout1.add_widget(label)
+
+        layout2 = AnchorLayout()
+        layout2.anchor_x = 'center'
+        layout2.anchor_y = 'top'
+        progress = ProgressBar(max=max)
+        progress.size_hint = (1, None)
+        layout2.add_widget(progress)
+
+        self.add_widget(layout1)
+        self.add_widget(layout2)
+        self.dialog = dialog
+        self.progress = progress
+        self.label = label
+
+    def update_layout(self, instr):
+        self.label.width = self.label.texture_size[0]
+        self.progress.size = self.label.size
+        super().update_layout(instr)

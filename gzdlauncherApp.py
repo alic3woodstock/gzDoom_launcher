@@ -22,7 +22,7 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from myButton import topMenuButton
 from gameDefDb import GameDefDb
-from myPopup import MyPopup, Dialog
+from myPopup import MyPopup, Dialog, Progress
 from menu import Menu
 
 
@@ -128,8 +128,13 @@ class FrmGzdlauncher(BoxLayout):
                             text="This will reset game database to the default values. \n"
                                  + "Do you want to continue?",
                             txtCancel='No', txtOk='Yes', icon='exclamation')
+            dialog.btnOk.bind(on_press=self.btnYes1_onPress)
             self.popup.content = dialog
         self.popup.open()
+
+    def btnYes1_onPress(self, widget):
+        progress = Progress(self.popup, text='Starting')
+        self.popup.content = progress
 
     def menuApp_on_select(self, widget, data):
         if data.index == 2:
