@@ -22,13 +22,45 @@ class MyPopup(Popup):
         self.title_color = normal_color
         self.separator_height = 2
 
-class Dialog(MyBoxLayout):
+class ModalWindow(MyBoxLayout):
+
+    def __int__(self, **kwargs):
+        super().__int__(**kwargs)
+        self.clear_widgets()
+        self.canvas.add(Callback(self.update_layout))
+        self.dialog.auto_dismiss = False
+
+    def update_layout(self, instr):
+        self.draw_title()
+        super().update_layout(instr)
+
+
+    def draw_title(self):
+        title = None
+        for t in self.dialog.children[0].children:
+            if isinstance(t, Label):
+                title = t
+
+        # self.height / 2 - self.texture_size[1] / 2
+
+        if title:
+            title.background_color = border_color
+            title.canvas.after.clear()
+            pos_y = title.y + title.height / 2 - title.texture_size[1] / 2 - self.lineWidth * 2
+            self.dialog.canvas.after.clear()
+            with self.dialog.canvas.after:
+                Color(rgba=border_color)
+                Rectangle(pos=(self.x - self.lineWidth, title.y - self.lineWidth * 2),
+                          size=(self.width + self.lineWidth * 2, title.height))
+                Color(rgba=normal_color)
+                Rectangle(pos=(title.x + 8, pos_y), size=title.texture_size, texture=title.texture)
+
+
+class Dialog(ModalWindow):
     def __init__(self, dialog, text='', txtOk='OK', txtCancel='Cancel', icon='', **kwargs):
-        super().__init__(**kwargs)
         self.dialog = dialog
         self.orientation = 'vertical'
-        self.clear_widgets()
-
+        super().__init__(**kwargs)
 
         textLayout = GridLayout()
         textLayout.cols = 3
@@ -81,9 +113,6 @@ class Dialog(MyBoxLayout):
         boxButtons.add_widget(btnOk)
         self.btnOk = btnOk
 
-        self.canvas.add(Callback(self.update_layout))
-        self.dialog.auto_dismiss = False
-
     def update_layout(self, instr):
         label = self.label
         if self.icon:
@@ -92,30 +121,9 @@ class Dialog(MyBoxLayout):
             self.dialog.width = label.texture_size[0] + 64
         self.dialog.height = self.dialog.initialHeight + label.texture_size[1] + 64
         self.dialog.height += self.boxButtons.height
-        self.draw_title()
         super().update_layout(instr)
 
     def btnCancel_on_press(self, widget):
         self.dialog.dismiss()
-
-    def draw_title(self):
-        title = None
-        for t in self.dialog.children[0].children:
-            if isinstance(t, Label):
-                title = t
-
-        # self.height / 2 - self.texture_size[1] / 2
-
-        if title:
-            title.background_color = border_color
-            title.canvas.after.clear()
-            pos_y = title.y + title.height / 2 - title.texture_size[1] / 2 - self.lineWidth * 2
-            self.dialog.canvas.after.clear()
-            with self.dialog.canvas.after:
-                Color(rgba=border_color)
-                Rectangle(pos=(self.x - self.lineWidth, title.y - self.lineWidth * 2),
-                          size=(self.width + self.lineWidth * 2, title.height))
-                Color(rgba=normal_color)
-                Rectangle(pos=(title.x + 8, pos_y), size=title.texture_size, texture=title.texture)
 
 
