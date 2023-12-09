@@ -1,7 +1,11 @@
 import time
 import zipfile
+
+from kivy.clock import Clock
+
 import functions
 import os
+
 
 class ZipFile:
     _format = ""
@@ -97,11 +101,15 @@ class GameFile():
     def __init__(self):
         self.value = 0
         self.message = 'Starting ...'
-        self.maxrange = 100
+        self.max_range = 100
+        self.clock = None
 
     def extractAll(self):
         self.message = 'starting'
         for i in range(100):
             self.value += 1
-            self.message = 'Progress = ' +  str( self.value)
-            time.sleep(1)
+            self.message = 'Progress = ' + str(self.value)
+            time.sleep(0.1)
+        if self.clock:
+            print(self.clock.get_callback())
+            Clock.unschedule(self.clock.get_callback())
