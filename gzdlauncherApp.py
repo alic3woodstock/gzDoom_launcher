@@ -139,13 +139,13 @@ class FrmGzdlauncher(BoxLayout):
         progress = Progress(self.popup, text='Starting')
         self.popup.content = progress
         gameFile = GameFile()
-        Clock.schedule_interval_free(partial(self.progress_update, progress, gameFile), 0.1)
+        Clock.schedule_interval(partial(self.progress_update, progress, gameFile), 0.1)
         thread = Thread(target=gameFile.extractAll)
         thread.start()
 
     def progress_update(self, progress, gameFile, *args):
         progress.update_progress(gameFile.value, gameFile.message)
-        print(gameFile.value)
+        print(gameFile.message)
 
     def menuApp_on_select(self, widget, data):
         if data.index == 2:

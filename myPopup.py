@@ -162,4 +162,5 @@ class Progress(ModalWindow):
 
     def update_progress(self, value, message):
         self.progress.value = value
-        self.progress.message = message
+        self.label.text = message
+        print(message)

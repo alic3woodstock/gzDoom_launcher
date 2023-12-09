@@ -96,12 +96,12 @@ class ZipFile:
 class GameFile():
     def __init__(self):
         self.value = 0
-        self.message = ''
+        self.message = 'Starting ...'
         self.maxrange = 100
 
     def extractAll(self):
-        self.messge = 'starting'
+        self.message = 'starting'
         for i in range(100):
             self.value += 1
-            self.messge = 'Progress = ' +  str( self.value)
+            self.message = 'Progress = ' +  str( self.value)
             time.sleep(1)
