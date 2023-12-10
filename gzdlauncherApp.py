@@ -4,6 +4,7 @@ from threading import Thread
 import kivy
 import functions
 import subprocess
+import os
 
 from kivy.config import Config
 kivy.require('2.1.0')
@@ -204,6 +205,14 @@ class GzdLauncher(App):
         functions.setDataPath()
         self.title = "GZDoom Launcher"
         self.icon = functions.pentagram
+
+        gameDefDb = GameDefDb()
+
+        if not os.path.isfile(functions.dbPath):
+            gameDefDb.CreateGameTable()
+        else:
+            gameDefDb.UpdateDatabase()
+
         self.frmGzLauncher.ReadDB()
 
 

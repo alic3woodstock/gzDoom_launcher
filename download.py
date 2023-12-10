@@ -1,7 +1,5 @@
-import wx
 import requests
 import os
-import wx.lib.dialogs as wxdialogs
 import functions
 import extract
 import shutil

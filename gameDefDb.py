@@ -29,6 +29,12 @@ CREATE_GAMEDEF = """CREATE TABLE IF NOT EXISTS gamedef(
                 FOREIGN KEY (tabindex) REFERENCES tabs(tabindex) ON DELETE NO ACTION ON UPDATE CASCADE);                
             """
 
+CREATE_DOWNLOADLIST = """CREATE TABLE IF NOT EXISTS downloadlist(
+                id integer PRIMARY KEY AUTOINCREMENT,
+                url text ,
+                filename text UNIQUE)
+            """
+
 
 class GameDefDb:
     _dataCon = None
@@ -78,8 +84,11 @@ class GameDefDb:
 
         sql = """REPLACE INTO config (param, numvalue)
             VALUES ('dbversion', ?)"""
-        params = [10100]
+        params = [20000]
         dataCon.ExecSQL(sql, params)
+
+        dataCon.ExecSQL(CREATE_DOWNLOADLIST)
+        self.InsertDefaultUrls(dataCon)
 
         dataCon.Commit()
         dataCon.CloseConnection()
@@ -101,8 +110,8 @@ class GameDefDb:
         sql = """INSERT INTO gamedef(name,tabindex,gamexec,modgroup,lastrunmod,iwad,cmdparams)
             VALUES (?,?,?,?,?,?,?);"""
 
-        params = (game.GetItem().GetText(), game.GetTab(), game.GetExec(), game.GetGroup().GetGroupId(),
-                  game.GetLastMod(), game.GetIWad(), game.GetCmdParams())
+        params = (game.name, game.tab, game.exec, game.GetGroup().GetGroupId(),
+                  game.lastMod, game.wad, game.cmdParams)
 
         dataCon.ExecSQL(sql, params)
 
@@ -110,7 +119,7 @@ class GameDefDb:
         gameId = gameIds.fetchall()[0][0]
 
         sql = """INSERT INTO files(gameid,file) VALUES(?,?)"""
-        for f in game.GetFiles():
+        for f in game.files:
             params = (gameId, f)
             dataCon.ExecSQL(sql, params)
 
@@ -290,6 +299,10 @@ class GameDefDb:
             dataCon.ExecSQL("""INSERT INTO gamedef SELECT * FROM gamedef_old""")
             dataCon.ExecSQL("""DROP TABLE gamedef_old""")
 
+        if dbVersion < 20000:
+            dataCon.ExecSQL(CREATE_DOWNLOADLIST)
+            self.InsertDefaultUrls()
+
         sql = """REPLACE INTO config (param, numvalue)
             VALUES (?, ?)"""
         params = ['dbversion', functions.versionNumber()]
@@ -418,3 +431,85 @@ class GameDefDb:
             tabConfigs.append(gameTabConfig.GameTabConfig(r[0], r[1], r[2]))
         dataCon.CloseConnection()
         return  tabConfigs
+
+    def InsertDefaultUrls(self, dataCon = None):
+        if dataCon:
+            commit = False
+        else:
+            dataCon = self.ConnectDb()
+            dataCon.StartTransaction()
+            commit = True
+
+        sql = """REPLACE INTO downloadlist (url, filename) VALUES (?, ?) """
+
+        # Blasphemer
+        params = ["https://github.com/Blasphemer/blasphemer/releases/download/v0.1.7/blasphem-0.1.7.zip",
+                  "blasphem.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://github.com/Blasphemer/blasphemer/releases/download/v0.1.7/blasphemer-texture-pack.zip",
+                  "blasphemer-texture-pack.zip"]
+        dataCon.ExecSQL(sql, params)
+
+        # Freedoom
+        params = ["https://github.com/freedoom/freedoom/releases/download/v0.12.1/freedoom-0.12.1.zip", "freedoom.zip"]
+        dataCon.ExecSQL(sql, params)
+
+        # 150skins
+        params = ["https://awxdeveloper.edu.eu.org/downloads/150skins.zip", "150skins.zip"] #my personal wordpress site
+        dataCon.ExecSQL(sql, params)
+
+        # Beautiful Doom
+        params = ["https://github.com/jekyllgrim/Beautiful-Doom/releases/download/7.1.6/Beautiful_Doom_716.pk3",
+                  "Beautiful_Doom.pk3"]
+        dataCon.ExecSQL(sql, params)
+
+        # Brutal Doom
+        params = ["https://github.com/BLOODWOLF333/Brutal-Doom-Community-Expansion/releases/"
+                  "download/V21.11.2/brutalv21.11.2.pk3", "brutal.pk3"]
+        dataCon.ExecSQL(sql, params)
+
+        #maps
+        params = ["https://youfailit.net/pub/idgames/levels/doom2/megawads/av.zip", "av.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/aaliens.zip", "aliens.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/levels/doom2/megawads/btsx_e1.zip", "btsx_e1.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/levels/doom2/megawads/btsx_e2.zip", "btsx_e2.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://www.dropbox.com/s/vi47z1a4e4c4980/Sunder%202407.zip?dl=1", "sunder.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/eviternity.zip", "eviternity.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/gd.zip", "gd.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/themes/hr/hr.zip", "hr.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/themes/hr/hr2final.zip", "hr2final.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/levels/heretic/Ports/htchest.zip", "htchest.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/themes/mm/mm_allup.zip", "mm_allup.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/themes/mm/mm2.zip", "mm2.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/levels/doom2/megawads/pl2.zip", "pl2.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/levels/doom2/megawads/scythe.zip", "scythe.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/scythe2.zip", "scythe2.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/levels/doom2/Ports/s-u/scythex.zip", "scythex.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/sunlust.zip", "sunlust.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/levels/heretic/s-u/unbeliev.zip", "unbeliev.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/valiant.zip", "valiant.zip"]
+        dataCon.ExecSQL(sql, params)
+        params = ["https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/zof.zip", "zof.zip"]
+        dataCon.ExecSQL(sql, params)
+
+        if commit:
+            dataCon.Commit()
+            dataCon.CloseConnection()
