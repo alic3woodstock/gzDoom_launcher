@@ -146,7 +146,10 @@ class FrmGzdlauncher(BoxLayout):
         thread.start()
 
     def progress_update(self, progress, gameFile, *args):
+        progress.progress.max = gameFile.max_range
         progress.update_progress(gameFile.value, gameFile.message)
+        if gameFile.done:
+            Clock.unschedule(self.progress_update)
 
     def menuApp_on_select(self, widget, data):
         if data.index == 2:

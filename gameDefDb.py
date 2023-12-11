@@ -4,6 +4,8 @@ import gameDef
 import modGroup
 import gameTabConfig
 
+from url import Url
+
 CREATE_CONFIG = """CREATE TABLE IF NOT EXISTS config(
                     id INTEGER PRIMARY KEY,
                     param TEXT UNIQUE,
@@ -513,3 +515,13 @@ class GameDefDb:
         if commit:
             dataCon.Commit()
             dataCon.CloseConnection()
+
+    def SelectDefaultUrls(self):
+        dataCon = self.ConnectDb()
+        sql = """SELECT url, filename FROM downloadlist"""
+        result = dataCon.ExecSQL(sql)
+        urls = []
+        for r in result:
+            urls.append(Url(r[0], r[1]))
+        dataCon.CloseConnection()
+        return  urls
