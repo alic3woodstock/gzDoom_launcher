@@ -112,8 +112,8 @@ class GameDefDb:
         sql = """INSERT INTO gamedef(name,tabindex,gamexec,modgroup,lastrunmod,iwad,cmdparams)
             VALUES (?,?,?,?,?,?,?);"""
 
-        params = (game.name, game.tab, game.exec, game.GetGroup().GetGroupId(),
-                  game.lastMod, game.wad, game.cmdParams)
+        params = (game.name, game.tab, game.exec, game.group.GetGroupId(),
+                  game.lastMod, game.iWad, game.cmdParams)
 
         dataCon.ExecSQL(sql, params)
 
@@ -188,7 +188,7 @@ class GameDefDb:
 
         sql = """UPDATE gamedef SET name=?, tabindex=?, gamexec=?, modgroup=?, iwad=?, cmdparams=?
          WHERE id=?"""
-        params = [game.GetItem().GetText(), game.GetTab(), game.GetExec(), game.GetGroup().GetGroupId(), game.GetIWad(),
+        params = [game.GetItem().GetText(), game.GetTab(), game.GetExec(), game.group.GetGroupId(), game.GetIWad(),
                   game.GetCmdParams(), game.GetItem().GetData()]
         dataCon.ExecSQL(sql, params)
 
