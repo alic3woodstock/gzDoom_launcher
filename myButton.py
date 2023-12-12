@@ -60,6 +60,10 @@ class topMenuButton(MyToggleButton):
 
     def on_release(self, value=0):
         self.dropdown.open(self)
+        topPanel = self.parent
+        for btn in topPanel.children:
+            if not (btn == self):
+                btn.state = 'normal'
 
     def update_button(self, instr):
         self.width = self.texture_size[0] + 16

@@ -483,6 +483,8 @@ class GameDefDb:
         dataCon.ExecSQL(sql, params)
         params = ["https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/eviternity.zip", "eviternity.zip"]
         dataCon.ExecSQL(sql, params)
+        params = ["https://eviternity-dl-us.dfdoom.com/Eviternity-II.zip", "Eviternity-II.zip"]
+        dataCon.ExecSQL(sql, params)
         params = ["https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/gd.zip", "gd.zip"]
         dataCon.ExecSQL(sql, params)
         params = ["https://youfailit.net/pub/idgames/themes/hr/hr.zip", "hr.zip"]

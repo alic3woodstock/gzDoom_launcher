@@ -149,7 +149,8 @@ class FrmGzdlauncher(BoxLayout):
         progress.progress.max = gameFile.max_range
         progress.update_progress(gameFile.value, gameFile.message)
         if gameFile.done:
-            Clock.unschedule(self.progress_update)
+            dialog = Dialog(self.popup, text=gameFile.message, txtCancel='OK', txtOk='')
+            self.popup.content = dialog
 
     def menuApp_on_select(self, widget, data):
         if data.index == 2:
@@ -176,8 +177,8 @@ class FrmGzdlauncher(BoxLayout):
         if not self.get_root_window():
             return  # do proceed if I'm not displayed <=> If have no parent
         pos = args[1]
-        x = pos[0]
-        newY = pos[1] * Window.dpi / 96
+        x = pos[0] * Window.dpi / 96
+        y = pos[1] * Window.dpi / 96
         topPanel = self.ids.mainMenu
         pressed = False
         btnPressed = None
@@ -185,15 +186,15 @@ class FrmGzdlauncher(BoxLayout):
             if btn.state == 'down':
                 pressed = True
                 btnPressed = btn
-        if pressed and topPanel.collide_point(x, newY):
+        if pressed and topPanel.collide_point(x, y):
+            i = 0
             for btn in topPanel.children:
                 if btn.x <= x <= (btn.x + btn.width):
                     if btn.state == 'normal':
                         btn.state = 'down'
                         btnPressed.dropdown.dismiss()
                         btn.on_state = self.dummy_function
-                        Clock.schedule_once(btn.on_release, 0.1)
-
+                        Clock.schedule_once(btn.on_release, 0)
     def dummy_function(self, widget, value):
         pass
 

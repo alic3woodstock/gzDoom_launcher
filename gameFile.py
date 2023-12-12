@@ -28,7 +28,7 @@ class GameFile():
         if not os.path.exists(functions.downloadPath):
             os.mkdir(functions.downloadPath)
 
-
+        dataCon.InsertDefaultUrls()
         urls = dataCon.SelectDefaultUrls()
 
         self.max_range = len(urls) * 2 + 1
@@ -85,9 +85,9 @@ class GameFile():
         # self.value = self.max_range
         self.done = True
 
-        # if self.clock:
-        #     self.clock()
-        #     Clock.unschedule(self.clock.get_callback())
+        if self.clock:
+            Clock.unschedule(self.clock.get_callback())
+            Clock.schedule_once(self.clock.get_callback())
 
     def DownloadFile(self, url):
         # updates dialog based on a fixed max range since I don't know the total size of all files before download

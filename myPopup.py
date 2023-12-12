@@ -95,25 +95,27 @@ class Dialog(ModalWindow):
         self.add_widget(boxButtons)
         self.boxButtons = boxButtons
 
-        btnCancel = MyButtonBorder()
-        btnCancel.size_hint = (None, 1)
-        btnCancel.text = txtCancel
-        btnCancel.width = 128
-        btnCancel.bind(on_press=self.btnCancel_on_press)
-        boxButtons.add_widget(btnCancel)
-        self.btnCancel = btnCancel
+        if txtCancel.strip():
+            btnCancel = MyButtonBorder()
+            btnCancel.size_hint = (None, 1)
+            btnCancel.text = txtCancel
+            btnCancel.width = 128
+            btnCancel.bind(on_press=self.btnCancel_on_press)
+            boxButtons.add_widget(btnCancel)
+            self.btnCancel = btnCancel
 
-        blankLabel = Label()
-        blankLabel.size_hint = (None, 1)
-        blankLabel.width = 8
-        boxButtons.add_widget(blankLabel)
+        if txtOk.strip():
+            blankLabel = Label()
+            blankLabel.size_hint = (None, 1)
+            blankLabel.width = 8
+            boxButtons.add_widget(blankLabel)
 
-        btnOk = MyButtonBorder()
-        btnOk.size_hint = (None, 1)
-        btnOk.text = txtOk
-        btnOk.width = 128
-        boxButtons.add_widget(btnOk)
-        self.btnOk = btnOk
+            btnOk = MyButtonBorder()
+            btnOk.size_hint = (None, 1)
+            btnOk.text = txtOk
+            btnOk.width = 128
+            boxButtons.add_widget(btnOk)
+            self.btnOk = btnOk
 
     def update_layout(self, instr):
         label = self.label
