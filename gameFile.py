@@ -4,6 +4,7 @@ import functions
 import os
 import requests
 import shutil
+import math
 
 from kivy.clock import Clock
 from gameDefDb import GameDefDb
@@ -21,6 +22,7 @@ class GameFile():
         self.done = False
 
     def extractAll(self):
+        self.done = False
         self.message = 'Downloading files...'
 
         dataCon = GameDefDb()
@@ -33,8 +35,10 @@ class GameFile():
 
         self.max_range = len(urls) * 2 + 1
         self.totalDownloads = len(urls) + 1
+        self.currentDownload = 0
         for u in urls:
             self.DownloadFile(u)
+            self.value = math.floor(self.value)
             self.value += 1
 
         self.message = 'Updating gzdoom...'
@@ -83,8 +87,11 @@ class GameFile():
 
         self.message = 'All done, have fun!'
         # self.value = self.max_range
-        self.done = True
+        self.finishTask()
 
+
+    def finishTask(self):
+        self.done = True
         if self.clock:
             Clock.unschedule(self.clock.get_callback())
             Clock.schedule_once(self.clock.get_callback())
@@ -110,6 +117,10 @@ class GameFile():
                         else:
                             strTotal = "..."
                         downloadF.write(chunk)
+                    if i < total_length:
+                        self.value = math.floor(self.value) + (i / total_length)
+                        print (self.value)
+
                     i += 1024
 
                     self.message = "Downloading file " + str(self.currentDownload) \
@@ -117,6 +128,23 @@ class GameFile():
                                    + str(i // 1024) + "k of " + strTotal + "k"
 
         self.currentDownload += 1
+
+    def verifyUpdate(self):
+        self.done = False
+        self.max_range = 1
+        self.message = 'Verifying GZDoom Version...'
+        self.totalDownloads = 1
+        self.currentDownload = 0
+        result = self.UpdateGzDoom()
+        if result == 2:
+            self.message = 'GZDoom already at latest version.'
+        elif result:
+            dataCon = GameDefDb()
+            self.message = 'GZDoom updated to version: ' + dataCon.ReadConfig('gzdversion','text')
+        else:
+            self.message = 'Update failed, read ' + functions.logFile + 'for more details!'
+        self.value = self.max_range
+        self.finishTask()
 
     def UpdateGzDoom(self):
         if not os.path.exists(functions.downloadPath):
@@ -174,7 +202,7 @@ class GameFile():
             result = extractOK and (os.path.isfile(functions.gzDoomExec)
                                     or os.path.isfile(functions.gzDoomExec))
         else:
-            result = True
+            result = 2
 
         return result
 

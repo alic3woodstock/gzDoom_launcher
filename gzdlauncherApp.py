@@ -152,6 +152,18 @@ class FrmGzdlauncher(BoxLayout):
         thread = Thread(target=gameFile.extractAll)
         thread.start()
 
+    def btnUpdate_onPress(self, widget):
+        progress = Progress(self.popup, text='Updating GZDoom...')
+        self.popup.content = progress
+        self.popup.width = 600
+        self.popup.height = 200
+        gameFile = GameFile()
+        progressClock = Clock.schedule_interval(partial(self.progress_update, progress, gameFile), 0.1)
+        gameFile.clock = progressClock
+        thread = Thread(target=gameFile.verifyUpdate)
+        thread.start()
+
+
     def progress_update(self, progress, gameFile, *args):
         progress.progress.max = gameFile.max_range
         progress.update_progress(gameFile.value, gameFile.message)
@@ -164,8 +176,11 @@ class FrmGzdlauncher(BoxLayout):
             Clock.schedule_once(exit, 0)
         else:
             self.popup.title = data.text
-            self.popup.content = Dialog(self.popup, text='Under contruction', txtCancel='OK', txtOk='',
-                                        icon='information')
+            if data.index == 0:
+                self.btnUpdate_onPress(data)
+            else:
+                self.popup.content = Dialog(self.popup, text='Under contruction', txtCancel='OK', txtOk='',
+                                            icon='information')
             self.popup.open()
 
     def ReadDB(self):
