@@ -3,7 +3,7 @@ from kivy.graphics import Color, Rectangle
 highlight_color = [2, 0, 0]
 normal_highlight_color = [0.5, 0, 0, 1]
 border_color = [1, 1, 1, 1]
-hover_color = [0.5, 0.5, 0.5]
+hover_color = [0.3, 0, 0, 1]
 normal_color = [0, 0, 0, 1]
 button_height = 42
 button_width = 128

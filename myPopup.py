@@ -122,7 +122,6 @@ class Dialog(ModalWindow):
         label = self.label
         if self.icon:
             self.dialog.width = label.texture_size[0] + self.icon.width + 80
-            print(label.texture_size[0])
         else:
             self.dialog.width = label.texture_size[0] + 64
         self.dialog.height = self.dialog.initialHeight + label.texture_size[1] + 64

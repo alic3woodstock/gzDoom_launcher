@@ -7,6 +7,9 @@ import subprocess
 import os
 
 from kivy.config import Config
+
+import kivyFunctions
+
 kivy.require('2.1.0')
 Config.set('kivy', 'default_font', '["RobotoMono", '
                                    '"fonts/RobotoMono-Regular.ttf", '
@@ -125,6 +128,7 @@ class FrmGzdlauncher(BoxLayout):
                         gameDefDb = GameDefDb()
                         gameDefDb.UpdateLastRunMod(game[0], game[1])
                         game[0].lastMod = game[1].id
+
     def menuGames_on_select(self, widget, data):
         self.popup.title = data.text
         if data.index == 1:
@@ -134,6 +138,9 @@ class FrmGzdlauncher(BoxLayout):
                             txtCancel='No', txtOk='Yes', icon='exclamation')
             dialog.btnOk.bind(on_press=self.btnYes1_onPress)
             self.popup.content = dialog
+        else:
+            self.popup.content = Dialog(self.popup, text='Under contruction', txtCancel='OK', txtOk='',
+                                        icon='information')
         self.popup.open()
 
     def btnYes1_onPress(self, widget):
@@ -154,9 +161,12 @@ class FrmGzdlauncher(BoxLayout):
 
     def menuApp_on_select(self, widget, data):
         if data.index == 2:
-            exit()
-        self.popup.title = data.text
-        self.popup.open()
+            Clock.schedule_once(exit, 0)
+        else:
+            self.popup.title = data.text
+            self.popup.content = Dialog(self.popup, text='Under contruction', txtCancel='OK', txtOk='',
+                                        icon='information')
+            self.popup.open()
 
     def ReadDB(self):
         gameTabs = self.ids.gameTabs
@@ -192,8 +202,16 @@ class FrmGzdlauncher(BoxLayout):
                     if btn.state == 'normal':
                         btn.state = 'down'
                         btnPressed.dropdown.dismiss()
-                        btn.on_state = self.dummy_function
                         Clock.schedule_once(btn.on_release, 0)
+
+        for btn in topPanel.children:
+            if btn.isDropOpen:
+                dropItens = btn.dropdown.container.children[0].children
+                for dropItem in dropItens:
+                    pos = dropItem.to_widget(x, y)
+                    dropItem.hover = dropItem.collide_point(*pos)
+                    dropItem.update_button(pos)
+
     def dummy_function(self, widget, value):
         pass
 

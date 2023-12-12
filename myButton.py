@@ -51,19 +51,27 @@ class DropdownItem(ToggleButtonBehavior, MyButtonBorder):
             point3 = (self.x + self.width - 16, center + 4)
             Line(points=[point1, point2, point3], width=1.5)
 
+
 class topMenuButton(MyToggleButton):
     def __init__(self, dropdown, **kwargs):
         super().__init__(**kwargs)
         self.size_hint = (None, 1)
+        if dropdown:
+            dropdown.bind(on_dismiss=self.on_dropdown_dismiss)
         self.dropdown = dropdown
         self.canvas.add(Callback(self.update_button))
+        self.isDropOpen = False
 
     def on_release(self, value=0):
         self.dropdown.open(self)
-        topPanel = self.parent
+        self.isDropOpen = True
+        topPanel = self.dropdown.parent
         for btn in topPanel.children:
             if not (btn == self):
                 btn.state = 'normal'
+
+    def on_dropdown_dismiss(self, widget):
+        self.isDropOpen = False
 
     def update_button(self, instr):
         self.width = self.texture_size[0] + 16

@@ -4,7 +4,7 @@ from kivy.uix.button import Button
 from kivy.uix.dropdown import DropDown
 from kivy.uix.label import CoreLabel
 from myLayout import MyBoxLayout
-from kivyFunctions import button_height, border_color, normal_color, normal_highlight_color
+from kivyFunctions import button_height, border_color, normal_color, normal_highlight_color, hover_color
 
 
 class Menu(DropDown):
@@ -49,6 +49,7 @@ class MenuItem(Button):
         self.index = index
         self.height = button_height
         self.canvas.add(Callback(self.update_button))
+        self.hover = False
 
     def update_button(self, instr):
         padding = [self.width / 2 - self.texture_size[0] / 2, self.height / 2 - self.texture_size[1] / 2]
@@ -60,7 +61,11 @@ class MenuItem(Button):
             self.background_color = normal_color
             self.color = border_color
             with self.canvas.after:
-                Color(rgba=normal_color)
+                if self.hover:
+                    self.background_color = hover_color
+                    Color(rgba=hover_color)
+                else:
+                    Color(rgba=normal_color)
                 Rectangle(pos=self.pos, size=(self.width, self.height + 1))
                 Color(rgba=border_color)
                 text = label.texture
