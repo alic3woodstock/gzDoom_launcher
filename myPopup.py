@@ -64,19 +64,20 @@ class Dialog(ModalWindow):
     def __init__(self, dialog, text='', txtOk='OK', txtCancel='Cancel', icon='', **kwargs):
         super().__init__(dialog, **kwargs)
 
-        textLayout = GridLayout()
-        textLayout.cols = 3
+        textLayout = BoxLayout()
         textLayout.padding = (16, 0, 16, 0)
         label = Label(text=text)
         self.size = label.size
         self.label = label
         self.icon = None
-        if icon != '':
+        if icon.strip():
             separator = BoxLayout()
             separator.size_hint = (None, 1)
-            separator.width = 32
+            separator.width = 16
             if icon == 'exclamation':
                 icon = Image(source=rootFolder + 'images/icon_exclamation.png')
+            else:
+                icon = Image(source=rootFolder + 'images/icon_information.png')
             icon.fit_mode = 'scale-down'
             icon.size_hint = (None, 1)
             icon.width = 48
@@ -120,7 +121,8 @@ class Dialog(ModalWindow):
     def update_layout(self, instr):
         label = self.label
         if self.icon:
-            self.dialog.width = label.texture_size[0] + self.icon.width + 64
+            self.dialog.width = label.texture_size[0] + self.icon.width + 80
+            print(label.texture_size[0])
         else:
             self.dialog.width = label.texture_size[0] + 64
         self.dialog.height = self.dialog.initialHeight + label.texture_size[1] + 64

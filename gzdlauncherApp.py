@@ -129,7 +129,7 @@ class FrmGzdlauncher(BoxLayout):
         self.popup.title = data.text
         if data.index == 1:
             dialog = Dialog(self.popup,
-                            text="This will reset game database to the default values. \n"
+                            text="This will reset game database to the default values.\n"
                                  + "Do you want to continue?",
                             txtCancel='No', txtOk='Yes', icon='exclamation')
             dialog.btnOk.bind(on_press=self.btnYes1_onPress)
@@ -149,8 +149,8 @@ class FrmGzdlauncher(BoxLayout):
         progress.progress.max = gameFile.max_range
         progress.update_progress(gameFile.value, gameFile.message)
         if gameFile.done:
-            dialog = Dialog(self.popup, text=gameFile.message, txtCancel='OK', txtOk='')
-            self.popup.content = dialog
+            self.popup.content = Dialog(self.popup, text=gameFile.message, txtCancel='OK', txtOk='',
+                                        icon='information')
 
     def menuApp_on_select(self, widget, data):
         if data.index == 2:
@@ -187,7 +187,6 @@ class FrmGzdlauncher(BoxLayout):
                 pressed = True
                 btnPressed = btn
         if pressed and topPanel.collide_point(x, y):
-            i = 0
             for btn in topPanel.children:
                 if btn.x <= x <= (btn.x + btn.width):
                     if btn.state == 'normal':
