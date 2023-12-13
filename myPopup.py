@@ -3,14 +3,13 @@ import math
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
-from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.anchorlayout import AnchorLayout
-from kivy.uix.image import Image
+from kivy.uix.gridlayout import GridLayout
+from kivy.core.window import Window
 from kivy.graphics import Callback, Rectangle, Color, Line, Ellipse
 from myLayout import MyStackLayout, MyBoxLayout
 from myButton import MyButtonBorder, text_color, background_color, highlight_color
-from functions import rootFolder
 
 class MyPopup(Popup):
 
@@ -27,13 +26,14 @@ class MyPopup(Popup):
 
 class ModalWindow(MyBoxLayout):
 
-    def __init__(self, dialog,  **kwargs):
+    def __init__(self, dialog, **kwargs):
         super().__init__( **kwargs)
         self.dialog = dialog
         self.orientation = 'vertical'
         self.clear_widgets()
         self.canvas.add(Callback(self.update_layout))
         self.dialog.auto_dismiss = False
+        self.buttons = []
 
     def update_layout(self, instr):
         self.draw_title()
@@ -60,6 +60,44 @@ class ModalWindow(MyBoxLayout):
                 Color(rgba=background_color)
                 Rectangle(pos=(title.x + 8, pos_y), size=title.texture_size, texture=title.texture)
 
+    def CreateBoxButtons(self, txtOk, txtCancel):
+        boxButtons = MyStackLayout()
+        boxButtons.size_hint = (1, None)
+        boxButtons.height = 64
+        boxButtons.borders = ['top']
+        boxButtons.orientation = 'rl-tb'
+        boxButtons.padding = (8, 10, 8, 8)
+        self.add_widget(boxButtons)
+        self.boxButtons = boxButtons
+
+        if txtCancel.strip():
+            btnCancel = MyButtonBorder()
+            btnCancel.size_hint = (None, 1)
+            btnCancel.text = txtCancel
+            btnCancel.width = 128
+            btnCancel.bind(on_press=self.btnCancel_on_press)
+            boxButtons.add_widget(btnCancel)
+            self.btnCancel = btnCancel
+
+        if txtOk.strip():
+            self.btnOk = self.AddButon(txtOk)
+
+    def btnCancel_on_press(self, widget):
+        self.dialog.dismiss()
+
+    def AddButon(self, txtBtn=''):
+        blankLabel = Label()
+        blankLabel.size_hint = (None, 1)
+        blankLabel.width = 8
+        self.boxButtons.add_widget(blankLabel)
+
+        btnOk = MyButtonBorder()
+        btnOk.size_hint = (None, 1)
+        btnOk.text = txtBtn
+        btnOk.width = 128
+        self.boxButtons.add_widget(btnOk)
+        return btnOk
+
 
 class Dialog(ModalWindow):
     def __init__(self, dialog, text='', txtOk='OK', txtCancel='Cancel', icon='', **kwargs):
@@ -84,37 +122,8 @@ class Dialog(ModalWindow):
         textLayout.add_widget(separator)
         textLayout.add_widget(label)
         self.add_widget(textLayout)
+        self.CreateBoxButtons(txtOk, txtCancel)
 
-        boxButtons = MyStackLayout()
-        boxButtons.size_hint = (1, None)
-        boxButtons.height = 64
-        boxButtons.borders = ['top']
-        boxButtons.orientation = 'rl-tb'
-        boxButtons.padding = (8, 10, 8, 8)
-        self.add_widget(boxButtons)
-        self.boxButtons = boxButtons
-
-        if txtCancel.strip():
-            btnCancel = MyButtonBorder()
-            btnCancel.size_hint = (None, 1)
-            btnCancel.text = txtCancel
-            btnCancel.width = 128
-            btnCancel.bind(on_press=self.btnCancel_on_press)
-            boxButtons.add_widget(btnCancel)
-            self.btnCancel = btnCancel
-
-        if txtOk.strip():
-            blankLabel = Label()
-            blankLabel.size_hint = (None, 1)
-            blankLabel.width = 8
-            boxButtons.add_widget(blankLabel)
-
-            btnOk = MyButtonBorder()
-            btnOk.size_hint = (None, 1)
-            btnOk.text = txtOk
-            btnOk.width = 128
-            boxButtons.add_widget(btnOk)
-            self.btnOk = btnOk
 
     def update_layout(self, instr):
         label = self.label
@@ -125,9 +134,6 @@ class Dialog(ModalWindow):
         self.dialog.height = self.dialog.initialHeight + label.texture_size[1] + 64
         self.dialog.height += self.boxButtons.height
         super().update_layout(instr)
-
-    def btnCancel_on_press(self, widget):
-        self.dialog.dismiss()
 
 class Progress(ModalWindow):
 
@@ -244,3 +250,14 @@ class Icon(Widget):
 
 
         self.canvas.ask_update()
+
+class ModalForm(ModalWindow):
+
+    def __init__(self, dialog, txtOk = 'OK', txtCancel='Cancel', **kwargs):
+        super().__init__(dialog, **kwargs)
+        self.dialog.size = Window.size
+
+        self.topLayout = GridLayout(cols=2)
+        self.topLayout.padding = 16
+        self.add_widget(self.topLayout)
+        self.CreateBoxButtons(txtOk, txtCancel)

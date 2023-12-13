@@ -9,6 +9,7 @@ import os
 from kivy.config import Config
 
 import getBorders
+from manageGames import ManageGames
 
 kivy.require('2.1.0')
 Config.set('kivy', 'default_font', '["RobotoMono", '
@@ -29,7 +30,7 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from myButton import topMenuButton
 from gameDefDb import GameDefDb
-from myPopup import MyPopup, Dialog, Progress
+from myPopup import MyPopup, Dialog, Progress, ModalForm
 from menu import Menu
 from gameFile import GameFile
 
@@ -56,6 +57,7 @@ class FrmGzdlauncher(BoxLayout):
         menuGames.add_item('Replace Heretic Wad')
 
         menuApp.add_item('Update GZDoom')
+        menuApp.add_item('Settings')
         menuApp.add_item('About')
         menuApp.add_item('Exit')
 
@@ -131,7 +133,10 @@ class FrmGzdlauncher(BoxLayout):
 
     def menuGames_on_select(self, widget, data):
         self.popup.title = data.text
-        if data.index == 1:
+        if data.index == 0:
+            dialog = ManageGames(self.popup)
+            self.popup.content = dialog
+        elif data.index == 1:
             dialog = Dialog(self.popup,
                             text="This will reset game database to the default values.\n"
                                  + "Do you want to continue?",
@@ -172,16 +177,20 @@ class FrmGzdlauncher(BoxLayout):
                                         icon='information')
 
     def menuApp_on_select(self, widget, data):
-        if data.index == 2:
+        if data.index == 3:
             Clock.schedule_once(exit, 0)
         else:
             self.popup.title = data.text
             if data.index == 0:
                 self.btnUpdate_onPress(data)
-            else:
+            elif data.index == 2:
                 self.popup.content = Dialog(self.popup, text="GZDoom launcher " + functions.APPVERSION
                                                              + "\nBy Alice Woodtstock 2022-2023",
                                             txtCancel='OK', txtOk='', icon='pentagram')
+            else:
+                self.popup.content = Dialog(self.popup, text='Under contruction', txtCancel='OK', txtOk='',
+                                            icon='information')
+
             self.popup.open()
 
     def ReadDB(self):
