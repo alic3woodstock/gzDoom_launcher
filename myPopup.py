@@ -1,3 +1,5 @@
+import math
+
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
@@ -7,7 +9,7 @@ from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
 from kivy.graphics import Callback, Rectangle, Color, Line, Ellipse
 from myLayout import MyStackLayout, MyBoxLayout
-from myButton import MyButtonBorder, text_color, background_color
+from myButton import MyButtonBorder, text_color, background_color, highlight_color
 from functions import rootFolder
 
 class MyPopup(Popup):
@@ -73,10 +75,7 @@ class Dialog(ModalWindow):
         separator = BoxLayout()
         separator.size_hint = (None, 1)
         separator.width = 16
-        if icon == 'exclamation':
-            icon = Icon('exclamation')
-        else:
-            icon = Icon() # Image(source=rootFolder + 'images/icon_information.png')
+        icon = Icon(icon) # Image(source=rootFolder + 'images/icon_information.png')
         icon.size_hint = (None, 1)
         icon.width = 48
         self.icon = icon
@@ -208,9 +207,6 @@ class Icon(Widget):
 
         with self.canvas.after:
             Color(rgba=text_color)
-            point1 = (pos_center[0], y + 12)
-            point2 = (pos_center[0], y + size - 20)
-            point3 = (pos_center[0], y + size - 12)
             if self.icon == 'exclamation':
                 point_t1 = (x, y)
                 point_t2 = (pos_center[0] - 0.1, y + size)
@@ -221,14 +217,30 @@ class Icon(Widget):
                 Line(points=[point_t1, point_t2, point_t3], width=1.1, close=True)
                 Line(points=[point1, point1], width=2)
                 Line(points=[point2, point3], width=2)
+            elif self.icon == 'pentagram':
+                Color(rgba=[1, 0, 0, 1])
+                cx1 = math.sin(2 * math.pi / 5)
+                cx2 = math.sin(4 * math.pi / 5)
+                cy1 = math.cos(2 * math.pi / 5)
+                cy2 = math.cos(math.pi / 5)
+                cx1 = cx1 * size / 2
+                cx2 = cx2 * size / 2
+                cy1 = cy1 * size / 2
+                cy2 = cy2 * size / 2
+                point1 = (pos_center[0], y)
+                point4 = (pos_center[0] + cx1, pos_center[1] - cy1)
+                point5 = (pos_center[0] - cx2, pos_center[1] + cy2)
+                point2 = (pos_center[0] + cx2, pos_center[1] + cy2)
+                point3 = (pos_center[0] - cx1, pos_center[1] - cy1)
+                Line(points=[point1, point2, point3, point4, point5], width=1.1, close=True)
+                Line(ellipse=(x, y, size, size), width=1.1)
             else:
+                point1 = (pos_center[0], y + 12)
+                point2 = (pos_center[0], y + size - 20)
+                point3 = (pos_center[0], y + size - 12)
                 Line(ellipse=(x, y, size, size), width=1.1)
                 Line(points=[point1, point2], width=2)
                 Line(points=[point3, point3], width=2)
 
 
         self.canvas.ask_update()
-
-
-
-

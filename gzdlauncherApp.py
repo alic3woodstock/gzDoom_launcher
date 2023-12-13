@@ -179,8 +179,9 @@ class FrmGzdlauncher(BoxLayout):
             if data.index == 0:
                 self.btnUpdate_onPress(data)
             else:
-                self.popup.content = Dialog(self.popup, text='Under contruction', txtCancel='OK', txtOk='',
-                                            icon='information')
+                self.popup.content = Dialog(self.popup, text="GZDoom launcher " + functions.APPVERSION
+                                                             + "\nBy Alice Woodtstock 2022-2023",
+                                            txtCancel='OK', txtOk='', icon='pentagram')
             self.popup.open()
 
     def ReadDB(self):
