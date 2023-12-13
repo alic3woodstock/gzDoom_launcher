@@ -1,7 +1,6 @@
 from kivy.uix.layout import Layout
 from kivy.uix.stacklayout import StackLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.scrollview import ScrollView
 from kivy.graphics import Color, Line, Callback
 from getBorders import GetBorders
 from myButton import text_color

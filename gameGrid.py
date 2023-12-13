@@ -1,4 +1,3 @@
-from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.stacklayout import StackLayout
 from kivy.uix.scrollview import ScrollView
 from myLayout import MyBoxLayout
@@ -42,7 +41,6 @@ class GameGrid(MyBoxLayout):
         self.container.height += gameButton.height
         gameButton.bind(state=self.btnCfg_on_state)
         gameButton.bind(on_press=self.btnCfg_on_press)
-        # self.background_color = [0, 0, 0, 0]
         gameButton.state = 'down'
 
     def btnCfg_on_state(self, widget, state):
