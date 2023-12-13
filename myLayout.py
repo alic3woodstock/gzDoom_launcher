@@ -3,7 +3,9 @@ from kivy.uix.stacklayout import StackLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.graphics import Color, Line, Callback
-from kivyFunctions import border_color, GetBorders
+from getBorders import GetBorders
+from myButton import text_color
+
 
 class MyLayout(Layout):
     borders = ['top', 'left', 'bottom', 'right']
@@ -19,7 +21,7 @@ class MyLayout(Layout):
         if self.width > 2:
             for b in self.borders:
                 with self.canvas.after:
-                    Color(border_color)
+                    Color(text_color)
                     if b == 'left':
                         points=[borderPos.top_left, borderPos.bottom_left]
                     elif b == 'right':

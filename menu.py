@@ -4,7 +4,7 @@ from kivy.uix.button import Button
 from kivy.uix.dropdown import DropDown
 from kivy.uix.label import CoreLabel
 from myLayout import MyBoxLayout
-from kivyFunctions import button_height, border_color, normal_color, normal_highlight_color, hover_color
+from myButton import highlight_color, text_color, highlight_color, background_color, button_height
 
 
 class Menu(DropDown):
@@ -53,30 +53,30 @@ class MenuItem(Button):
 
     def update_button(self, instr):
         padding = [self.width / 2 - self.texture_size[0] / 2, self.height / 2 - self.texture_size[1] / 2]
-        label = CoreLabel(text=self.text, color=border_color,
+        label = CoreLabel(text=self.text, color=text_color,
                           font_size=self.font_size, font=self.font_name,
                           halign='center', valign='center', padding=padding)
         label.refresh()
         if self.state == 'normal':
-            self.background_color = normal_color
-            self.color = border_color
+            self.background_color = background_color
+            self.color = text_color
             with self.canvas.after:
                 if self.hover:
-                    self.background_color = hover_color
-                    Color(rgba=hover_color)
+                    self.background_color = highlight_color
+                    Color(rgba=highlight_color)
                 else:
-                    Color(rgba=normal_color)
+                    Color(rgba=background_color)
                 Rectangle(pos=self.pos, size=(self.width, self.height + 1))
-                Color(rgba=border_color)
+                Color(rgba=text_color)
                 text = label.texture
                 Rectangle(pos=self.pos, size=self.size, texture=text)
         else:
-            self.background_color = border_color
-            self.color = normal_color
+            self.background_color = text_color
+            self.color = background_color
             with self.canvas.after:
-                Color(rgba=normal_highlight_color)
+                Color(rgba=highlight_color)
                 Rectangle(pos=self.pos, size=(self.width, self.height + 1))
-                Color(rgba=border_color)
+                Color(rgba=text_color)
                 text = label.texture
                 Rectangle(pos=self.pos, size=self.size, texture=text)
 

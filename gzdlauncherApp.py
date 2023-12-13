@@ -8,7 +8,7 @@ import os
 
 from kivy.config import Config
 
-import kivyFunctions
+import getBorders
 
 kivy.require('2.1.0')
 Config.set('kivy', 'default_font', '["RobotoMono", '
@@ -165,7 +165,7 @@ class FrmGzdlauncher(BoxLayout):
 
 
     def progress_update(self, progress, gameFile, *args):
-        progress.progress.max = gameFile.max_range
+        progress.update_max(gameFile.max_range)
         progress.update_progress(gameFile.value, gameFile.message)
         if gameFile.done:
             self.popup.content = Dialog(self.popup, text=gameFile.message, txtCancel='OK', txtOk='',

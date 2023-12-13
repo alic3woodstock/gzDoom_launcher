@@ -1,16 +1,55 @@
 from kivy.uix.behaviors.togglebutton import ToggleButtonBehavior
 from kivy.uix.button import Button
-from kivy.graphics import Color, Line, Callback
-from kivyFunctions import change_color, border_color
-
+from kivy.uix.label import CoreLabel
+from kivy.graphics import Color, Line, Callback, Rectangle
+text_color = [1, 1, 1, 1]
+highlight_color = [0.4, 0, 0, 1]
+background_color = [0, 0, 0, 1]
+button_height = 42
+button_width = 128
 
 class MyButton(Button):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        change_color(self)
+        self.hover = False
+        self.canvas.add(Callback(self.update_button))
+        self.text_color = text_color
+        self.highlight_color = highlight_color
+        self.hover_color = highlight_color
+        self.background_color = background_color
 
-    def on_state(self, instance, value):
-        change_color(self)
+    def draw_button(self):
+        padding = [self.width / 2 - self.texture_size[0] / 2, self.height / 2 - self.texture_size[1] / 2]
+        label = CoreLabel(text=self.text, color=self.text_color,
+                          font_size=self.font_size, font=self.font_name,
+                          halign='center', valign='center', padding=padding)
+        label.refresh()
+        if self.state == 'normal':
+            with self.canvas.after:
+                if self.hover:
+                    Color(rgba=self.hover_color)
+                else:
+                    Color(rgba=self.background_color)
+                Rectangle(pos=self.pos, size=(self.width, self.height + 1))
+                Color(rgba=self.text_color)
+                text = label.texture
+                Rectangle(pos=self.pos, size=self.size, texture=text)
+        else:
+            with self.canvas:
+                Color(rgba=self.highlight_color)
+                Rectangle(pos=self.pos, size=(self.width, self.height + 1))
+                if self.text_color == self.highlight_color:
+                    Color(rgba=self.background_color)
+                else:
+                    Color(rgba=self.text_color)
+                text = label.texture
+                Rectangle(pos=self.pos, size=self.size, texture=text)
+
+    def update_button(self, instr):
+        self.canvas.after.clear()
+        self.draw_button()
+        self.canvas.ask_update()
+
 
 class MyToggleButton(ToggleButtonBehavior, MyButton):
     pass
@@ -20,13 +59,11 @@ class MyButtonBorder(MyButton):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.size_hint = (1, None)
-        self.canvas.add(Callback(self.update_button))
 
     def draw_border(self):
-        self.canvas.after.clear()
         if self.width > 2:
             with self.canvas.after:
-                Color(border_color)
+                Color(text_color)
                 point1 = self.pos
                 point2 = (self.x + self.width, self.y)
                 point3 = (self.x + self.width, self.y + self.height)
@@ -34,8 +71,9 @@ class MyButtonBorder(MyButton):
                 Line(points=[point1, point2, point3, point4, point1], width=1)
 
     def update_button(self, instr):
+        self.canvas.after.clear()
+        self.draw_button()
         self.draw_border()
-        change_color(self)
         self.canvas.ask_update()
 
 
@@ -44,7 +82,7 @@ class DropdownItem(ToggleButtonBehavior, MyButtonBorder):
     def draw_border(self):
         super().draw_border()
         with self.canvas.after:
-            Color(border_color)
+            Color(text_color)
             center = self.y + self.height // 2
             point1 = (self.x + self.width - 32, center + 4)
             point2 = (self.x + self.width - 24, center - 4)
@@ -59,6 +97,7 @@ class topMenuButton(MyToggleButton):
         if dropdown:
             dropdown.bind(on_dismiss=self.on_dropdown_dismiss)
         self.dropdown = dropdown
+        self.highlight_color = self.hover_color
         self.canvas.add(Callback(self.update_button))
         self.isDropOpen = False
 
@@ -75,3 +114,4 @@ class topMenuButton(MyToggleButton):
 
     def update_button(self, instr):
         self.width = self.texture_size[0] + 16
+        super().update_button(instr)

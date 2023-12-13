@@ -5,10 +5,9 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
-from kivy.graphics import Callback, Rectangle, Color
+from kivy.graphics import Callback, Rectangle, Color, Line
 from myLayout import MyStackLayout, MyBoxLayout
-from myButton import MyButtonBorder
-from kivyFunctions import normal_color, border_color
+from myButton import MyButtonBorder, text_color, background_color
 from functions import rootFolder
 
 class MyPopup(Popup):
@@ -18,10 +17,10 @@ class MyPopup(Popup):
         self.anchor_x = 'center'
         self.anchor_y = 'center'
         self.size_hint = (None, None)
-        self.background_color = normal_color
-        self.separator_color = border_color
+        self.background_color = background_color
+        self.separator_color = text_color
         self.initialHeight = self.height
-        self.title_color = normal_color
+        self.title_color = background_color
         self.separator_height = 2
 
 class ModalWindow(MyBoxLayout):
@@ -48,15 +47,15 @@ class ModalWindow(MyBoxLayout):
         # self.height / 2 - self.texture_size[1] / 2
 
         if title:
-            title.background_color = border_color
+            title.background_color = text_color
             title.canvas.after.clear()
             pos_y = title.y + title.height / 2 - title.texture_size[1] / 2 - self.lineWidth * 2
             self.dialog.canvas.after.clear()
             with self.dialog.canvas.after:
-                Color(rgba=border_color)
+                Color(rgba=text_color)
                 Rectangle(pos=(self.x - self.lineWidth, title.y - self.lineWidth * 2),
                           size=(self.width + self.lineWidth * 2, title.height))
-                Color(rgba=normal_color)
+                Color(rgba=background_color)
                 Rectangle(pos=(title.x + 8, pos_y), size=title.texture_size, texture=title.texture)
 
 
@@ -148,7 +147,7 @@ class Progress(ModalWindow):
         layout2 = AnchorLayout()
         layout2.anchor_x = 'center'
         layout2.anchor_y = 'top'
-        progress = ProgressBar(max=max)
+        progress = ProgressBar()
         progress.size_hint = (1, None)
         layout2.add_widget(progress)
 
@@ -156,6 +155,7 @@ class Progress(ModalWindow):
         self.add_widget(layout2)
         self.dialog = dialog
         self.progress = progress
+        self.update_max(max)
         self.label = label
 
     def update_layout(self, instr):
@@ -166,3 +166,21 @@ class Progress(ModalWindow):
     def update_progress(self, value, message):
         self.progress.value = value
         self.label.text = message
+        self.draw_bar()
+        # self.progress.update_layout(value)
+
+    def update_max(self, value):
+        self.progress.max = value
+        self.draw_bar()
+
+    def draw_bar(self):
+        self.progress.canvas.clear()
+        with self.progress.canvas:
+            Color(text_color)
+            pos = self.progress.to_window(self.progress.x, self.progress.center_y)
+            print(pos, ', ', self.pos)
+            point1 = (pos[0], pos[1] + 8)
+            point2 = (pos[0] + self.progress.width, pos[1] + 8)
+            point3 = (pos[0] + self.progress.width, pos[1] - 8)
+            point4 = (pos[0], pos[1] - 8)
+            Line(points=[point1, point2, point3, point4, point1], width=1)

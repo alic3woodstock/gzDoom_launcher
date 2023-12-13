@@ -1,15 +1,15 @@
 from kivy.uix.carousel import Carousel
 from kivy.uix.carousel import Carousel
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.togglebutton import ToggleButton
+from kivy.uix.togglebutton import ToggleButtonBehavior
 from kivy.graphics import Color, Line, Callback, Rectangle
 from kivy.uix.label import CoreLabel, Label
 from kivy.uix.dropdown import DropDown
 
 from myLayout import MyStackLayout
-from kivyFunctions import border_color, normal_color, GetBorders, button_height
+from getBorders import GetBorders
 from gameGrid import GameGrid
-from myButton import MyButtonBorder, DropdownItem
+from myButton import MyButtonBorder, DropdownItem, MyToggleButton, text_color, background_color, button_height
 from gameDef import GameDef
 
 class GameCarousel(BoxLayout):
@@ -149,43 +149,22 @@ class GameCarousel(BoxLayout):
     def get_run_params(self):
         return [self.carousel.current_slide.gameGrid.get_game(), self.mainBtnDrop.game]
 
-class CarouselButton(ToggleButton):
+class CarouselButton(ToggleButtonBehavior, MyButtonBorder):
 
     def __init__(self, tabIndex, **kwargs):
         super().__init__(**kwargs)
         self.tabIndex = tabIndex
         self.size_hint = (None, 1)
+        self.highlight_color = self.text_color
         self.canvas.add(Callback(self.update_button))
 
     def update_button(self, instr):
         self.width = self.texture_size[0] + 16
         self.canvas.after.clear()
-        self.change_color()
+        self.draw_button()
+        self.draw_border()
         self.canvas.ask_update()
 
-    def change_color(self):
-        padding = [8, self.height / 2 - self.texture_size[1] / 2]
-        label = CoreLabel(text=self.text, color=normal_color,
-                          font_size=self.font_size, font=self.font_name,
-                          halign='center', valign='center', padding=padding)
-        label.refresh()
-        if self.state == 'normal':
-            self.background_color = normal_color
-            self.color = border_color
-            borders = GetBorders(self)
-            with self.canvas.after:
-                Color(border_color)
-                Line(points=[borders.top_left, borders.bottom_left, borders.bottom_right, borders.top_right],
-                     width=1)
-        else:
-            self.background_color = border_color
-            self.color = normal_color
-            with self.canvas.after:
-                Color(border_color)
-                Rectangle(pos=self.pos, size=(self.width, self.height + 1))
-                Color(normal_color)
-                text = label.texture
-                Rectangle(pos=self.pos, size=self.size, texture=text)
 
 class GameTab(BoxLayout):
     def __init__(self, tabId, tabIndex=0, btnTitle=None, grid=None, **kwargs):
