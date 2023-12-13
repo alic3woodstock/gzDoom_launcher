@@ -5,7 +5,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
-from kivy.graphics import Callback, Rectangle, Color, Line
+from kivy.graphics import Callback, Rectangle, Color, Line, Ellipse
 from myLayout import MyStackLayout, MyBoxLayout
 from myButton import MyButtonBorder, text_color, background_color
 from functions import rootFolder
@@ -69,20 +69,20 @@ class Dialog(ModalWindow):
         self.size = label.size
         self.label = label
         self.icon = None
-        if icon.strip():
-            separator = BoxLayout()
-            separator.size_hint = (None, 1)
-            separator.width = 16
-            if icon == 'exclamation':
-                icon = Image(source=rootFolder + 'images/icon_exclamation.png')
-            else:
-                icon = Image(source=rootFolder + 'images/icon_information.png')
-            icon.fit_mode = 'scale-down'
-            icon.size_hint = (None, 1)
-            icon.width = 48
-            self.icon = icon
-            textLayout.add_widget(icon)
-            textLayout.add_widget(separator)
+
+        separator = BoxLayout()
+        separator.size_hint = (None, 1)
+        separator.width = 16
+        if icon == 'exclamation':
+            icon = Icon('exclamation')
+        else:
+            icon = Icon() # Image(source=rootFolder + 'images/icon_information.png')
+        icon.size_hint = (None, 1)
+        icon.width = 48
+        self.icon = icon
+
+        textLayout.add_widget(icon)
+        textLayout.add_widget(separator)
         textLayout.add_widget(label)
         self.add_widget(textLayout)
 
@@ -185,3 +185,50 @@ class Progress(ModalWindow):
             point3 = (pos[0] + self.progress.width, pos[1] - 6)
             point4 = (pos[0], pos[1] - 6)
             Line(points=[point1, point2, point3, point4, point1], width=1)
+
+class Icon(Widget):
+
+    def __init__(self, icon='information', **kwargs):
+        super().__init__(**kwargs)
+        self.icon = icon
+        self.canvas.add(Callback(self.draw_icon))
+
+    def draw_icon(self, instr):
+        self.canvas.after.clear()
+        pos_center = self.to_window(*self.center)
+        pos = self.to_window(*self.pos)
+        if self.width > self.height:
+            size = self.height
+            x = pos_center[0] - size / 2
+            y = pos[1]
+        else:
+            size = self.width
+            x = pos[0]
+            y = pos_center[1] - size / 2
+
+        with self.canvas.after:
+            Color(rgba=text_color)
+            point1 = (pos_center[0], y + 12)
+            point2 = (pos_center[0], y + size - 20)
+            point3 = (pos_center[0], y + size - 12)
+            if self.icon == 'exclamation':
+                point_t1 = (x, y)
+                point_t2 = (pos_center[0] - 0.1, y + size)
+                point_t3 = (x + size, y)
+                point1 = (pos_center[0], y + 8)
+                point2 = (pos_center[0], y + 16)
+                point3 = (pos_center[0], y + size - 16)
+                Line(points=[point_t1, point_t2, point_t3], width=1.1, close=True)
+                Line(points=[point1, point1], width=2)
+                Line(points=[point2, point3], width=2)
+            else:
+                Line(ellipse=(x, y, size, size), width=1.1)
+                Line(points=[point1, point2], width=2)
+                Line(points=[point3, point3], width=2)
+
+
+        self.canvas.ask_update()
+
+
+
+

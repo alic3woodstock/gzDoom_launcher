@@ -3,7 +3,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import CoreLabel
 from kivy.graphics import Color, Line, Callback, Rectangle
 text_color = [1, 1, 1, 1]
-highlight_color = [0.4, 0, 0, 1]
+highlight_color = [0.5, 0, 0, 1]
 background_color = [0, 0, 0, 1]
 button_height = 42
 button_width = 128
