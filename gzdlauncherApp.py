@@ -165,7 +165,7 @@ class FrmGzdlauncher(BoxLayout):
 
 
     def progress_update(self, progress, gameFile, *args):
-        progress.update_max(gameFile.max_range)
+        progress.max = gameFile.max_range
         progress.update_progress(gameFile.value, gameFile.message)
         if gameFile.done:
             self.popup.content = Dialog(self.popup, text=gameFile.message, txtCancel='OK', txtOk='',

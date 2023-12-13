@@ -1,6 +1,6 @@
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
-from kivy.uix.progressbar import ProgressBar
+from kivy.uix.widget import Widget
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.anchorlayout import AnchorLayout
@@ -147,7 +147,7 @@ class Progress(ModalWindow):
         layout2 = AnchorLayout()
         layout2.anchor_x = 'center'
         layout2.anchor_y = 'top'
-        progress = ProgressBar()
+        progress = Widget()
         progress.size_hint = (1, None)
         layout2.add_widget(progress)
 
@@ -155,32 +155,33 @@ class Progress(ModalWindow):
         self.add_widget(layout2)
         self.dialog = dialog
         self.progress = progress
-        self.update_max(max)
+        self.max = max
+        self.value = 0
         self.label = label
 
     def update_layout(self, instr):
         self.label.width = self.label.texture_size[0]
-        self.progress.size = self.label.size
+        self.progress.height = self.label.height
+        self.draw_bar()
         super().update_layout(instr)
 
     def update_progress(self, value, message):
-        self.progress.value = value
+        self.value = value
         self.label.text = message
-        self.draw_bar()
-        # self.progress.update_layout(value)
-
-    def update_max(self, value):
-        self.progress.max = value
         self.draw_bar()
 
     def draw_bar(self):
-        self.progress.canvas.clear()
-        with self.progress.canvas:
-            Color(text_color)
+        self.progress.canvas.after.clear()
+        with self.progress.canvas.after:
+            Color(rgba=text_color)
+
+            pos = self.progress.to_window(self.progress.x, self.progress.center_y - 6)
+            width = self.progress.width * self.value / self.max
+            Rectangle(pos=pos, size=(width, 12))
+
             pos = self.progress.to_window(self.progress.x, self.progress.center_y)
-            print(pos, ', ', self.pos)
-            point1 = (pos[0], pos[1] + 8)
-            point2 = (pos[0] + self.progress.width, pos[1] + 8)
-            point3 = (pos[0] + self.progress.width, pos[1] - 8)
-            point4 = (pos[0], pos[1] - 8)
+            point1 = (pos[0], pos[1] + 6)
+            point2 = (pos[0] + self.progress.width, pos[1] + 6)
+            point3 = (pos[0] + self.progress.width, pos[1] - 6)
+            point4 = (pos[0], pos[1] - 6)
             Line(points=[point1, point2, point3, point4, point1], width=1)
