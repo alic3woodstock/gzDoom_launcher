@@ -1,8 +1,10 @@
+from kivy.graphics import Callback
 from kivy.uix.stacklayout import StackLayout
 from kivy.uix.scrollview import ScrollView
 from myLayout import MyBoxLayout
 from myButton import MyToggleButton, button_height
 from gameDef import GameDef
+from scrollBar import VertScrollBar
 
 
 class GameButton(MyToggleButton):
@@ -29,7 +31,7 @@ class GameGrid(MyBoxLayout):
         self.empty_game = GameDef(id=0, name='Empty Tab', tab=-2)
         self.empty_game.exec = ''
         self.insert_game(self.empty_game)
-        # kivyFunctions.change_color(self, use_alternative_color=True)
+        self.canvas.add(Callback(self.scroll_update))
 
     def insert_game(self, game=None):
         if self.empty_game and game != self.empty_game:
@@ -129,3 +131,16 @@ class GameGrid(MyBoxLayout):
             if game == btn.game:
                 self.container.remove_widget(btn)
                 self.container.height = button_height * len(self.container.children)
+
+    def scroll_update(self, instr):
+        scroll = None
+        for widget in self.children:
+            if isinstance(widget, VertScrollBar):
+                scroll = widget
+                break
+
+        if self.scroll.viewport_size[1] > self.scroll.height:
+            if not scroll:
+                self.add_widget(VertScrollBar(self.scroll, self.container))
+        elif scroll:
+            self.remove_widget(scroll)

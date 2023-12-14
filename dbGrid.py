@@ -1,0 +1,2 @@
+class DBGrid():
+    pass

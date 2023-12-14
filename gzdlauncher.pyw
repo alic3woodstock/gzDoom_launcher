@@ -7,7 +7,7 @@ import extract
 import wx.lib.mixins.listctrl as listmix
 import addGame
 import gameDefDb
-import manageGames
+import frmManageGames
 import replaceWad
 import wx.lib.dialogs as wxdialogs
 import functions

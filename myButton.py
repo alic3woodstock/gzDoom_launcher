@@ -35,7 +35,7 @@ class MyButton(Button):
                 text = label.texture
                 Rectangle(pos=self.pos, size=self.size, texture=text)
         else:
-            with self.canvas:
+            with self.canvas.after:
                 Color(rgba=self.highlight_color)
                 Rectangle(pos=self.pos, size=(self.width, self.height + 1))
                 if self.text_color == self.highlight_color:

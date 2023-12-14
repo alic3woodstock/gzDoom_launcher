@@ -2,6 +2,8 @@ from functools import partial
 from threading import Thread
 
 import kivy
+from kivy.metrics import Metrics
+
 import functions
 import subprocess
 import os
@@ -9,7 +11,7 @@ import os
 from kivy.config import Config
 
 import getBorders
-from manageGames import ManageGames
+from frmManageGames import FrmManageGames
 
 kivy.require('2.1.0')
 Config.set('kivy', 'default_font', '["RobotoMono", '
@@ -134,7 +136,7 @@ class FrmGzdlauncher(BoxLayout):
     def menuGames_on_select(self, widget, data):
         self.popup.title = data.text
         if data.index == 0:
-            dialog = ManageGames(self.popup)
+            dialog = FrmManageGames(self.popup)
             self.popup.content = dialog
         elif data.index == 1:
             dialog = Dialog(self.popup,
@@ -212,8 +214,8 @@ class FrmGzdlauncher(BoxLayout):
         if not self.get_root_window():
             return  # do proceed if I'm not displayed <=> If have no parent
         pos = args[1]
-        x = pos[0] * Window.dpi / 96
-        y = pos[1] * Window.dpi / 96
+        x = pos[0] * Metrics.dpi / 96
+        y = pos[1] * Metrics.dpi / 96
         topPanel = self.ids.mainMenu
         pressed = False
         btnPressed = None
