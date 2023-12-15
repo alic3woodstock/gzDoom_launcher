@@ -1,10 +1,9 @@
 from kivy.graphics import Callback, Color, Rectangle
-from kivy.core.window import Window
 from kivy.uix.button import Button
 from kivy.uix.dropdown import DropDown
 from kivy.uix.label import CoreLabel
 from myLayout import MyBoxLayout
-from myButton import highlight_color, text_color, highlight_color, background_color, button_height
+from myButton import text_color, highlight_color, background_color, button_height
 
 
 class Menu(DropDown):

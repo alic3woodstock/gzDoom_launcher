@@ -1,4 +1,6 @@
+from kivy.uix.button import Button
 from kivy.uix.layout import Layout
+from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.stacklayout import StackLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics import Color, Line, Callback
@@ -22,23 +24,25 @@ class MyLayout(Layout):
                 with self.canvas.after:
                     Color(text_color)
                     if b == 'left':
-                        points=[borderPos.top_left, borderPos.bottom_left]
+                        points = [borderPos.top_left, borderPos.bottom_left]
                     elif b == 'right':
-                        points=[borderPos.top_right, borderPos.bottom_right]
+                        points = [borderPos.top_right, borderPos.bottom_right]
                     elif b == 'bottom':
-                        points=[borderPos.top_left, borderPos.top_right]
+                        points = [borderPos.top_left, borderPos.top_right]
                     else:
-                        points=[borderPos.bottom_left, borderPos.bottom_right]
+                        points = [borderPos.bottom_left, borderPos.bottom_right]
                     Line(points=points, width=self.lineWidth)
 
     def update_layout(self, instr):
         self.draw_border()
         self.canvas.ask_update()
 
-class MyStackLayout(MyLayout,StackLayout):
+
+class MyStackLayout(MyLayout, StackLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
 
 class MyBoxLayout(MyLayout, BoxLayout):
 
@@ -46,3 +50,5 @@ class MyBoxLayout(MyLayout, BoxLayout):
         super().__init__(**kwargs)
 
 
+class RelativeLayoutButton(Button, RelativeLayout):
+    pass

@@ -25,6 +25,7 @@ Config.set('graphics', 'minimum_width', '640')
 Config.set('graphics', 'minimum_height', '480')
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '600')
+Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout

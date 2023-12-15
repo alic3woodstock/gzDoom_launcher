@@ -21,6 +21,8 @@ class GameGrid(MyBoxLayout):
         self.lineWidth = 1
 
         self.scroll = ScrollView()
+        self.scroll.scroll_type = ['bars']
+        self.scroll.always_overscroll = False
         self.scroll.bar_width = 4
         self.container = StackLayout()
         self.container.orientation = 'bt-lr'
