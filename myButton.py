@@ -2,6 +2,7 @@ from kivy.uix.behaviors.togglebutton import ToggleButtonBehavior
 from kivy.uix.button import Button
 from kivy.uix.label import CoreLabel
 from kivy.graphics import Color, Line, Callback, Rectangle
+
 text_color = [1, 1, 1, 1]
 highlight_color = [0.5, 0, 0, 1]
 background_color = [0, 0, 0, 1]
@@ -56,8 +57,9 @@ class MyToggleButton(ToggleButtonBehavior, MyButton):
 
 
 class MyButtonBorder(MyButton):
-    def __init__(self, **kwargs):
+    def __init__(self, icon=None, **kwargs):
         super().__init__(**kwargs)
+        self.icon = icon
         self.size_hint = (1, None)
 
     def draw_border(self):
@@ -69,6 +71,12 @@ class MyButtonBorder(MyButton):
                 point3 = (self.x + self.width, self.y + self.height)
                 point4 = (self.x, self.y + self.height)
                 Line(points=[point1, point2, point3, point4, point1], width=1)
+
+            if self.icon:
+                self.icon.size = (self.width - self.icon.buttonMargin * 2, self.height - self.icon.buttonMargin * 2)
+                self.icon.center = self.center
+                for i in self.icon.get_instr():
+                    self.canvas.after.add(i)
 
     def update_button(self, instr):
         self.canvas.after.clear()
