@@ -88,9 +88,9 @@ class VertScrollBar(MyBoxLayout):
         self.on_state(self.bottomButton, self.bottomButton.state)
 
         if self.movup or (self.movup2 and (self.scroll.scroll_y < self.trailpos_to_scroll())):
-            Clock.schedule_once(partial(self.move_scroll, 'up', 0), 0.1)
+            Clock.schedule_once(partial(self.move_scroll, 'up', 0), 0.025)
         elif self.movdown or (self.movdown2 and (self.scroll.scroll_y > self.trailpos_to_scroll())):
-            Clock.schedule_once(partial(self.move_scroll, 'down', 0), 0.1)
+            Clock.schedule_once(partial(self.move_scroll, 'down', 0), 0.025)
         else:
             Clock.unschedule(partial(self.move_scroll, 'up'))
             Clock.unschedule(partial(self.move_scroll, 'down'))
