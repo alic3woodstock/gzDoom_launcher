@@ -61,16 +61,17 @@ class MyButtonBorder(MyButton):
         super().__init__(**kwargs)
         self.icon = icon
         self.size_hint = (1, None)
+        self.border_color = text_color
 
     def draw_border(self):
         if self.width > 2:
             with self.canvas.after:
-                Color(text_color)
+                Color(rgba=self.border_color)
                 point1 = self.pos
                 point2 = (self.x + self.width, self.y)
                 point3 = (self.x + self.width, self.y + self.height)
                 point4 = (self.x, self.y + self.height)
-                Line(points=[point1, point2, point3, point4, point1], width=1)
+                Line(points=[point1, point2, point3, point4], width=1, close=True)
 
             if self.icon:
                 self.icon.size = (self.width - self.icon.buttonMargin * 2, self.height - self.icon.buttonMargin * 2)

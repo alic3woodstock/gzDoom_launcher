@@ -9,10 +9,6 @@ import subprocess
 import os
 
 from kivy.config import Config
-
-import getBorders
-from frmManageGames import FrmManageGames
-
 kivy.require('2.1.0')
 Config.set('kivy', 'default_font', '["RobotoMono", '
                                    '"fonts/RobotoMono-Regular.ttf", '
@@ -27,19 +23,21 @@ Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '600')
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
+from frmManageGames import FrmManageGames
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.core.window import Window
 from kivy.clock import Clock
 from myButton import topMenuButton
 from gameDefDb import GameDefDb
-from myPopup import MyPopup, Dialog, Progress, ModalForm
+from myPopup import MyPopup, Dialog, Progress
 from menu import Menu
 from gameFile import GameFile
 
 class FrmGzdlauncher(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
         self._keyboard = Window.request_keyboard(
             self._keyboard_closed, self, 'text')
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
@@ -76,27 +74,40 @@ class FrmGzdlauncher(BoxLayout):
 
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
         gameTabs = self.ids.gameTabs
-        if keycode[1] == 'left':
-            gameTabs.carousel.load_previous()
-        elif keycode[1] == 'right':
-            gameTabs.carousel.load_next()
-        elif keycode[1] == 'down':
-            gameTabs.carousel.current_slide.children[0].load_next_game()
-        elif keycode[1] == 'up':
-            gameTabs.carousel.current_slide.children[0].load_previous_game()
-        elif keycode[1] == 'pagedown':
-            gameTabs.carousel.current_slide.children[0].page_down()
-        elif keycode[1] == 'pageup':
-            gameTabs.carousel.current_slide.children[0].page_up()
-        elif keycode[1] == 'spacebar':
-            gameTabs.spacebar()
-        elif keycode[1] == 'enter':
-            self.run_game(gameTabs.get_run_params())
+        if not self.popup.is_open:
+            if keycode[1] == 'left':
+                gameTabs.carousel.load_previous()
+            elif keycode[1] == 'right':
+                gameTabs.carousel.load_next()
+            elif keycode[1] == 'down':
+                gameTabs.carousel.current_slide.children[0].load_next()
+            elif keycode[1] == 'up':
+                gameTabs.carousel.current_slide.children[0].load_previous()
+            elif keycode[1] == 'pagedown':
+                gameTabs.carousel.current_slide.children[0].page_down()
+            elif keycode[1] == 'pageup':
+                gameTabs.carousel.current_slide.children[0].page_up()
+            elif keycode[1] == 'spacebar':
+                gameTabs.spacebar()
+            elif keycode[1] == 'enter':
+                self.run_game(gameTabs.get_run_params())
+        elif isinstance(self.popup.content, FrmManageGames):
+            if keycode[1] == 'down':
+                self.popup.content.topLayout.load_next()
+            elif keycode[1] == 'up':
+                self.popup.content.topLayout.load_previous()
+            elif keycode[1] == 'pagedown':
+                self.popup.content.topLayout.page_down()
+            elif keycode[1] == 'pageup':
+                self.popup.content.topLayout.page_up()
 
         # Keycode is composed of an integer + a string
         # If we hit escape, release the keyboard
         if keycode[1] == 'escape':
-            exit()
+            if self.popup.is_open:
+                self.popup.dismiss()
+            else:
+                exit()
 
         # Return True to accept the key. Otherwise, it will be used by
         # the system.
@@ -201,7 +212,7 @@ class FrmGzdlauncher(BoxLayout):
         gameTabs.clear_tabs()
         gameData = GameDefDb()
         dbTabs = gameData.SelectAllGameTabConfigs()
-        games = gameData.SelectAllGames(desc=True)
+        games = gameData.SelectAllGames()
         for tab in dbTabs:
             if tab.IsEnabled():
                 gameTabs.add_tab(tab.GetName(), tab.GetIndex())
@@ -209,7 +220,11 @@ class FrmGzdlauncher(BoxLayout):
         for game in games:
             gameTabs.insert_game(game)
 
+        for slide in gameTabs.carousel.slides:
+            slide.children[0].select_index(0)
+
         gameTabs.select_tab(0)
+
 
     def mouse_pos(self, *args):
         if not self.get_root_window():
@@ -246,8 +261,6 @@ class FrmGzdlauncher(BoxLayout):
 class GzdLauncher(App):
     def build(self):
         self.frmGzLauncher = FrmGzdlauncher()
-        # Window.minimum_width = 640
-        # Window.minimum_height = 480
         return self.frmGzLauncher
 
     def on_start(self):

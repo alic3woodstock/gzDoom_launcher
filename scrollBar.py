@@ -14,7 +14,7 @@ from myLayout import MyBoxLayout, RelativeLayoutButton
 
 class VertScrollBar(MyBoxLayout):
 
-    def __init__(self, scroll, container, **kwargs):
+    def __init__(self, scroll, **kwargs):
         super().__init__(**kwargs)
         self.orientation = 'vertical'
         self.size_hint = (None, 1)

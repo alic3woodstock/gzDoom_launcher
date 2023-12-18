@@ -1,3 +1,4 @@
+from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.button import Button
 from kivy.uix.layout import Layout
 from kivy.uix.relativelayout import RelativeLayout
@@ -39,16 +40,11 @@ class MyLayout(Layout):
 
 
 class MyStackLayout(MyLayout, StackLayout):
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    pass
 
 
 class MyBoxLayout(MyLayout, BoxLayout):
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
+    pass
 
 class RelativeLayoutButton(Button, RelativeLayout):
     pass

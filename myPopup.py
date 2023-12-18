@@ -24,6 +24,15 @@ class MyPopup(Popup):
         self.initialHeight = self.height
         self.title_color = background_color
         self.separator_height = 2
+        self.is_open = False
+
+    def on_open(self):
+        super().on_open()
+        self.is_open = True
+
+    def on_dismiss(self):
+        super().on_dismiss()
+        self.is_open = False
 
 class ModalWindow(MyBoxLayout):
 

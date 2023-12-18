@@ -128,7 +128,7 @@ class GameDefDb:
         dataCon.Commit()
         dataCon.CloseConnection()
 
-    def SelectAllGames(self, desc=False):
+    def SelectAllGames(self):
         games = []
 
         dataCon = self.ConnectDb()
@@ -136,8 +136,6 @@ class GameDefDb:
             a.iwad, b.groupname, a.cmdparams 
             FROM gamedef a LEFT JOIN groups b ON b.id = a.modgroup 
             ORDER BY tabindex,name"""
-        if desc:
-            sql += """ DESC"""
 
         gameData = dataCon.ExecSQL(sql)
         for game in gameData:
@@ -313,14 +311,13 @@ class GameDefDb:
 
         dataCon.CloseConnection()
 
-
     def UpdateGzdoomVersion(self, version, filehash):
         self.WriteConfig('gzdversion', version, 'text')
         self.WriteConfig('gzdhash', filehash, 'text')
 
     def CheckGzDoomVersion(self, version, filehash):
-        dataVersion = self.ReadConfig('gzdversion','text')
-        dataHash = self.ReadConfig('gzdhash','text')
+        dataVersion = self.ReadConfig('gzdversion', 'text')
+        dataHash = self.ReadConfig('gzdhash', 'text')
         if dataVersion == version and dataHash == filehash:
             return True
         else:
@@ -345,7 +342,7 @@ class GameDefDb:
 
             return int(version)
 
-    def ReadConfig(self, param = "", valuetype ="text"):
+    def ReadConfig(self, param="", valuetype="text"):
         dataCon = self.ConnectDb()
         if valuetype == "num":
             sql = """SELECT numvalue"""
@@ -356,7 +353,7 @@ class GameDefDb:
         else:
             sql = """SELECT txtvalue"""
             defaultValue = ""
-            
+
         sql += """ FROM config WHERE param = ?"""
         params = [param]
         result = dataCon.ExecSQL(sql, params)
@@ -365,10 +362,9 @@ class GameDefDb:
             returnValue = r[0]
             break
         dataCon.CloseConnection()
-        return  returnValue
+        return returnValue
 
-
-    def WriteConfig(self, param = "", value = "", valuetype = "text"):
+    def WriteConfig(self, param="", value="", valuetype="text"):
         dataCon = self.ConnectDb()
         sql = """REPLACE INTO config (param,"""
         if valuetype == "num":
@@ -394,7 +390,7 @@ class GameDefDb:
         params = [tabIndex]
         dataCon = self.ConnectDb()
         tabs = dataCon.ExecSQL(sql, params)
-        tabConfig = gameTabConfig.GameTabConfig(tabIndex,"",False)
+        tabConfig = gameTabConfig.GameTabConfig(tabIndex, "", False)
         for t in tabs:
             tabConfig.SetName(t[0])
             tabConfig.SetEnabled(t[1])
@@ -416,7 +412,7 @@ class GameDefDb:
                           g.IsEnabled()]
                 dataCon.ExecSQL(sql, params)
 
-            #Clean unnamed tabs that aren't in any game
+            # Clean unnamed tabs that aren't in any game
             sql = """DELETE FROM tabs WHERE tabindex NOT IN (SELECT DISTINCT(tabindex)
              FROM gamedef) AND label == '' AND enabled = false"""
             dataCon.ExecSQL(sql)
@@ -432,9 +428,9 @@ class GameDefDb:
         for r in result:
             tabConfigs.append(gameTabConfig.GameTabConfig(r[0], r[1], r[2]))
         dataCon.CloseConnection()
-        return  tabConfigs
+        return tabConfigs
 
-    def InsertDefaultUrls(self, dataCon = None):
+    def InsertDefaultUrls(self, dataCon=None):
         if dataCon:
             commit = False
         else:
@@ -457,7 +453,8 @@ class GameDefDb:
         dataCon.ExecSQL(sql, params)
 
         # 150skins
-        params = ["https://awxdeveloper.edu.eu.org/downloads/150skins.zip", "150skins.zip"] #my personal wordpress site
+        params = ["https://awxdeveloper.edu.eu.org/downloads/150skins.zip",
+                  "150skins.zip"]  # my personal wordpress site
         dataCon.ExecSQL(sql, params)
 
         # Beautiful Doom
@@ -470,7 +467,7 @@ class GameDefDb:
                   "download/V21.11.2/brutalv21.11.2.pk3", "brutal.pk3"]
         dataCon.ExecSQL(sql, params)
 
-        #maps
+        # maps
         params = ["https://youfailit.net/pub/idgames/levels/doom2/megawads/av.zip", "av.zip"]
         dataCon.ExecSQL(sql, params)
         params = ["https://youfailit.net/pub/idgames/levels/doom2/Ports/megawads/aaliens.zip", "aliens.zip"]
@@ -526,4 +523,13 @@ class GameDefDb:
         for r in result:
             urls.append(Url(r[0], r[1]))
         dataCon.CloseConnection()
-        return  urls
+        return urls
+
+    def SelectGridValues(self, sql):
+        dataCon = self.ConnectDb()
+        result = dataCon.ExecSQL(sql)
+        values = []
+        for r in result:
+            values.append(r)
+        dataCon.CloseConnection()
+        return values
