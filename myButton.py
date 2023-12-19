@@ -10,7 +10,7 @@ button_height = 42
 button_width = 128
 
 class MyButton(Button):
-    def __init__(self, **kwargs):
+    def __init__(self, icon=None, **kwargs):
         super().__init__(**kwargs)
         self.hover = False
         self.canvas.add(Callback(self.update_button))
@@ -18,6 +18,7 @@ class MyButton(Button):
         self.highlight_color = highlight_color
         self.hover_color = highlight_color
         self.background_color = background_color
+        self.icon = icon
 
     def draw_button(self):
         padding = [self.width / 2 - self.texture_size[0] / 2, self.height / 2 - self.texture_size[1] / 2]
@@ -46,6 +47,12 @@ class MyButton(Button):
                 text = label.texture
                 Rectangle(pos=self.pos, size=self.size, texture=text)
 
+        if self.icon:
+            self.icon.size = (self.width - self.icon.buttonMargin * 2, self.height - self.icon.buttonMargin * 2)
+            self.icon.center = self.center
+            for i in self.icon.get_instr():
+                self.canvas.after.add(i)
+
     def update_button(self, instr):
         self.canvas.after.clear()
         self.draw_button()
@@ -58,8 +65,7 @@ class MyToggleButton(ToggleButtonBehavior, MyButton):
 
 class MyButtonBorder(MyButton):
     def __init__(self, icon=None, **kwargs):
-        super().__init__(**kwargs)
-        self.icon = icon
+        super().__init__(icon, **kwargs)
         self.size_hint = (1, None)
         self.border_color = text_color
 
@@ -72,12 +78,6 @@ class MyButtonBorder(MyButton):
                 point3 = (self.x + self.width, self.y + self.height)
                 point4 = (self.x, self.y + self.height)
                 Line(points=[point1, point2, point3, point4], width=1, close=True)
-
-            if self.icon:
-                self.icon.size = (self.width - self.icon.buttonMargin * 2, self.height - self.icon.buttonMargin * 2)
-                self.icon.center = self.center
-                for i in self.icon.get_instr():
-                    self.canvas.after.add(i)
 
     def update_button(self, instr):
         self.canvas.after.clear()

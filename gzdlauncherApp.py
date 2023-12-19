@@ -9,7 +9,6 @@ import subprocess
 import os
 
 from kivy.config import Config
-
 kivy.require('2.1.0')
 Config.set('kivy', 'default_font', '["RobotoMono", '
                                    '"fonts/RobotoMono-Regular.ttf", '
@@ -18,6 +17,10 @@ Config.set('kivy', 'default_font', '["RobotoMono", '
                                    '"fonts/RobotoMono-BoldItalic.ttf"]')
 
 Config.set('kivy', 'kivy_clock', 'free_all')
+Config.set('graphics', 'borderless', '1')
+# Config.set('graphics', 'custom_titlebar', '1')
+# Config.set('graphics', 'custom_titlebar_border', '0')
+Config.set('graphics', 'resizable', '0')
 Config.set('graphics', 'minimum_width', '640')
 Config.set('graphics', 'minimum_height', '480')
 Config.set('graphics', 'width', '800')
@@ -44,6 +47,8 @@ class FrmGzdlauncher(BoxLayout):
             self._keyboard_closed, self, 'text')
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
 
+        Window.set_custom_titlebar(BoxLayout())
+
         menuApp = Menu()
         menuApp.bind(on_select=self.menuApp_on_select)
         btnMenuApp = topMenuButton(menuApp, text='Application')
@@ -68,6 +73,7 @@ class FrmGzdlauncher(BoxLayout):
         self.menuGames = menuGames
         self.popup = MyPopup()
         Window.bind(mouse_pos=self.mouse_pos)
+        self.height = Window.height - 32
 
     def _keyboard_closed(self):
         print('My keyboard have been closed!')

@@ -59,6 +59,7 @@ class ModalWindow(MyBoxLayout):
         # self.height / 2 - self.texture_size[1] / 2
 
         if title:
+            title.height = 32
             title.background_color = text_color
             title.canvas.after.clear()
             pos_y = title.y + title.height / 2 - title.texture_size[1] / 2 - self.lineWidth * 2

@@ -1,17 +1,27 @@
 #:kivy 1.0
 #:import MyToggleButton,MyButtonBorder myButton.MyButtonBorder
-#:import MyStackLayout,MyBoxLayout myLayout.MyStackLayout
+#:import MyStackLayout,MyBoxLayout myLayout
 #:import GameCarousel gameCarousel.GameCarousel
+#:import CustomTitleBar,SystemIcons myLayout
 
 <FrmGzdlauncher>:
     orientation: 'vertical'
     padding: 1
-    MyStackLayout:
-        id: mainMenu
+    BoxLayout:
+        orientation: 'horizontal'
         size_hint: (1, None)
         height: 42
-        padding: (0, 0, 2, 4)
-        borders: ['bottom']
+        TitleIcon:
+            id: titleIcon
+            size_hint: (None, 1)
+            width: 42
+        StackLayout:
+            id: mainMenu
+            padding: (0, 0, 2, 4)
+        SystemIcons:
+            id: titleIcon
+            size_hint: (None, 1)
+
 
     BoxLayout:
         id: mainBox
