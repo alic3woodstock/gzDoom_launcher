@@ -5,10 +5,12 @@ from kivy.graphics import Callback
 from kivy.uix.label import Label
 from kivy.uix.dropdown import DropDown
 
-from myLayout import MyStackLayout
 from gameGrid import GameGrid
+from gridContainer import GridContainer
+from myLayout import MyStackLayout
 from myButton import MyButtonBorder, DropdownItem, button_height
 from gameDef import GameDef
+
 
 class GameCarousel(BoxLayout):
     def __init__(self, **kwargs):
@@ -56,8 +58,11 @@ class GameCarousel(BoxLayout):
         btnTitle.bind(state=self.btnTitle_on_state)
         btnTitle.bind(on_press=self.btnTitle_on_press)
         self.topPanel.add_widget(btnTitle)
-        gameGrid = GameGrid()
-        gameGrid.on_change_selection = self.grid_on_change_selection
+
+        gameGrid = GridContainer(GameGrid())
+        gameGrid.container.size_hint = (1, 1)
+        gameGrid.grid.on_change_selection = self.grid_on_change_selection
+
         gameTab = GameTab(tabId, tabId, btnTitle, gameGrid)
         self.carousel.add_widget(gameTab)
 
@@ -75,7 +80,7 @@ class GameCarousel(BoxLayout):
             else:
                 for gameTab in self.carousel.slides:
                     if gameTab.tabId == game.tab:
-                        gameTab.gameGrid.insert_game(game)
+                        gameTab.gameGrid.grid.insert_game(game)
 
     def list_sort(self, game):
         return game.name
@@ -83,7 +88,6 @@ class GameCarousel(BoxLayout):
     def clear_tabs(self):
         self.carousel.clear_widgets()
         self.topPanel.clear_widgets()
-
 
     def btnTitle_on_state(self, widget, state):
         if widget.state == 'down':
@@ -139,13 +143,14 @@ class GameCarousel(BoxLayout):
             btn = self.dropDown.children[0].children
             if btn[i].game.id == self.mainBtnDrop.game.id:
                 if i > 0:
-                    self.dropDown.select(btn[i-1].game)
+                    self.dropDown.select(btn[i - 1].game)
                 else:
                     self.dropDown.select(btn[gameCount - 1].game)
                 return
 
     def get_run_params(self):
-        return [self.carousel.current_slide.gameGrid.get_game(), self.mainBtnDrop.game]
+        return [self.carousel.current_slide.gameGrid.grid.get_game(), self.mainBtnDrop.game]
+
 
 class CarouselButton(ToggleButtonBehavior, MyButtonBorder):
 
@@ -169,22 +174,21 @@ class GameTab(BoxLayout):
         super().__init__(**kwargs)
         self.lineWidth = 1
         self.padding = 16
-        self.tabId = tabId # tab id in database
-        self.tabIndex = tabIndex # tab index in carousel
+        self.tabId = tabId  # tab id in database
+        self.tabIndex = tabIndex  # tab index in carousel
         self.btnTitle = btnTitle
         self.gameGrid = grid
         self.add_widget(grid)
-        
+
+
 class MyCarousel(Carousel):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
 
     def on_index(self, *args):
         super().on_index(*args)
-        if len(self.slides) > 0:
-            tab = self.slides[args[1]]
-            if tab.btnTitle.state == 'normal':
-                tab.btnTitle.state = 'down'
+        if self.current_slide:
+            self.parent.grid_on_change_selection(self.current_slide.gameGrid.grid.get_game_btn())
+            self.current_slide.btnTitle.state = 'down'
+
 
 class ModButton(MyButtonBorder):
     def __init__(self, game, **kwargs):
@@ -194,6 +198,7 @@ class ModButton(MyButtonBorder):
         if game:
             self.text = game.name
 
+
 class MainModButton(DropdownItem):
     def __init__(self, game, **kwargs):
         super().__init__(**kwargs)
@@ -201,10 +206,3 @@ class MainModButton(DropdownItem):
         self.height = button_height
         if game:
             self.text = game.name
-
-class MyCarousel(Carousel):
-    def on_index(self, *args):
-        super().on_index(*args)
-        if self.current_slide:
-            self.parent.grid_on_change_selection(self.current_slide.gameGrid.get_game_btn())
-            self.current_slide.btnTitle.state = 'down'

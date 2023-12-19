@@ -17,7 +17,7 @@ class FrmManageGames(ModalWindow):
         self.dialog.size = Window.size
 
         self.grid = DBGrid()
-        self.topLayout = GridContainer(self.grid)
+        self.topLayout = GridContainer(grid=self.grid, has_title=True)
         self.add_widget(self.topLayout)
         self.grid.get_values(['id','Name', 'Tab', 'Mod Group'],
                              """SELECT g.id, g.name, t.label, r.groupname FROM gamedef g 

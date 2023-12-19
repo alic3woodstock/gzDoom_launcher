@@ -10,11 +10,11 @@ from myButton import text_color
 
 
 class MyLayout(Layout):
-    borders = ['top', 'left', 'bottom', 'right']
-    lineWidth = 2
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.borders = ['top', 'left', 'bottom', 'right']
+        self.lineWidth = 2
         self.canvas.add(Callback(self.update_layout))
 
     def draw_border(self):

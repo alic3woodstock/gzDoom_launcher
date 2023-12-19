@@ -9,6 +9,7 @@ import subprocess
 import os
 
 from kivy.config import Config
+
 kivy.require('2.1.0')
 Config.set('kivy', 'default_font', '["RobotoMono", '
                                    '"fonts/RobotoMono-Regular.ttf", '
@@ -33,6 +34,7 @@ from gameDefDb import GameDefDb
 from myPopup import MyPopup, Dialog, Progress
 from menu import Menu
 from gameFile import GameFile
+
 
 class FrmGzdlauncher(BoxLayout):
     def __init__(self, **kwargs):
@@ -182,7 +184,6 @@ class FrmGzdlauncher(BoxLayout):
         thread = Thread(target=gameFile.verifyUpdate)
         thread.start()
 
-
     def progress_update(self, progress, gameFile, *args):
         progress.max = gameFile.max_range
         progress.update_progress(gameFile.value, gameFile.message)
@@ -225,7 +226,6 @@ class FrmGzdlauncher(BoxLayout):
 
         gameTabs.select_tab(0)
 
-
     def mouse_pos(self, *args):
         if not self.get_root_window():
             return  # do proceed if I'm not displayed <=> If have no parent
@@ -258,7 +258,12 @@ class FrmGzdlauncher(BoxLayout):
     def dummy_function(self, widget, value):
         pass
 
+
 class GzdLauncher(App):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.frmGzLauncher = None
+
     def build(self):
         self.frmGzLauncher = FrmGzdlauncher()
         return self.frmGzLauncher
