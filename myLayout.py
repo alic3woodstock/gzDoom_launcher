@@ -77,35 +77,56 @@ class SystemIcons(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.padding = [4, 4, 4, 4]
+
         self.minButton = MyButton(text='-')
         self.minButton.size_hint = (None, None)
+        self.minButton.bind(on_release=self.minimize_event)
+
         self.maxButton = MyButton(text='+')
         self.maxButton.size_hint = (None, None)
-        self.maxButton.bind(on_press=self.maximize_event)
+        self.maxButton.bind(on_release=self.maximize_event)
+
         self.closeButton = MyButton(text='x')
         self.closeButton.size_hint = (None, None)
-        self.closeButton.bind(on_press=self.close_event)
+        self.closeButton.bind(on_release=self.close_event)
+
         self.add_widget(self.minButton)
         self.add_widget(self.maxButton)
         self.add_widget(self.closeButton)
+
         self.canvas.add(Callback(self.update_layout))
         self.old_size = Window.size
+        self.old_pos = (Window.left, Window.top)
+        self.maximized = False
 
     def update_layout(self, instr):
         self.maxButton.size = (self.height, self.height)
         self.minButton.size = (self.height, self.height)
         self.closeButton.size = (self.height, self.height)
         self.width = self.height * 3
+        if not self.maximized:
+            self.old_pos = (Window.left, Window.top)
 
     def close_event(self, widget):
-        Clock.schedule_once(exit, 0)
+        Window.close()
 
     def maximize_event(self, widget):
-        Window.top = 0
-        Window.left = 0
-        app = tkinter.Tk()
-        width = app.winfo_screenwidth()
-        height = app.winfo_screenheight()
-        x = width / Metrics.dpi * 96
-        y = height / Metrics.dpi * 96
-        Window.size = (x, y)
+        if self.maximized:
+            x = self.old_size[0] / Metrics.dpi * 96
+            y = self.old_size[1] / Metrics.dpi * 96
+            Window.size = (x, y)
+            Window.left = self.old_pos[0]
+            Window.top = self.old_pos[1]
+        else:
+            Window.top = 0
+            Window.left = 0
+            app = tkinter.Tk()
+            width = app.winfo_screenwidth()
+            height = app.winfo_screenheight()
+            x = width / Metrics.dpi * 96
+            y = height / Metrics.dpi * 96
+            Window.size = (x, y)
+        self.maximized = not self.maximized
+
+    def minimize_event(self, widget):
+        Window.minimize()
