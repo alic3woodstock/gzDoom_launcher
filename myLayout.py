@@ -58,8 +58,9 @@ class TitleIcon(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.padding = [4, 4, 4, 4]
-        self.icon = MyButton(icon=Icon('pentagram'))
+        icon = Icon('pentagram')
+        icon.buttonMargin = 10
+        self.icon = MyButton(icon=icon)
         self.icon.size_hint = (None, None)
         self.add_widget(self.icon)
         self.canvas.add(Callback(self.update_layout))
@@ -76,8 +77,6 @@ class SystemIcons(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.padding = [4, 4, 4, 4]
-
         self.minButton = MyButton(text='-')
         self.minButton.size_hint = (None, None)
         self.minButton.bind(on_release=self.minimize_event)
@@ -86,7 +85,9 @@ class SystemIcons(BoxLayout):
         self.maxButton.size_hint = (None, None)
         self.maxButton.bind(on_release=self.maximize_event)
 
-        self.closeButton = MyButton(text='x')
+        icon = Icon('close')
+        icon.buttonMargin = 16
+        self.closeButton = MyButton(icon=icon)
         self.closeButton.size_hint = (None, None)
         self.closeButton.bind(on_release=self.close_event)
 

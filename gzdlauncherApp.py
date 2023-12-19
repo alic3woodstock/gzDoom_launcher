@@ -47,8 +47,6 @@ class FrmGzdlauncher(BoxLayout):
             self._keyboard_closed, self, 'text')
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
 
-        Window.set_custom_titlebar(BoxLayout())
-
         menuApp = Menu()
         menuApp.bind(on_select=self.menuApp_on_select)
         btnMenuApp = topMenuButton(menuApp, text='Application')

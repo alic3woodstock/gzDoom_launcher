@@ -71,6 +71,13 @@ class Icon(Widget):
                 point_t3 = (x + size, y + size)
                 Triangle(points=(point_t1[0], point_t1[1], point_t2[0], point_t2[1],
                                  point_t3[0], point_t3[1]), width=1.1, close=True)
+            elif self.icon == 'close':
+                point1 = (x, y)
+                point2 = (x + size, y + size)
+                point3 = (x + size, y)
+                point4 = (x, y + size)
+                Line(points=[point1, point2], wdith=1.1)
+                Line(points=[point3, point4], wdith=1.1)
             else:
                 point1 = (pos_center[0], y + 12)
                 point2 = (pos_center[0], y + size - 20)
