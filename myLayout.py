@@ -1,4 +1,5 @@
 import tkinter
+import screeninfo
 
 from kivy.core.window import Window
 from kivy.metrics import Metrics
@@ -130,16 +131,17 @@ class SystemIcons(BoxLayout):
             Window.size = (x, y)
             Window.left = self.old_pos[0]
             Window.top = self.old_pos[1]
+            Window.always_on_top = False
             widget.icon = self.maxIcon
         else:
-            app = tkinter.Tk()
-            width = app.winfo_screenwidth()
-            height = app.winfo_screenheight()
-            x = width / Metrics.dpi * 96
-            y = height / Metrics.dpi * 96
-            Window.top = 0
-            Window.left = 0
+            monitor = screeninfo.get_monitors()
+            monitor = monitor[0]
+            x = monitor.width / Metrics.dpi * 96
+            y = monitor.height / Metrics.dpi * 96
+            Window.top = monitor.y
+            Window.left = monitor.x
             Window.size = (x, y)
+            Window.always_on_top = True
             widget.icon = self.restoreIcon
         self.maximized = not self.maximized
         widget.canvas.ask_update()
