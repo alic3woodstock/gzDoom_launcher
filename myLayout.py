@@ -1,6 +1,5 @@
 import tkinter
 
-from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.metrics import Metrics
 from kivy.uix.button import Button
@@ -51,8 +50,10 @@ class MyStackLayout(MyLayout, StackLayout):
 class MyBoxLayout(MyLayout, BoxLayout):
     pass
 
+
 class RelativeLayoutButton(Button, RelativeLayout):
     pass
+
 
 class TitleIcon(BoxLayout):
 
@@ -72,6 +73,7 @@ class TitleIcon(BoxLayout):
     def in_drag_area(self, x, y):
         print('passou aqui')
         return self.collide_point(*self.to_window(x, y))
+
 
 class SystemIcons(BoxLayout):
 
@@ -118,7 +120,6 @@ class SystemIcons(BoxLayout):
             self.old_pos = (Window.left, Window.top)
         self.canvas.ask_update()
 
-
     def close_event(self, widget):
         Window.close()
 
@@ -131,13 +132,13 @@ class SystemIcons(BoxLayout):
             Window.top = self.old_pos[1]
             widget.icon = self.maxIcon
         else:
-            Window.top = 0
-            Window.left = 0
             app = tkinter.Tk()
             width = app.winfo_screenwidth()
             height = app.winfo_screenheight()
             x = width / Metrics.dpi * 96
             y = height / Metrics.dpi * 96
+            Window.top = 0
+            Window.left = 0
             Window.size = (x, y)
             widget.icon = self.restoreIcon
         self.maximized = not self.maximized

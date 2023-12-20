@@ -9,6 +9,7 @@ background_color = [0, 0, 0, 1]
 button_height = 42
 button_width = 128
 
+
 class MyButton(Button):
     def __init__(self, icon=None, **kwargs):
         super().__init__(**kwargs)
@@ -99,7 +100,7 @@ class DropdownItem(ToggleButtonBehavior, MyButtonBorder):
             Line(points=[point1, point2, point3], width=1.5)
 
 
-class topMenuButton(MyToggleButton):
+class TopMenuButton(MyToggleButton):
     def __init__(self, dropdown, **kwargs):
         super().__init__(**kwargs)
         self.size_hint = (None, 1)

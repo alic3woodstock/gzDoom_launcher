@@ -17,8 +17,8 @@ Config.set('kivy', 'default_font', '["RobotoMono", '
                                    '"fonts/RobotoMono-BoldItalic.ttf"]')
 
 Config.set('kivy', 'kivy_clock', 'free_all')
-Config.set('graphics', 'borderless', '1')
-# Config.set('graphics', 'custom_titlebar', '1')
+# Config.set('graphics', 'borderless', '1')
+Config.set('graphics', 'custom_titlebar', '1')
 # Config.set('graphics', 'custom_titlebar_border', '0')
 Config.set('graphics', 'resizable', '0')
 Config.set('graphics', 'minimum_width', '640')
@@ -32,11 +32,41 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.core.window import Window
 from kivy.clock import Clock
-from myButton import topMenuButton
+from myButton import TopMenuButton
 from gameDefDb import GameDefDb
 from myPopup import MyPopup, Dialog, Progress
 from menu import Menu
 from gameFile import GameFile
+
+
+def run_game(game):
+    if game[0]:
+        command = []
+        if game[0].exec.strip() != "":
+            command.append(game[0].exec)
+
+            if game[0].iWad.strip() != "":
+                command.append('-iwad')
+                command.append(game[0].iWad.strip())
+
+            for file in game[0].files:
+                command.append('-file')
+                command.append(file.strip())
+
+            if game[1]:
+                for file in game[1].files:
+                    command.append('-file')
+                    command.append(file.strip())
+
+            for cmd in list(game[0].cmdParams):
+                command.append(cmd)
+
+            if len(command) > 0:
+                result = subprocess.run(command, shell=True)
+                if result.returncode == 0:
+                    gameDefDb = GameDefDb()
+                    gameDefDb.UpdateLastRunMod(game[0], game[1])
+                    game[0].lastMod = game[1].id
 
 
 class FrmGzdlauncher(BoxLayout):
@@ -49,12 +79,12 @@ class FrmGzdlauncher(BoxLayout):
 
         menuApp = Menu()
         menuApp.bind(on_select=self.menuApp_on_select)
-        btnMenuApp = topMenuButton(menuApp, text='Application')
+        btnMenuApp = TopMenuButton(menuApp, text='Application')
         self.ids.mainMenu.add_widget(btnMenuApp)
 
         menuGames = Menu()
         menuGames.bind(on_select=self.menuGames_on_select)
-        btnMenuGames = topMenuButton(menuGames, text='Games')
+        btnMenuGames = TopMenuButton(menuGames, text='Games')
         self.ids.mainMenu.add_widget(btnMenuGames)
 
         menuGames.add_item('Manage Games')
@@ -96,7 +126,7 @@ class FrmGzdlauncher(BoxLayout):
             elif keycode[1] == 'spacebar':
                 gameTabs.spacebar()
             elif keycode[1] == 'enter':
-                self.run_game(gameTabs.get_run_params())
+                run_game(gameTabs.get_run_params())
         elif isinstance(self.popup.content, FrmManageGames):
             if keycode[1] == 'down':
                 self.popup.content.topLayout.load_next()
@@ -120,36 +150,7 @@ class FrmGzdlauncher(BoxLayout):
         return True
 
     def btnRun_on_press(self, widget):
-        self.run_game(self.ids.gameTabs.get_run_params())
-
-    def run_game(self, game):
-        if game[0]:
-            command = []
-            if game[0].exec.strip() != "":
-                command.append(game[0].exec)
-
-                if game[0].iWad.strip() != "":
-                    command.append('-iwad')
-                    command.append(game[0].iWad.strip())
-
-                for file in game[0].files:
-                    command.append('-file')
-                    command.append(file.strip())
-
-                if game[1]:
-                    for file in game[1].files:
-                        command.append('-file')
-                        command.append(file.strip())
-
-                for cmd in list(game[0].cmdParams):
-                    command.append(cmd)
-
-                if len(command) > 0:
-                    result = subprocess.run(command, shell=True)
-                    if result.returncode == 0:
-                        gameDefDb = GameDefDb()
-                        gameDefDb.UpdateLastRunMod(game[0], game[1])
-                        game[0].lastMod = game[1].id
+        run_game(self.ids.gameTabs.get_run_params())
 
     def menuGames_on_select(self, widget, data):
         self.popup.title = data.text
@@ -232,7 +233,7 @@ class FrmGzdlauncher(BoxLayout):
 
     def mouse_pos(self, *args):
         if not self.get_root_window():
-            return  # do proceed if I'm not displayed <=> If have no parent
+            return
         pos = args[1]
         x = pos[0] * Metrics.dpi / 96
         y = pos[1] * Metrics.dpi / 96
@@ -276,6 +277,7 @@ class GzdLauncher(App):
         functions.setDataPath()
         self.title = "GZDoom Launcher"
         self.icon = functions.pentagram
+        Window.set_custom_titlebar(BoxLayout())
 
         gameDefDb = GameDefDb()
 
