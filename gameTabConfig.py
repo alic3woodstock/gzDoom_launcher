@@ -17,7 +17,7 @@ class GameTabConfig:
     def SetEnabled(self, isEnabled):
         self._isEnabled = isEnabled
 
-    def __init__(self, index = 0, name = "", isEnabled = False):
+    def __init__(self, index=0, name="", isEnabled=False):
         self._index = index
         self._name = name
         self._isEnabled = isEnabled

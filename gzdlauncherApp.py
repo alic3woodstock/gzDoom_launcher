@@ -1,15 +1,15 @@
+import os
+import subprocess
 from functools import partial
 from threading import Thread
 
 import kivy
+from kivy.config import Config
 from kivy.graphics import Callback
 from kivy.metrics import Metrics
 
 import functions
-import subprocess
-import os
 
-from kivy.config import Config
 kivy.require('2.1.0')
 Config.set('kivy', 'default_font', '["RobotoMono", '
                                    '"fonts/RobotoMono-Regular.ttf", '

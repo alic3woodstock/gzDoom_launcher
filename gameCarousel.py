@@ -1,15 +1,15 @@
-from kivy.uix.carousel import Carousel
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.togglebutton import ToggleButtonBehavior
 from kivy.graphics import Callback
-from kivy.uix.label import Label
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.carousel import Carousel
 from kivy.uix.dropdown import DropDown
+from kivy.uix.label import Label
+from kivy.uix.togglebutton import ToggleButtonBehavior
 
+from gameDef import GameDef
 from gameGrid import GameGrid
 from gridContainer import GridContainer
-from myLayout import MyStackLayout
 from myButton import MyButtonBorder, DropdownItem, button_height
-from gameDef import GameDef
+from myLayout import MyStackLayout
 
 
 class GameCarousel(BoxLayout):

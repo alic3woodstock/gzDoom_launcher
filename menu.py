@@ -2,8 +2,9 @@ from kivy.graphics import Callback, Color, Rectangle
 from kivy.uix.button import Button
 from kivy.uix.dropdown import DropDown
 from kivy.uix.label import CoreLabel
-from myLayout import MyBoxLayout
+
 from myButton import text_color, highlight_color, background_color, button_height
+from myLayout import MyBoxLayout
 
 
 class Menu(DropDown):
@@ -42,6 +43,7 @@ class Menu(DropDown):
             if btn.texture_size[0] > self.width:
                 self.width = btn.texture_size[0] + 16
 
+
 class MenuItem(Button):
     def __init__(self, index, **kwargs):
         super().__init__(**kwargs)
@@ -78,4 +80,3 @@ class MenuItem(Button):
                 Color(rgba=text_color)
                 text = label.texture
                 Rectangle(pos=self.pos, size=self.size, texture=text)
-

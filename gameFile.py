@@ -1,15 +1,17 @@
-import time
-import zipfile
-import functions
-import os
-import requests
-import shutil
 import math
+import os
+import shutil
+import tarfile
+import zipfile
 
+import requests
 from kivy.clock import Clock
-from gameDefDb import GameDefDb
+
+import functions
 from gameDef import GameDef
+from gameDefDb import GameDefDb
 from url import Url
+
 
 class GameFile():
     def __init__(self):
@@ -89,7 +91,6 @@ class GameFile():
         # self.value = self.max_range
         self.finishTask()
 
-
     def finishTask(self):
         self.done = True
         if self.clock:
@@ -119,7 +120,7 @@ class GameFile():
                         downloadF.write(chunk)
                     if i < total_length:
                         self.value = math.floor(self.value) + (i / total_length)
-                        print (self.value)
+                        print(self.value)
 
                     i += 1024
 
@@ -140,7 +141,7 @@ class GameFile():
             self.message = 'GZDoom already at latest version.'
         elif result:
             dataCon = GameDefDb()
-            self.message = 'GZDoom updated to version: ' + dataCon.ReadConfig('gzdversion','text')
+            self.message = 'GZDoom updated to version: ' + dataCon.ReadConfig('gzdversion', 'text')
         else:
             self.message = 'Update failed, read ' + functions.logFile + 'for more details!'
         self.value = self.max_range
@@ -274,22 +275,22 @@ class GameFile():
                 elif z.GetFormat().find("maps") >= 0:
                     if z.TestFileName("htchest") or z.TestFileName("unbeliev"):
                         games.append(GameDef(i, z.GetMapName(), 1, gameExec, 2, 0,
-                                                     functions.wadPath + "blasphem-0.1.7.wad",
-                                                     [functions.wadPath + "BLSMPTXT.WAD", fullPath]))
+                                             functions.wadPath + "blasphem-0.1.7.wad",
+                                             [functions.wadPath + "BLSMPTXT.WAD", fullPath]))
                     else:
                         games.append(GameDef(i, z.GetMapName(), 1, gameExec, 1, 0,
-                                                     functions.wadPath + "freedoom2.wad", [fullPath]))
+                                             functions.wadPath + "freedoom2.wad", [fullPath]))
                 elif z.GetFormat().find("mods") >= 0:
                     if z.TestFileName("150skins"):
                         games.append(
                             GameDef(i, "150 Skins", -1, gameExec, 2, 0,  # 150 Skins also works with heretic
-                                            "", [fullPath]))
+                                    "", [fullPath]))
                     elif z.TestFileName("beautiful"):
                         games.append(GameDef(i, "Beautiful Doom", -1, gameExec, 1, 0,
-                                                     "", [functions.modPath + "150skins.zip", fullPath]))
+                                             "", [functions.modPath + "150skins.zip", fullPath]))
                     elif z.TestFileName("brutal"):
                         games.append(GameDef(i, "Brutal Doom", -1, gameExec, 1, 0,
-                                                     "", [fullPath]))
+                                             "", [fullPath]))
             except Exception as e:
                 functions.log("CreateDB - " + str(e))
 
@@ -297,6 +298,7 @@ class GameFile():
 
         for g in games:
             dbGames.InsertGame(g)
+
 
 class ZipFile:
     _format = ""

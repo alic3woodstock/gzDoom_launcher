@@ -1,9 +1,8 @@
 import dataConnect
 import functions
 import gameDef
-import modGroup
 import gameTabConfig
-
+import modGroup
 from url import Url
 
 CREATE_CONFIG = """CREATE TABLE IF NOT EXISTS config(
@@ -173,10 +172,10 @@ class GameDefDb:
             WHERE a.id=?""", [gameId])
         game = gameData.fetchone()
         g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6], [], game[7], game[8])
-        g.SetFiles([])
+        g.files = []
         fileData = dataCon.ExecSQL("""SELECT file FROM files WHERE gameid = ?""", [game[0]])
         for f in fileData:
-            g.GetFiles().append(f[0])
+            g.files.append(f[0])
         dataCon.CloseConnection()
         return g
 
@@ -335,6 +334,7 @@ class GameDefDb:
         if strTable.lower().find("config") < 0:
             return 0
         else:
+            version = 0
             sql = """SELECT numvalue FROM config WHERE param = 'dbversion'"""
             versionData = dataCon.ExecSQL(sql)
             for v in versionData:

@@ -1,5 +1,5 @@
-import logging
 import hashlib
+import logging
 import os
 
 LOGLEVEL = logging.ERROR
@@ -19,8 +19,9 @@ logFile = "gzdlauncher.log"
 pentagram = "pentagram.png"
 rootFolder = ""
 
+
 def log(text, error=True):
-    logging.basicConfig(filename = logFile, encoding='utf-8', level=LOGLEVEL, format=FORMAT)
+    logging.basicConfig(filename=logFile, encoding='utf-8', level=LOGLEVEL, format=FORMAT)
     if error:
         logging.error(text)
     else:
@@ -43,6 +44,7 @@ def versionNumber():
     strVersion = APPVERSION.replace(".", "")
     return int(strVersion)
 
+
 def setDataPath():
     global dbPath
     global gzDoomPath
@@ -61,7 +63,7 @@ def setDataPath():
     rootFolder = dataPath.replace("functions.py", "")
     dataPath = dataPath.replace("functions.py", "data")
 
-    #global paths
+    # global paths
     dbPath = dataPath + "/games.sqlite3"
     gzDoomPath = dataPath + "/gzdoom/"
     tmpDir = dataPath + "/temp/"
@@ -70,7 +72,7 @@ def setDataPath():
     mapPath = dataPath + "/maps/"
     modPath = dataPath + "/mods/"
 
-    #global files
+    # global files
     logFile = dataPath + '/gzDoomLauncher.log'
     gzDoomExec = gzDoomPath + "gzdoom"
 
@@ -89,4 +91,3 @@ def setDataPath():
         logFile = logFile.replace('/', '\\')
         gzDoomExec = gzDoomPath + "gzdoom.exe"
         pentagram = pentagram.replace('/', '\\')
-

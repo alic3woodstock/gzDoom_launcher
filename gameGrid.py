@@ -1,6 +1,5 @@
 from kivy.uix.gridlayout import GridLayout
 
-from dbGrid import GridButton
 from gameDef import GameDef
 from myButton import button_height, MyToggleButton
 
@@ -32,7 +31,7 @@ class GameGrid(GridLayout):
         self.height += gameButton.height
 
     def on_change_selection(self, widget):
-        pass # Used in game carousel to populate mods
+        pass  # Used in game carousel to populate mods
 
     def get_game_btn(self):
         for gameBtn in self.children:
@@ -47,6 +46,7 @@ class GameGrid(GridLayout):
             if game == btn.game:
                 self.remove_widget(btn)
                 self.height = self.row_height * len(self.children)
+
 
 class GameButton(MyToggleButton):
     def __init__(self, row_index=0, game=None, **kwargs):

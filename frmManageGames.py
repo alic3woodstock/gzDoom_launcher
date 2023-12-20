@@ -1,13 +1,8 @@
 from kivy.core.window import Window
-from kivy.graphics import Callback
-from kivy.uix.anchorlayout import AnchorLayout
-from kivy.uix.scrollview import ScrollView
 
 from dbGrid import DBGrid
-from myLayout import MyBoxLayout
-from myPopup import ModalWindow
-from scrollBar import VertScrollBar
 from gridContainer import GridContainer
+from myPopup import ModalWindow
 
 
 class FrmManageGames(ModalWindow):
@@ -19,7 +14,7 @@ class FrmManageGames(ModalWindow):
         self.grid = DBGrid()
         self.topLayout = GridContainer(grid=self.grid, has_title=True)
         self.add_widget(self.topLayout)
-        self.grid.get_values(['id','Name', 'Tab', 'Mod Group'],
+        self.grid.get_values(['id', 'Name', 'Tab', 'Mod Group'],
                              """SELECT g.id, g.name, t.label, r.groupname FROM gamedef g 
                              LEFT JOIN tabs t ON g.tabindex=t.tabindex
                              LEFT JOIN groups r ON g.modgroup=r.id""")
