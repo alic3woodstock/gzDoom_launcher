@@ -1,5 +1,7 @@
-import tkinter
+from functools import partial
+
 import screeninfo
+from kivy.clock import Clock
 
 from kivy.core.window import Window
 from kivy.metrics import Metrics
@@ -71,15 +73,15 @@ class TitleIcon(BoxLayout):
         self.icon.height = self.height - self.padding[0] * 2
         self.icon.width = self.height - self.padding[1] * 2
 
-    def in_drag_area(self, x, y):
-        print('passou aqui')
-        return self.collide_point(*self.to_window(x, y))
-
 
 class SystemIcons(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        self.btnMove = MyButton()
+        self.btnMove.size_hint = (1, 1)
+        self.btnMove.highlight_color = self.btnMove.background_color
 
         icon = Icon('minimize')
         icon.buttonMargin = 13
@@ -103,48 +105,83 @@ class SystemIcons(BoxLayout):
         self.closeButton.size_hint = (None, None)
         self.closeButton.bind(on_release=self.close_event)
 
+        self.add_widget(self.btnMove)
         self.add_widget(self.minButton)
         self.add_widget(self.maxButton)
         self.add_widget(self.closeButton)
 
         self.canvas.add(Callback(self.update_layout))
-        self.old_size = Window.size
+        self.old_size = Window.system_size
         self.old_pos = (Window.left, Window.top)
         self.maximized = False
+        self.is_moving = False
+        self.window_origin = (0, 0)
+        self.monitor = screeninfo.get_monitors()
 
     def update_layout(self, instr):
         self.maxButton.size = (self.height, self.height)
         self.minButton.size = (self.height, self.height)
         self.closeButton.size = (self.height, self.height)
-        self.width = self.height * 3
+        # self.width = self.height * 3
         if not self.maximized:
             self.old_pos = (Window.left, Window.top)
         self.canvas.ask_update()
+        Window.bind(on_mouse_move=self.mouse_move)
+        Window.bind(on_mouse_down=self.mouse_down)
+        Window.bind(on_mouse_up=self.mouse_up)
+        self.monitor = screeninfo.get_monitors()
 
     def close_event(self, widget):
         Window.close()
 
     def maximize_event(self, widget):
         if self.maximized:
-            x = self.old_size[0] / Metrics.dpi * 96
-            y = self.old_size[1] / Metrics.dpi * 96
+            self.maximized = False
+            x = self.old_size[0]
+            y = self.old_size[1]
             Window.size = (x, y)
             Window.left = self.old_pos[0]
             Window.top = self.old_pos[1]
             Window.always_on_top = False
             widget.icon = self.maxIcon
         else:
-            monitor = screeninfo.get_monitors()
-            monitor = monitor[0]
+            self.maximized = True
+            monitor = self.monitor[0]
+            if Window.left > monitor.width or Window.left < monitor.x:
+                monitor = self.monitor[1]
             x = monitor.width / Metrics.dpi * 96
             y = monitor.height / Metrics.dpi * 96
             Window.top = monitor.y
             Window.left = monitor.x
-            Window.size = (x, y)
+            Window.system_size = (x, y)
             Window.always_on_top = True
             widget.icon = self.restoreIcon
-        self.maximized = not self.maximized
         widget.canvas.ask_update()
 
     def minimize_event(self, widget):
         Window.minimize()
+
+    def mouse_down(self, widget, x, y, button, modifiers):
+        self.window_origin = (x, y)
+        x = x * Metrics.dpi / 96
+        y = Window.height - y * Metrics.dpi / 96
+        if self.btnMove.collide_point(*self.btnMove.to_widget(x, y)):
+            self.is_moving = True
+
+    def mouse_move(self, widget, x, y, modifiers):
+        if self.is_moving and (not self.maximized):
+            Clock.schedule_once(partial(self.move_schedule, x, y), 0)
+
+    def mouse_up(self, widget, x, y, button, modifiers):
+        self.is_moving = False
+        if not self.maximized:
+            Window.size = (640, 480)
+            Window.size = self.old_size
+        Window.canvas.ask_update()
+
+    def move_schedule(self, x, y, *args):
+        x = self.window_origin[0] - x
+        y = self.window_origin[1] - y
+        Window.left = Window.left - x
+        Window.top = Window.top - y
+        Window.canvas.ask_update()

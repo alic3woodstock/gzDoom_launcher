@@ -2,6 +2,7 @@ from functools import partial
 from threading import Thread
 
 import kivy
+from kivy.graphics import Callback
 from kivy.metrics import Metrics
 
 import functions
@@ -17,10 +18,9 @@ Config.set('kivy', 'default_font', '["RobotoMono", '
                                    '"fonts/RobotoMono-BoldItalic.ttf"]')
 
 Config.set('kivy', 'kivy_clock', 'free_all')
-# Config.set('graphics', 'borderless', '1')
 Config.set('graphics', 'custom_titlebar', '1')
-# Config.set('graphics', 'custom_titlebar_border', '0')
 Config.set('graphics', 'resizable', '0')
+# Config.set('graphics', 'borderless', '1')
 Config.set('graphics', 'minimum_width', '640')
 Config.set('graphics', 'minimum_height', '480')
 Config.set('graphics', 'width', '800')
@@ -100,8 +100,9 @@ class FrmGzdlauncher(BoxLayout):
         self.menuApp = menuApp
         self.menuGames = menuGames
         self.popup = MyPopup()
-        Window.bind(mouse_pos=self.mouse_pos)
         self.height = Window.height - 32
+        self.ids.mainMenu.canvas.add(Callback(self.main_menu_cupdate))
+        Window.bind(mouse_pos=self.mouse_pos)
 
     def _keyboard_closed(self):
         print('My keyboard have been closed!')
@@ -143,7 +144,7 @@ class FrmGzdlauncher(BoxLayout):
             if self.popup.is_open:
                 self.popup.dismiss()
             else:
-                exit()
+                Window.close()
 
         # Return True to accept the key. Otherwise, it will be used by
         # the system.
@@ -198,7 +199,7 @@ class FrmGzdlauncher(BoxLayout):
 
     def menuApp_on_select(self, widget, data):
         if data.index == 3:
-            Clock.schedule_once(exit, 0)
+            Clock.schedule_once(lambda close: Window.close(), 0)
         else:
             self.popup.title = data.text
             if data.index == 0:
@@ -262,6 +263,12 @@ class FrmGzdlauncher(BoxLayout):
 
     def dummy_function(self, widget, value):
         pass
+
+    def main_menu_cupdate(self, instr):
+        i = 0
+        for c in self.ids.mainMenu.children:
+            i += c.width
+        self.ids.mainMenu.width = i + self.ids.mainMenu.padding[2] * 2
 
 
 class GzdLauncher(App):
