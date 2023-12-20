@@ -77,16 +77,25 @@ class SystemIcons(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.minButton = MyButton(text='-')
+
+        icon = Icon('minimize')
+        icon.buttonMargin = 13
+        self.minButton = MyButton(icon=icon)
         self.minButton.size_hint = (None, None)
         self.minButton.bind(on_release=self.minimize_event)
 
-        self.maxButton = MyButton(text='+')
+        icon = Icon('restore')
+        icon.buttonMargin = 13
+        self.restoreIcon = icon
+        icon = Icon('maximize')
+        icon.buttonMargin = 13
+        self.maxIcon = icon
+        self.maxButton = MyButton(icon=icon)
         self.maxButton.size_hint = (None, None)
         self.maxButton.bind(on_release=self.maximize_event)
 
         icon = Icon('close')
-        icon.buttonMargin = 16
+        icon.buttonMargin = 13
         self.closeButton = MyButton(icon=icon)
         self.closeButton.size_hint = (None, None)
         self.closeButton.bind(on_release=self.close_event)
@@ -107,6 +116,8 @@ class SystemIcons(BoxLayout):
         self.width = self.height * 3
         if not self.maximized:
             self.old_pos = (Window.left, Window.top)
+        self.canvas.ask_update()
+
 
     def close_event(self, widget):
         Window.close()
@@ -118,6 +129,7 @@ class SystemIcons(BoxLayout):
             Window.size = (x, y)
             Window.left = self.old_pos[0]
             Window.top = self.old_pos[1]
+            widget.icon = self.maxIcon
         else:
             Window.top = 0
             Window.left = 0
@@ -127,7 +139,9 @@ class SystemIcons(BoxLayout):
             x = width / Metrics.dpi * 96
             y = height / Metrics.dpi * 96
             Window.size = (x, y)
+            widget.icon = self.restoreIcon
         self.maximized = not self.maximized
+        widget.canvas.ask_update()
 
     def minimize_event(self, widget):
         Window.minimize()
