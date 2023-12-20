@@ -151,9 +151,9 @@ class SystemIcons(BoxLayout):
                 monitor = self.monitor[1]
             x = monitor.width / Metrics.dpi * 96
             y = monitor.height / Metrics.dpi * 96
+            Window.system_size = (x, y)
             Window.top = monitor.y
             Window.left = monitor.x
-            Window.system_size = (x, y)
             Window.always_on_top = True
             widget.icon = self.restoreIcon
         widget.canvas.ask_update()
@@ -173,15 +173,18 @@ class SystemIcons(BoxLayout):
             Clock.schedule_once(partial(self.move_schedule, x, y), 0)
 
     def mouse_up(self, widget, x, y, button, modifiers):
+        if self.is_moving:
+            Window.system_size = (799, 599)
+            Clock.schedule_once(self.restore_size_schedule, 0)
         self.is_moving = False
-        if not self.maximized:
-            Window.size = (640, 480)
-            Window.size = self.old_size
-        Window.canvas.ask_update()
 
     def move_schedule(self, x, y, *args):
         x = self.window_origin[0] - x
         y = self.window_origin[1] - y
         Window.left = Window.left - x
         Window.top = Window.top - y
+
+    def restore_size_schedule(self, *args):
+        Window.system_size = self.old_size
         Window.canvas.ask_update()
+
