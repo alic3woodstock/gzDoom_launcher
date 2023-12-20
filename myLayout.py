@@ -174,8 +174,9 @@ class SystemIcons(BoxLayout):
 
     def mouse_up(self, widget, x, y, button, modifiers):
         if self.is_moving:
-            Window.system_size = (799, 599)
-            Clock.schedule_once(self.restore_size_schedule, 0)
+            Window.size = (799, 599)
+            wsize = Window.system_size
+            Clock.schedule_once(lambda resize: self.restore_size_schedule(wsize), 0)
         self.is_moving = False
 
     def move_schedule(self, x, y, *args):
@@ -184,7 +185,7 @@ class SystemIcons(BoxLayout):
         Window.left = Window.left - x
         Window.top = Window.top - y
 
-    def restore_size_schedule(self, *args):
-        Window.system_size = self.old_size
+    def restore_size_schedule(self, size):
+        Window.size = size
         Window.canvas.ask_update()
 

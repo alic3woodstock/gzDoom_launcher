@@ -191,10 +191,3 @@ class VertScrollBar(MyBoxLayout):
         pos = self.trail.to_window(*self.trail.pos)
         y = y - pos[1]
         return y / self.trail.height
-
-    # def trail_state_down(self, value):
-    #     pos = Window.mouse_pos
-    #     x = pos[0] * Metrics.dpi / 96
-    #     y = pos[1] * Metrics.dpi / 96
-
-
