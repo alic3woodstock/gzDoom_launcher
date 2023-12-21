@@ -6,7 +6,8 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 
 from functions import text_color, background_color, button_height
-from myButton import MyCheckBox, DropdownItem
+from icon import Icon
+from myButton import MyCheckBox, DropdownItem, MyButtonBorder
 
 
 class GenericForm(GridLayout):
@@ -67,6 +68,31 @@ class GenericForm(GridLayout):
         self.add_widget(container)
 
         self.canvas.add(Callback(self.update_form))
+
+    def add_file_field(self, text='', field_name=''):
+        label = self.add_label(text)
+        value_input = TextInput()
+        value_input.id = field_name
+
+        box_file = GridLayout()
+        box_file.cols = 2
+        box_file.size_hint = (1, None)
+        box_file.height = self.children_height
+
+        aux_box = BoxLayout()
+        aux_box.padding = 2
+        aux_box.size_hint = (None, None)
+        aux_box.height = self.children_height
+        aux_box.width = self.children_height
+        button_file = MyButtonBorder(icon=Icon('folder'))
+        button_file.size_hint = (1, 1)
+        aux_box.add_widget(button_file)
+
+        self.add_widget(label)
+        box_file.add_widget(value_input)
+        box_file.add_widget(aux_box)
+        self.add_widget(box_file)
+
 
     def add_dropdown(self, text='', field_name=''):
         label = self.add_label(text)

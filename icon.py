@@ -111,6 +111,18 @@ class Icon(Widget):
                 point2 = (pos_center[0] - 2, y + 4)
                 point3 = (x + size - 3, y + size - 4)
                 Line(points=[point1, point2, point3], width=self.line_width)
+            elif self.icon == 'folder':
+                point1 = (x + size / 3, y + size)
+                point2 = (pos_center[0], y + size - 6)
+                point3 = (x + size / 3, y + size - 6)
+                Triangle(points=(point1[0], point1[1], point2[0], point2[1],
+                                 point3[0], point3[1]))
+                Rectangle(pos=(x - self.line_width, y + size - 6), size=(size / 3, 6))
+                point1 = (x, y)
+                point2 = (x, y + size - 5)
+                point3 = (x + size, y + size - 5)
+                point4 = (x + size, y)
+                Line(points=[point1, point2, point3, point4], width=self.line_width, close=True)
             else:
                 point1 = (pos_center[0], y + 12)
                 point2 = (pos_center[0], y + size - 20)
