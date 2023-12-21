@@ -9,7 +9,7 @@ from kivy.graphics import Callback, Rectangle, Color, Line
 
 from icon import Icon
 from myLayout import MyStackLayout, MyBoxLayout
-from myButton import MyButtonBorder, text_color, background_color
+from myButton import MyButtonBorder, text_color, background_color, MyButton, button_height
 
 
 class MyPopup(ModalView):
@@ -19,15 +19,25 @@ class MyPopup(ModalView):
         self.background_color = background_color
         self.size_hint = (None, None)
 
-        self.topLayout = GridLayout()
-        self.topLayout.cols = 1
+        self.topLayout = BoxLayout()
+        self.topLayout.orientation = 'vertical'
+        self.topLayout.padding = 0
 
         self.titleWidget = Label()
+        icon = Icon('close', button_margin=10, color=background_color)
+        self.closeButton = MyButton(icon=icon)
+        self.closeButton.background_color = text_color
+        self.closeButton.text_color = background_color
+        self.closeButton.size_hint = (None, 1)
+        self.closeButton.bind(on_release=(lambda dismiss: self.dismiss()))
+
         self.boxTitle = BoxLayout()
-        self.boxTitle.orientation = 'vertical'
-        self.boxTitle.size_hint = (1, None)
-        self.boxTitle.height = 42
+        self.boxTitle.padding = 0
+        self.boxTitle.height = button_height
+        self.closeButton.width = self.boxTitle.height
+
         self.boxTitle.add_widget((self.titleWidget))
+        self.boxTitle.add_widget(self.closeButton)
 
         self.content = None
         self.boxContent = BoxLayout()
@@ -42,6 +52,10 @@ class MyPopup(ModalView):
     def on_pre_open(self):
         self.boxContent.clear_widgets()
         self.titleWidget.text = ''
+        with self.canvas.after:
+            Color(rgba=background_color)
+            Rectangle(pos=self.pos, size=self.size)
+        self.canvas.ask_update()
 
     def on_open(self):
         super().on_open()
@@ -50,6 +64,7 @@ class MyPopup(ModalView):
         if self.content:
             self.boxContent.add_widget(self.content)
         self.is_open = True
+        self.canvas.after.clear()
 
     def on_dismiss(self):
         super().on_dismiss()
@@ -60,6 +75,7 @@ class MyPopup(ModalView):
         if len(self.boxContent.children) > 0 and self.boxContent.children[0] != self.content:
             self.boxContent.clear_widgets()
             self.boxContent.add_widget(self.content)
+        self.closeButton.width = self.boxTitle.height
 
 class ModalWindow(MyBoxLayout):
 
@@ -71,6 +87,7 @@ class ModalWindow(MyBoxLayout):
         self.canvas.add(Callback(self.update_layout))
         self.dialog.auto_dismiss = False
         self.buttons = []
+        self.borders = ['left', 'bottom', 'right']
 
     def update_layout(self, instr):
         self.draw_title()
@@ -80,14 +97,18 @@ class ModalWindow(MyBoxLayout):
     def draw_title(self):
         title = self.dialog.titleWidget
         if title:
+            self.dialog.boxTitle.size_hint = (None, None)
+            self.dialog.boxTitle.x = self.x - self.lineWidth
+            self.dialog.boxTitle.width = self.width + self.lineWidth * 2
+            self.dialog.boxTitle.height = button_height - self.lineWidth * 2
             title.background_color = text_color
             title.canvas.after.clear()
-            pos_y = title.y + title.height / 2 - title.texture_size[1] / 2 - self.lineWidth * 2
+            pos_y = title.y + title.height / 2 - title.texture_size[1] / 2
             self.dialog.canvas.after.clear()
             with self.dialog.canvas.after:
                 Color(rgba=text_color)
-                Rectangle(pos=(self.x - self.lineWidth, title.y - self.lineWidth * 2),
-                          size=(self.width + self.lineWidth * 2, title.height))
+                Rectangle(pos=title.pos,
+                          size=(title.width, title.height + 1))
                 Color(rgba=background_color)
                 Rectangle(pos=(title.x + 8, pos_y), size=title.texture_size, texture=title.texture)
 

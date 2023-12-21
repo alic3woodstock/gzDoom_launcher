@@ -8,12 +8,13 @@ from myButton import text_color
 
 class Icon(Widget):
 
-    def __init__(self, icon='information', **kwargs):
+    def __init__(self, icon='information', button_margin=6, color=text_color,  **kwargs):
         super().__init__(**kwargs)
         self.icon = icon
         self.canvas.add(Callback(self.draw_icon))
         self.instructions = None
-        self.buttonMargin = 6
+        self.color = color
+        self.buttonMargin = button_margin
 
     def draw_icon(self, instr):
         self.canvas.after.clear()
@@ -29,7 +30,7 @@ class Icon(Widget):
             y = pos_center[1] - size / 2
 
         with self.canvas.after:
-            Color(rgba=text_color)
+            Color(rgba=self.color)
             if self.icon == 'exclamation':
                 point_t1 = (x, y)
                 point_t2 = (pos_center[0] - 0.1, y + size)
@@ -58,14 +59,12 @@ class Icon(Widget):
                 Line(points=[point1, point2, point3, point4, point5], width=1.1, close=True)
                 Line(ellipse=(x, y, size, size), width=1.1)
             elif self.icon == 'uparrow':
-                Color(rgba=text_color)
                 point_t1 = (x, y)
                 point_t2 = (pos_center[0] - 0.1, y + size)
                 point_t3 = (x + size, y)
                 Triangle(points=(point_t1[0], point_t1[1], point_t2[0], point_t2[1],
                                  point_t3[0], point_t3[1]), width=1.1, close=True)
             elif self.icon == 'downarrow':
-                Color(rgba=text_color)
                 point_t1 = (x, y + size)
                 point_t2 = (pos_center[0] - 0.1, y)
                 point_t3 = (x + size, y + size)
