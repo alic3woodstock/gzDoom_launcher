@@ -3,7 +3,7 @@ from kivy.uix.button import Button
 from kivy.uix.dropdown import DropDown
 from kivy.uix.label import CoreLabel
 
-from myButton import text_color, highlight_color, background_color, button_height
+from functions import text_color, highlight_color, background_color, button_height
 from myLayout import MyBoxLayout
 
 

@@ -13,7 +13,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics import Color, Line, Callback
 from getBorders import GetBorders
 from icon import Icon
-from myButton import text_color, MyButton
+from myButton import MyButton
+from functions import text_color
 
 
 class MyLayout(Layout):

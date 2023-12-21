@@ -3,11 +3,8 @@ from kivy.uix.button import Button
 from kivy.uix.label import CoreLabel
 from kivy.graphics import Color, Line, Callback, Rectangle
 
-text_color = [1, 1, 1, 1]
-highlight_color = [0.5, 0, 0, 1]
-background_color = [0, 0, 0, 1]
-button_height = 42
-button_width = 128
+from functions import text_color, highlight_color, background_color
+from icon import Icon
 
 
 class MyButton(Button):
@@ -125,3 +122,23 @@ class TopMenuButton(MyToggleButton):
     def update_button(self, instr):
         self.width = self.texture_size[0] + 16
         super().update_button(instr)
+
+
+class MyCheckBox(MyToggleButton):
+
+    def __init__(self, **kwargs):
+        super().__init__(icon=Icon('maximize'), **kwargs)
+        self.highlight_color = self.background_color
+
+    def choose_icon(self):
+        if self.state == 'down':
+            self.icon = Icon('check', color=highlight_color, line_width=1)
+        else:
+            self.icon = Icon('maximize', line_width=1)
+        self.icon.buttonMargin = 0
+
+    def update_button(self, instr):
+        self.canvas.after.clear()
+        self.choose_icon()
+        self.draw_button()
+        self.canvas.ask_update()

@@ -8,7 +8,8 @@ from kivy.uix.togglebutton import ToggleButtonBehavior
 from gameDef import GameDef
 from gameGrid import GameGrid
 from gridContainer import GridContainer
-from myButton import MyButtonBorder, DropdownItem, button_height
+from myButton import MyButtonBorder, DropdownItem
+from functions import button_height
 from myLayout import MyStackLayout
 
 

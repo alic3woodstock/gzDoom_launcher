@@ -1,7 +1,8 @@
 from kivy.uix.gridlayout import GridLayout
 
 from gameDef import GameDef
-from myButton import button_height, MyToggleButton
+from myButton import MyToggleButton
+from functions import button_height
 
 
 class GameGrid(GridLayout):

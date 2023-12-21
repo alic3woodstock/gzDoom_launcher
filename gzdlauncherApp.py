@@ -141,7 +141,11 @@ class FrmGzdlauncher(BoxLayout):
         # Keycode is composed of an integer + a string
         # If we hit escape, release the keyboard
         if keycode[1] == 'escape':
-            if self.popup.is_open:
+            if (isinstance(self.popup.content, FrmManageGames)
+                    and self.popup.content.popup
+                    and self.popup.content.popup.is_open):
+                self.popup.content.popup.dismiss()
+            elif self.popup.is_open:
                 self.popup.dismiss()
             else:
                 Window.close()

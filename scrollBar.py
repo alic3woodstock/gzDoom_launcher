@@ -8,7 +8,8 @@ from kivy.metrics import Metrics
 from kivy.uix.relativelayout import RelativeLayout
 
 from icon import Icon
-from myButton import MyButtonBorder, MyButton, text_color, background_color
+from myButton import MyButtonBorder, MyButton
+from functions import text_color, background_color
 from myLayout import MyBoxLayout, RelativeLayoutButton
 
 

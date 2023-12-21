@@ -91,3 +91,10 @@ def setDataPath():
         logFile = logFile.replace('/', '\\')
         gzDoomExec = gzDoomPath + "gzdoom.exe"
         pentagram = pentagram.replace('/', '\\')
+
+
+text_color = [1, 1, 1, 1]
+highlight_color = [0.5, 0, 0, 1]
+background_color = [0, 0, 0, 1]
+button_height = 42
+button_width = 128

@@ -8,9 +8,11 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.core.window import Window
 from kivy.graphics import Callback, Rectangle, Color, Line
 
+import functions
 from icon import Icon
 from myLayout import MyStackLayout, MyBoxLayout
-from myButton import MyButtonBorder, text_color, background_color, MyButton, button_height
+from myButton import MyButtonBorder, MyButton
+from functions import text_color, background_color, button_height
 
 
 class MyPopup(ModalView):
@@ -110,7 +112,7 @@ class ModalWindow(MyBoxLayout):
             self.dialog.boxTitle.x = self.x - self.lineWidth
             self.dialog.boxTitle.width = self.width + self.lineWidth * 2
             self.dialog.boxTitle.height = button_height - self.lineWidth * 2
-            title.background_color = text_color
+            functions.background_color = text_color
             title.canvas.after.clear()
             pos_y = title.y + title.height / 2 - title.texture_size[1] / 2
             self.dialog.canvas.after.clear()

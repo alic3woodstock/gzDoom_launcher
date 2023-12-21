@@ -3,7 +3,8 @@ from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.gridlayout import GridLayout
 
 from gameDefDb import GameDefDb
-from myButton import MyButtonBorder, background_color, text_color
+from myButton import MyButtonBorder
+from functions import text_color, background_color
 
 
 class DBGrid(GridLayout):
