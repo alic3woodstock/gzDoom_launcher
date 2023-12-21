@@ -66,34 +66,35 @@ class VertScrollBar(MyBoxLayout):
         Window.bind(on_mouse_up=self.mouse_up)
 
     def scroll_update(self, widget=None):
-        height1 = (self.scroll.height / self.scroll.viewport_size[1] * self.trail.height)
-        if height1 > self.width:
-            self.trailButton.height = height1
-        else:
-            self.trailButton.height = self.width
+        if self.height > 0:
+            height1 = (self.scroll.height / self.scroll.viewport_size[1] * self.trail.height)
+            if height1 > self.width:
+                self.trailButton.height = height1
+            else:
+                self.trailButton.height = self.width
 
-        const = (self.trail.height - self.trailButton.height) / self.trail.height
-        self.const = const
+            const = (self.trail.height - self.trailButton.height) / self.trail.height
+            self.const = const
 
-        if not self.trailButton_pressed and self.parent:
-            movment = self.scroll.scroll_y * const
-            if movment < 0:
-                movment = 0
-            if movment > const:
-                movment = const
-            self.trailButton.pos_hint = {'y': movment}
-            self.canvas.ask_update()
+            if not self.trailButton_pressed and self.parent:
+                movment = self.scroll.scroll_y * const
+                if movment < 0:
+                    movment = 0
+                if movment > const:
+                    movment = const
+                self.trailButton.pos_hint = {'y': movment}
+                self.canvas.ask_update()
 
-        self.on_state(self.topButton, self.topButton.state)
-        self.on_state(self.bottomButton, self.bottomButton.state)
+            self.on_state(self.topButton, self.topButton.state)
+            self.on_state(self.bottomButton, self.bottomButton.state)
 
-        if self.movup or (self.movup2 and (self.scroll.scroll_y < self.trailpos_to_scroll())):
-            Clock.schedule_once(partial(self.move_scroll, 'up', 0), 0.025)
-        elif self.movdown or (self.movdown2 and (self.scroll.scroll_y > self.trailpos_to_scroll())):
-            Clock.schedule_once(partial(self.move_scroll, 'down', 0), 0.025)
-        else:
-            Clock.unschedule(partial(self.move_scroll, 'up'))
-            Clock.unschedule(partial(self.move_scroll, 'down'))
+            if self.movup or (self.movup2 and (self.scroll.scroll_y < self.trailpos_to_scroll())):
+                Clock.schedule_once(partial(self.move_scroll, 'up', 0), 0.025)
+            elif self.movdown or (self.movdown2 and (self.scroll.scroll_y > self.trailpos_to_scroll())):
+                Clock.schedule_once(partial(self.move_scroll, 'down', 0), 0.025)
+            else:
+                Clock.unschedule(partial(self.move_scroll, 'up'))
+                Clock.unschedule(partial(self.move_scroll, 'down'))
 
         # if self.trail.state == 'down':
         #     Clock.schedule_interval(self.trail_state_down, 0.1)

@@ -1,4 +1,4 @@
-from kivy.uix.popup import Popup
+from kivy.uix.modalview import ModalView
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
@@ -12,27 +12,54 @@ from myLayout import MyStackLayout, MyBoxLayout
 from myButton import MyButtonBorder, text_color, background_color
 
 
-class MyPopup(Popup):
+class MyPopup(ModalView):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.anchor_x = 'center'
-        self.anchor_y = 'center'
-        self.size_hint = (None, None)
         self.background_color = background_color
-        self.separator_color = text_color
-        self.initialHeight = self.height
-        self.title_color = background_color
-        self.separator_height = 2
+        self.size_hint = (None, None)
+
+        self.topLayout = GridLayout()
+        self.topLayout.cols = 1
+
+        self.titleWidget = Label()
+        self.boxTitle = BoxLayout()
+        self.boxTitle.orientation = 'vertical'
+        self.boxTitle.size_hint = (1, None)
+        self.boxTitle.height = 42
+        self.boxTitle.add_widget((self.titleWidget))
+
+        self.content = None
+        self.boxContent = BoxLayout()
+
+        self.title = ''
         self.is_open = False
+        self.topLayout.add_widget(self.boxTitle)
+        self.topLayout.add_widget(self.boxContent)
+        self.add_widget(self.topLayout)
+        self.canvas.add(Callback(self.update_popup))
+
+    def on_pre_open(self):
+        self.boxContent.clear_widgets()
+        self.titleWidget.text = ''
 
     def on_open(self):
         super().on_open()
+        if self.titleWidget:
+            self.titleWidget.text = self.title
+        if self.content:
+            self.boxContent.add_widget(self.content)
         self.is_open = True
 
     def on_dismiss(self):
         super().on_dismiss()
+        self.boxContent.clear_widgets()
         self.is_open = False
+
+    def update_popup(self, instr):
+        if len(self.boxContent.children) > 0 and self.boxContent.children[0] != self.content:
+            self.boxContent.clear_widgets()
+            self.boxContent.add_widget(self.content)
 
 class ModalWindow(MyBoxLayout):
 
@@ -51,15 +78,8 @@ class ModalWindow(MyBoxLayout):
 
 
     def draw_title(self):
-        title = None
-        for t in self.dialog.children[0].children:
-            if isinstance(t, Label):
-                title = t
-
-        # self.height / 2 - self.texture_size[1] / 2
-
+        title = self.dialog.titleWidget
         if title:
-            title.height = 32
             title.background_color = text_color
             title.canvas.after.clear()
             pos_y = title.y + title.height / 2 - title.texture_size[1] / 2 - self.lineWidth * 2
@@ -142,7 +162,7 @@ class Dialog(ModalWindow):
             self.dialog.width = label.texture_size[0] + self.icon.width + 80
         else:
             self.dialog.width = label.texture_size[0] + 64
-        self.dialog.height = self.dialog.initialHeight + label.texture_size[1] + 64
+        self.dialog.height = self.dialog.boxTitle.height + label.texture_size[1] + 64
         self.dialog.height += self.boxButtons.height
         super().update_layout(instr)
 

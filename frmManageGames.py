@@ -24,3 +24,5 @@ class FrmManageGames(ModalWindow):
         self.btnAdd = self.AddButon('Add')
         if self.grid.children[0].row_index > 0:
             self.topLayout.select_index(0)
+        self.dialog.size = Window.size
+
