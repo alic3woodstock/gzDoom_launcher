@@ -1,3 +1,4 @@
+from kivy.clock import Clock
 from kivy.uix.modalview import ModalView
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
@@ -36,7 +37,7 @@ class MyPopup(ModalView):
         self.boxTitle.height = button_height
         self.closeButton.width = self.boxTitle.height
 
-        self.boxTitle.add_widget((self.titleWidget))
+        self.boxTitle.add_widget(self.titleWidget)
         self.boxTitle.add_widget(self.closeButton)
 
         self.content = None
@@ -48,14 +49,11 @@ class MyPopup(ModalView):
         self.topLayout.add_widget(self.boxContent)
         self.add_widget(self.topLayout)
         self.canvas.add(Callback(self.update_popup))
+        self.pre_open_size = 0
 
     def on_pre_open(self):
-        self.boxContent.clear_widgets()
-        self.titleWidget.text = ''
-        with self.canvas.after:
-            Color(rgba=background_color)
-            Rectangle(pos=self.pos, size=self.size)
-        self.canvas.ask_update()
+        self.topLayout.clear_widgets()
+        self.opacity = 0
 
     def on_open(self):
         super().on_open()
@@ -64,7 +62,8 @@ class MyPopup(ModalView):
         if self.content:
             self.boxContent.add_widget(self.content)
         self.is_open = True
-        self.canvas.after.clear()
+        self.topLayout.add_widget(self.boxTitle)
+        self.topLayout.add_widget(self.boxContent)
 
     def on_dismiss(self):
         super().on_dismiss()
@@ -76,11 +75,22 @@ class MyPopup(ModalView):
             self.boxContent.clear_widgets()
             self.boxContent.add_widget(self.content)
         self.closeButton.width = self.boxTitle.height
+        if self.is_open and self.opacity < 1:
+            Clock.schedule_once(lambda rp: self.redraw_popup(), 0.1)
+
+    def redraw_popup(self):
+        self.opacity += 0.5
+        self.canvas.ask_update()
+
+
 
 class ModalWindow(MyBoxLayout):
 
     def __init__(self, dialog, **kwargs):
-        super().__init__( **kwargs)
+        super().__init__(**kwargs)
+        self.btnOk = None
+        self.btnCancel = None
+        self.boxButtons = None
         self.dialog = dialog
         self.orientation = 'vertical'
         self.clear_widgets()
@@ -92,7 +102,6 @@ class ModalWindow(MyBoxLayout):
     def update_layout(self, instr):
         self.draw_title()
         super().update_layout(instr)
-
 
     def draw_title(self):
         title = self.dialog.titleWidget
@@ -165,7 +174,7 @@ class Dialog(ModalWindow):
         separator = BoxLayout()
         separator.size_hint = (None, 1)
         separator.width = 16
-        icon = Icon(icon) # Image(source=rootFolder + 'images/icon_information.png')
+        icon = Icon(icon)  # Image(source=rootFolder + 'images/icon_information.png')
         icon.size_hint = (None, 1)
         icon.width = 48
         self.icon = icon
@@ -175,7 +184,6 @@ class Dialog(ModalWindow):
         textLayout.add_widget(label)
         self.add_widget(textLayout)
         self.CreateBoxButtons(txtOk, txtCancel)
-
 
     def update_layout(self, instr):
         label = self.label
@@ -187,9 +195,10 @@ class Dialog(ModalWindow):
         self.dialog.height += self.boxButtons.height
         super().update_layout(instr)
 
+
 class Progress(ModalWindow):
 
-    def __init__(self,  dialog, max=100,  text='', **kwargs):
+    def __init__(self, dialog, max_value=100, text='', **kwargs):
         super().__init__(dialog, **kwargs)
         self.padding = [16, 0, 16, 0]
 
@@ -212,7 +221,7 @@ class Progress(ModalWindow):
         self.add_widget(layout2)
         self.dialog = dialog
         self.progress = progress
-        self.max = max
+        self.max = max_value
         self.value = 0
         self.label = label
 
@@ -246,7 +255,7 @@ class Progress(ModalWindow):
 
 class ModalForm(ModalWindow):
 
-    def __init__(self, dialog, txtOk = 'OK', txtCancel='Cancel', **kwargs):
+    def __init__(self, dialog, txtOk='OK', txtCancel='Cancel', **kwargs):
         super().__init__(dialog, **kwargs)
         self.dialog.size = Window.size
 
