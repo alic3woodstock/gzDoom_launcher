@@ -26,7 +26,7 @@ class FrmManageGames(ModalWindow):
             self.topGrid.select_index(0)
         self.dialog.size = Window.size
         self.popup = MyPopup()
-        self.btnAdd.bind(on_press=self.btnAdd_on_press)
+        self.btnAdd.bind(on_release=self.btnAdd_on_press)
 
     def btnAdd_on_press(self, widget):
         self.popup.content = FrmGames(self.popup)

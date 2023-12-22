@@ -4,8 +4,6 @@ from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.anchorlayout import AnchorLayout
-from kivy.uix.gridlayout import GridLayout
-from kivy.core.window import Window
 from kivy.graphics import Callback, Rectangle, Color, Line
 
 import functions
@@ -138,7 +136,7 @@ class ModalWindow(MyBoxLayout):
             btnCancel.size_hint = (None, 1)
             btnCancel.text = txtCancel
             btnCancel.width = 128
-            btnCancel.bind(on_press=self.btnCancel_on_press)
+            btnCancel.bind(on_release=self.btnCancel_on_press)
             boxButtons.add_widget(btnCancel)
             self.btnCancel = btnCancel
 
@@ -255,13 +253,3 @@ class Progress(ModalWindow):
             Line(points=[point1, point2, point3, point4, point1], width=1)
 
 
-class ModalForm(ModalWindow):
-
-    def __init__(self, dialog, txtOk='OK', txtCancel='Cancel', **kwargs):
-        super().__init__(dialog, **kwargs)
-        self.dialog.size = Window.size
-
-        self.topLayout = GridLayout(cols=2)
-        self.topLayout.padding = 16
-        self.add_widget(self.topLayout)
-        self.CreateBoxButtons(txtOk, txtCancel)

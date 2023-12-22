@@ -1,16 +1,15 @@
-import math
 from functools import partial
 
 from kivy.clock import Clock
 from kivy.core.window import Window
-from kivy.graphics import Callback, Color, Rectangle
+from kivy.graphics import Callback
 from kivy.metrics import Metrics
 from kivy.uix.relativelayout import RelativeLayout
 
 from icon import Icon
-from myButton import MyButtonBorder, MyButton
-from functions import text_color, background_color
-from myLayout import MyBoxLayout, RelativeLayoutButton
+from myButton import MyButtonBorder
+from functions import text_color
+from myLayout import MyBoxLayout
 
 
 class VertScrollBar(MyBoxLayout):

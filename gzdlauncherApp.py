@@ -167,7 +167,7 @@ class FrmGzdlauncher(BoxLayout):
                             text="This will reset game database to the default values.\n"
                                  + "Do you want to continue?",
                             txtCancel='No', txtOk='Yes', icon='exclamation')
-            dialog.btnOk.bind(on_press=self.btnYes1_onPress)
+            dialog.btnOk.bind(on_release=self.btnYes1_onPress)
             self.popup.content = dialog
         else:
             self.popup.content = Dialog(self.popup, text='Under contruction', txtCancel='OK', txtOk='',
