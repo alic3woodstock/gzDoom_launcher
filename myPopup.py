@@ -285,11 +285,11 @@ class FileProgress(FileChooserProgress):
         super().__init__(**kwargs)
         self.clear_widgets()
         self.progress = Progress(max_value=self.total)
+        self.progress.pos = (0, 0)
+        self.progress.size = self.size
         self.add_widget(self.progress)
         self.canvas.add(Callback(self.update_layout))
 
     def update_layout(self, instr):
-        self.progress.pos = (0, 0)
-        self.progress.size = self.size
         self.progress.max = self.total
         self.progress.update_progress(self.index, str(self.index) + ' / ' + str(self.total))
