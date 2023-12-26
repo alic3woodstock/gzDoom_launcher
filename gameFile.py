@@ -13,7 +13,7 @@ from gameDefDb import GameDefDb
 from url import Url
 
 
-class GameFile():
+class GameFile:
     def __init__(self):
         self.value = 0
         self.message = 'Starting ...'
@@ -174,18 +174,18 @@ class GameFile():
                 self.DownloadFile(file)
 
                 if os.name == "nt":
-                    zipfile = ZipFile(filename, "zip")
+                    zip_file = ZipFile(filename, "zip")
                 else:
-                    zipfile = ZipFile(filename, "xz")
+                    zip_file = ZipFile(filename, "xz")
 
                 extractOK = False
-                if zipfile.TestFileName("gzdoom"):
+                if zip_file.TestFileName("gzdoom"):
                     if os.name == "nt":
-                        if zipfile.ExtractTo(functions.gzDoomPath):
+                        if zip_file.ExtractTo(functions.gzDoomPath):
                             extractOK = True
                     else:
                         try:
-                            if zipfile.ExtractTo(functions.tempDir):
+                            if zip_file.ExtractTo(functions.tempDir):
                                 extractOK = True
                             dirs = os.listdir(functions.tempDir)
                             for d in dirs:

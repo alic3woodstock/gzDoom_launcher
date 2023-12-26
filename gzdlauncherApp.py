@@ -20,7 +20,6 @@ Config.set('kivy', 'default_font', '["RobotoMono", '
 Config.set('kivy', 'kivy_clock', 'free_all')
 Config.set('graphics', 'custom_titlebar', '1')
 Config.set('graphics', 'resizable', '0')
-# Config.set('graphics', 'borderless', '1')
 Config.set('graphics', 'minimum_width', '640')
 Config.set('graphics', 'minimum_height', '480')
 Config.set('graphics', 'width', '800')
@@ -109,7 +108,7 @@ class FrmGzdlauncher(BoxLayout):
         self._keyboard.unbind(on_key_down=self._on_keyboard_down)
         self._keyboard = None
 
-    def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+    def _on_keyboard_down(self, _keyboard, keycode, _text, _modifiers):
         gameTabs = self.ids.gameTabs
         if not self.popup.is_open:
             if keycode[1] == 'left':
@@ -154,10 +153,10 @@ class FrmGzdlauncher(BoxLayout):
         # the system.
         return True
 
-    def btnRun_on_press(self, widget):
+    def btnRun_on_press(self, _widget):
         run_game(self.ids.gameTabs.get_run_params())
 
-    def menuGames_on_select(self, widget, data):
+    def menuGames_on_select(self, _widget, data):
         self.popup.title = data.text
         if data.index == 0:
             dialog = FrmManageGames(self.popup)
@@ -174,7 +173,7 @@ class FrmGzdlauncher(BoxLayout):
                                         icon='information')
         self.popup.open()
 
-    def btnYes1_onPress(self, widget):
+    def btnYes1_onPress(self, _widget):
         progress = Progress(self.popup, text='Starting')
         self.popup.content = progress
         gameFile = GameFile()
@@ -183,7 +182,7 @@ class FrmGzdlauncher(BoxLayout):
         thread = Thread(target=gameFile.extractAll)
         thread.start()
 
-    def btnUpdate_onPress(self, widget):
+    def btnUpdate_onPress(self, _widget):
         progress = Progress(self.popup, text='Updating GZDoom...')
         self.popup.content = progress
         self.popup.width = 600
@@ -194,14 +193,14 @@ class FrmGzdlauncher(BoxLayout):
         thread = Thread(target=gameFile.verifyUpdate)
         thread.start()
 
-    def progress_update(self, progress, gameFile, *args):
+    def progress_update(self, progress, gameFile, *_args):
         progress.max = gameFile.max_range
         progress.update_progress(gameFile.value, gameFile.message)
         if gameFile.done:
             self.popup.content = Dialog(self.popup, text=gameFile.message, txtCancel='OK', txtOk='',
                                         icon='information')
 
-    def menuApp_on_select(self, widget, data):
+    def menuApp_on_select(self, _widget, data):
         if data.index == 3:
             Clock.schedule_once(lambda close: Window.close(), 0)
         else:
@@ -268,7 +267,7 @@ class FrmGzdlauncher(BoxLayout):
     def dummy_function(self, widget, value):
         pass
 
-    def main_menu_cupdate(self, instr):
+    def main_menu_cupdate(self, _instr):
         i = 0
         for c in self.ids.mainMenu.children:
             i += c.width

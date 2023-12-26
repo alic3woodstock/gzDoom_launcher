@@ -17,7 +17,7 @@ class Icon(Widget):
         self.buttonMargin = button_margin
         self.line_width = line_width
 
-    def draw_icon(self, instr):
+    def draw_icon(self, _instr):
         self.canvas.after.clear()
         pos_center = self.to_window(*self.center)
         pos = self.to_window(*self.pos)

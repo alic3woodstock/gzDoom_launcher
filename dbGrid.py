@@ -2,9 +2,9 @@ from kivy.graphics import Callback
 from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.gridlayout import GridLayout
 
+from functions import text_color, background_color
 from gameDefDb import GameDefDb
 from myButton import MyButtonBorder
-from functions import text_color, background_color
 
 
 class DBGrid(GridLayout):
@@ -53,7 +53,7 @@ class DBGrid(GridLayout):
 
         self.height = len(self.row_values) * self.row_height
 
-    def update_grid(self, instr):
+    def update_grid(self, _instr):
         grid_width = 0
         for i in range(len(self.title)):
             if i > 0:

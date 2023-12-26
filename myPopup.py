@@ -72,6 +72,7 @@ class MyPopup(ModalView):
         self.boxContent.clear_widgets()
         self.is_open = False
 
+    # noinspection PyUnusedLocal
     def update_popup(self, instr):
         if len(self.boxContent.children) > 0 and self.boxContent.children[0] != self.content:
             self.boxContent.clear_widgets()
@@ -146,7 +147,7 @@ class ModalWindow(MyBoxLayout):
         if txtOk.strip():
             self.btnOk = self.AddButon(txtOk)
 
-    def btnCancel_on_press(self, widget):
+    def btnCancel_on_press(self, _widget):
         self.dialog.dismiss()
 
     def AddButon(self, txtBtn=''):
@@ -290,6 +291,6 @@ class FileProgress(FileChooserProgress):
         self.add_widget(self.progress)
         self.canvas.add(Callback(self.update_layout))
 
-    def update_layout(self, instr):
+    def update_layout(self, _instr):
         self.progress.max = self.total
         self.progress.update_progress(self.index, str(self.index) + ' / ' + str(self.total))

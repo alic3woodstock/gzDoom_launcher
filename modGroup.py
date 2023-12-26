@@ -1,4 +1,4 @@
-class ModGroup():
+class ModGroup:
     def __init__(self, groupId, groupName):
         self._groupId = groupId
         self._groupName = groupName

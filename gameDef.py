@@ -10,14 +10,14 @@ class GameDef:
         self.files.append(file)
 
     # Id,Name,Tab Index,Exe,Group,Last run mod,iWad,files...
-    def __init__(self, id, name, tab, gameExec="", groupId=1, lastMod=0, wad='freedoom1.wad',
+    def __init__(self, gameId, name, tab, gameExec="", groupId=1, lastMod=0, wad='freedoom1.wad',
                  files=None, groupName=None, cmdParams=""):
         if not gameExec.strip():
             gameExec = functions.gzDoomExec
 
         if files is None:
             files = []
-        self.id = id
+        self.id = gameId
         self.name = name
         self.tab = tab
         self.exec = gameExec

@@ -5,11 +5,11 @@ from kivy.uix.dropdown import DropDown
 from kivy.uix.label import Label
 from kivy.uix.togglebutton import ToggleButtonBehavior
 
+from functions import button_height
 from gameDef import GameDef
 from gameGrid import GameGrid
 from gridContainer import GridContainer
 from myButton import MyButtonBorder, DropdownItem
-from functions import button_height
 from myLayout import MyStackLayout
 
 
@@ -90,8 +90,8 @@ class GameCarousel(BoxLayout):
         self.carousel.clear_widgets()
         self.topPanel.clear_widgets()
 
-    def btnTitle_on_state(self, widget, state):
-        if widget.state == 'down':
+    def btnTitle_on_state(self, widget, value):
+        if value == 'down':
             for c in self.topPanel.children:
                 if c != widget:
                     c.state = 'normal'
@@ -105,12 +105,12 @@ class GameCarousel(BoxLayout):
     def btnDrop_on_press(self, widget):
         self.dropDown.select(widget.game)
 
-    def dropDown_on_select(self, widget, data):
+    def dropDown_on_select(self, _widget, data):
         self.mainBtnDrop.text = data.name
         self.mainBtnDrop.game = data
         self.mainBtnDrop.state = 'normal'
 
-    def dropDown_on_dismiss(self, widget):
+    def dropDown_on_dismiss(self, _widget):
         self.mainBtnDrop.state = 'normal'
 
     def grid_on_change_selection(self, widget):

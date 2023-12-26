@@ -52,7 +52,7 @@ class MenuItem(Button):
         self.canvas.add(Callback(self.update_button))
         self.hover = False
 
-    def update_button(self, instr):
+    def update_button(self, _instr):
         padding = [self.width / 2 - self.texture_size[0] / 2, self.height / 2 - self.texture_size[1] / 2]
         label = CoreLabel(text=self.text, color=text_color,
                           font_size=self.font_size, font=self.font_name,

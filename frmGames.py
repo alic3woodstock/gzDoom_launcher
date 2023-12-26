@@ -1,5 +1,4 @@
 from kivy.core.window import Window
-from kivy.uix.anchorlayout import AnchorLayout
 
 from genericForm import GenericForm
 from myPopup import ModalWindow

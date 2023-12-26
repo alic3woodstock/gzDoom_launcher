@@ -5,11 +5,11 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 
+from fileChooserDialog import FileChooserDialog
 from functions import text_color, background_color, button_height
 from icon import Icon
 from myButton import MyCheckBox, DropdownItem, MyButtonBorder
 from myPopup import MyPopup
-from fileChooserDialog import FileChooserDialog
 
 
 class GenericForm(GridLayout):
@@ -96,7 +96,6 @@ class GenericForm(GridLayout):
         box_file.add_widget(aux_box)
         self.add_widget(box_file)
 
-
     def add_dropdown(self, text='', field_name=''):
         label = self.add_label(text)
 
@@ -113,13 +112,12 @@ class GenericForm(GridLayout):
         self.add_widget(label)
         self.add_widget(dropBox)
 
-
     def get_value(self, field_name):
         for c in self.children:
             if isinstance(c, TextInput) and c.id == field_name:
                 return c.text
 
-    def update_form(self, instr):
+    def update_form(self, _instr):
         max_size = 0
         for lb in self.labels:
             size_x = lb.texture_size[0]
@@ -130,8 +128,7 @@ class GenericForm(GridLayout):
         for lb in self.labels:
             lb.parent.width = max_size
 
-    def open_file_dialog(self, widget):
+    def open_file_dialog(self, _widget):
         popup = MyPopup()
         popup.content = FileChooserDialog(popup)
         popup.open()
-

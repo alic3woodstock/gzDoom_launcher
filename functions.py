@@ -66,7 +66,7 @@ def setDataPath():
     # global paths
     dbPath = dataPath + "/games.sqlite3"
     gzDoomPath = dataPath + "/gzdoom/"
-    tmpDir = dataPath + "/temp/"
+    tempDir = dataPath + "/temp/"
     downloadPath = dataPath + "/downloads/"
     wadPath = dataPath + "/wads/"
     mapPath = dataPath + "/maps/"
@@ -82,7 +82,7 @@ def setDataPath():
     if os.name == "nt":
         dbPath = dbPath.replace('/', '\\')
         gzDoomPath = gzDoomPath.replace('/', '\\')
-        tmpDir = tmpDir.replace('/', '\\')
+        tempDir = tempDir.replace('/', '\\')
         downloadPath = downloadPath.replace('/', '\\')
         wadPath = wadPath.replace('/', '\\')
         mapPath = mapPath.replace('/', '\\')

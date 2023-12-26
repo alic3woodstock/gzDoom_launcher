@@ -28,6 +28,6 @@ class FrmManageGames(ModalWindow):
         self.popup = MyPopup()
         self.btnAdd.bind(on_release=self.btnAdd_on_press)
 
-    def btnAdd_on_press(self, widget):
+    def btnAdd_on_press(self, _widget):
         self.popup.content = FrmGames(self.popup)
         self.popup.open()

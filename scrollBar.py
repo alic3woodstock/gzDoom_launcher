@@ -65,7 +65,7 @@ class VertScrollBar(MyBoxLayout):
         Window.bind(on_mouse_down=self.mouse_down)
         Window.bind(on_mouse_up=self.mouse_up)
 
-    def scroll_update(self, widget=None):
+    def scroll_update(self, _instr):
         if self.height > 0:
             height1 = (self.scroll.height / self.scroll.viewport_size[1] * self.trail.height)
             if height1 > self.width:
@@ -101,7 +101,7 @@ class VertScrollBar(MyBoxLayout):
         # else:
         #     Clock.unschedule(self.trail_state_down)
 
-    def mouse_down(self, widget, x, y, button, modifiers):
+    def mouse_down(self, _widget, x, y, button, _modifiers):
         x = x * Metrics.dpi / 96
         y = Window.height - y * Metrics.dpi / 96
 
@@ -130,14 +130,14 @@ class VertScrollBar(MyBoxLayout):
             if button == 'scrollup':
                 self.move_scroll('down')
 
-    def mouse_up(self, widget, x, y, button, modifiers):
+    def mouse_up(self, widget, _x, _y, _button, _modifiers):
         self.trailButton_pressed = False
         self.trail_pressed = False
         self.movup2 = False
         self.movdown2 = False
         Clock.unschedule(partial(self.change_movement, widget, 0))
 
-    def mouse_move(self, widget, x, y, modifiers):
+    def mouse_move(self, _widget, _x, y, _modifiers):
         y = Window.height - y * Metrics.dpi / 96
         if self.trailButton_pressed:
             pos = self.trail.to_window(*self.trail.pos)
@@ -154,13 +154,13 @@ class VertScrollBar(MyBoxLayout):
         if self.movup2 or self.movdown2:
             self.canvas.ask_update()
 
-    def btn_move_scroll(self, widget, value=0, *args):
+    def btn_move_scroll(self, widget, _value, *_args):
         if widget == self.topButton:
             self.move_scroll()
         else:
             self.move_scroll('down')
 
-    def move_scroll(self, direction='up', value=0, *args):
+    def move_scroll(self, direction='up', _value=0, *_args):
         qtd = self.scroll.convert_distance_to_scroll(0, self.scroll.scroll_distance)
         if direction == 'up':
             self.scroll.scroll_y = (self.scroll.scroll_y + qtd[1])
@@ -172,7 +172,7 @@ class VertScrollBar(MyBoxLayout):
             self.scroll.scroll_y = 1
 
 
-    def on_state(self, widget, value):
+    def on_state(self, widget, _value):
         if widget.state == 'down':
             Clock.schedule_once(partial(self.change_movement, widget, 0), 0.5)
         else:
@@ -182,7 +182,7 @@ class VertScrollBar(MyBoxLayout):
             else:
                 self.movdown = False
 
-    def change_movement(self, widget, value, *args):
+    def change_movement(self, widget, _value, *_args):
         self.movup = widget == self.topButton
         self.movdown = widget == self.bottomButton
 

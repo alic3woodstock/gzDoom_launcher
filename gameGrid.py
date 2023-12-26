@@ -1,8 +1,8 @@
 from kivy.uix.gridlayout import GridLayout
 
+from functions import button_height
 from gameDef import GameDef
 from myButton import MyToggleButton
-from functions import button_height
 
 
 class GameGrid(GridLayout):
@@ -16,7 +16,7 @@ class GameGrid(GridLayout):
         self.height = 0
 
         self.games = []
-        self.empty_game = GameDef(id=0, name='Empty Tab', tab=-2)
+        self.empty_game = GameDef(gameId=0, name='Empty Tab', tab=-2)
         self.empty_game.exec = ''
         self.insert_game(self.empty_game)
         self.container = None

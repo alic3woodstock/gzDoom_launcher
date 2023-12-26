@@ -364,16 +364,16 @@ class GameDefDb:
         dataCon.CloseConnection()
         return returnValue
 
-    def WriteConfig(self, param="", value="", valuetype="text"):
+    def WriteConfig(self, param="", value=None, value_type="text"):
         dataCon = self.ConnectDb()
         sql = """REPLACE INTO config (param,"""
-        if valuetype == "num":
+        if value_type == "num":
             sql += """numvalue)"""
-            if (value == ""):
+            if value == "":
                 value = 0
-        elif valuetype == "bool":
+        elif value_type == "bool":
             sql += """boolvalue)"""
-            if (value == ""):
+            if value == "":
                 value = False
         else:
             sql += """txtvalue)"""
@@ -399,14 +399,14 @@ class GameDefDb:
 
         return tabConfig
 
-    def UpdateGameTabConfig(self, gameTabConfig):
-        if not (gameTabConfig is None):
+    def UpdateGameTabConfig(self, gameTab):
+        if not (gameTab is None):
             dataCon = self.ConnectDb()
             sql = """REPLACE INTO tabs(tabindex, label, enabled) 
              VALUES(?, ?, ?)"""
             dataCon.StartTransaction()
 
-            for g in gameTabConfig:
+            for g in gameTab:
                 params = [g.GetIndex(),
                           g.GetName(),
                           g.IsEnabled()]

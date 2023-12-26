@@ -116,7 +116,7 @@ class TopMenuButton(MyToggleButton):
             if not (btn == self):
                 btn.state = 'normal'
 
-    def on_dropdown_dismiss(self, widget):
+    def on_dropdown_dismiss(self, _widget):
         self.isDropOpen = False
 
     def update_button(self, instr):

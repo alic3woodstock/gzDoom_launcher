@@ -70,7 +70,7 @@ class TitleIcon(BoxLayout):
         self.add_widget(self.icon)
         self.canvas.add(Callback(self.update_layout))
 
-    def update_layout(self, instr):
+    def update_layout(self, _instr):
         self.icon.height = self.height - self.padding[0] * 2
         self.icon.width = self.height - self.padding[1] * 2
 
@@ -119,7 +119,7 @@ class SystemIcons(BoxLayout):
         self.window_origin = (0, 0)
         self.monitor = screeninfo.get_monitors()
 
-    def update_layout(self, instr):
+    def update_layout(self, _instr):
         self.maxButton.size = (self.height, self.height)
         self.minButton.size = (self.height, self.height)
         self.closeButton.size = (self.height, self.height)
@@ -132,7 +132,7 @@ class SystemIcons(BoxLayout):
         Window.bind(on_mouse_up=self.mouse_up)
         self.monitor = screeninfo.get_monitors()
 
-    def close_event(self, widget):
+    def close_event(self, _widget):
         Window.close()
 
     def maximize_event(self, widget):
@@ -159,28 +159,28 @@ class SystemIcons(BoxLayout):
             widget.icon = self.restoreIcon
         widget.canvas.ask_update()
 
-    def minimize_event(self, widget):
+    def minimize_event(self, _widget):
         Window.minimize()
 
-    def mouse_down(self, widget, x, y, button, modifiers):
+    def mouse_down(self, _widget, x, y, _button, _modifiers):
         self.window_origin = (x, y)
         x = x * Metrics.dpi / 96
         y = Window.height - y * Metrics.dpi / 96
         if self.btnMove.collide_point(*self.btnMove.to_widget(x, y)):
             self.is_moving = True
 
-    def mouse_move(self, widget, x, y, modifiers):
+    def mouse_move(self, _widget, x, y, _modifiers):
         if self.is_moving and (not self.maximized):
             Clock.schedule_once(partial(self.move_schedule, x, y), 0)
 
-    def mouse_up(self, widget, x, y, button, modifiers):
+    def mouse_up(self, _widget, _x, _y, _button, _modifiers):
         if self.is_moving:
             Window.size = (799, 599)
             wsize = Window.system_size
             Clock.schedule_once(lambda resize: self.restore_size_schedule(wsize), 0)
         self.is_moving = False
 
-    def move_schedule(self, x, y, *args):
+    def move_schedule(self, x, y, *_args):
         x = self.window_origin[0] - x
         y = self.window_origin[1] - y
         Window.left = Window.left - x

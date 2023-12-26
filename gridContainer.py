@@ -48,7 +48,7 @@ class GridContainer(AnchorLayout):
         self.container.add_widget(self.scroll)
         self.canvas.add(Callback(self.scroll_update))
 
-    def scroll_update(self, instr):
+    def scroll_update(self, _instr):
         scroll = None
         for widget in self.container.children:
             if isinstance(widget, VertScrollBar):
