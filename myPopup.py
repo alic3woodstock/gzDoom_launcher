@@ -1,16 +1,18 @@
 from kivy.clock import Clock
-from kivy.uix.modalview import ModalView
-from kivy.uix.label import Label
-from kivy.uix.widget import Widget
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.anchorlayout import AnchorLayout
 from kivy.graphics import Callback, Rectangle, Color, Line
+from kivy.properties import AliasProperty, NumericProperty
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.filechooser import FileChooserProgress
+from kivy.uix.label import Label
+from kivy.uix.modalview import ModalView
+from kivy.uix.stacklayout import StackLayout
+from kivy.uix.widget import Widget
 
 import functions
-from icon import Icon
-from myLayout import MyStackLayout, MyBoxLayout
-from myButton import MyButtonBorder, MyButton
 from functions import text_color, background_color, button_height
+from icon import Icon
+from myButton import MyButtonBorder, MyButton
+from myLayout import MyStackLayout, MyBoxLayout
 
 
 class MyPopup(ModalView):
@@ -83,7 +85,6 @@ class MyPopup(ModalView):
         self.canvas.ask_update()
 
 
-
 class ModalWindow(MyBoxLayout):
 
     def __init__(self, dialog, **kwargs):
@@ -95,7 +96,8 @@ class ModalWindow(MyBoxLayout):
         self.orientation = 'vertical'
         self.clear_widgets()
         self.canvas.add(Callback(self.update_layout))
-        self.dialog.auto_dismiss = False
+        if self.dialog:
+            self.dialog.auto_dismiss = False
         self.buttons = []
         self.borders = ['left', 'bottom', 'right']
 
@@ -104,22 +106,23 @@ class ModalWindow(MyBoxLayout):
         super().update_layout(instr)
 
     def draw_title(self):
-        title = self.dialog.titleWidget
-        if title:
-            self.dialog.boxTitle.size_hint = (None, None)
-            self.dialog.boxTitle.x = self.x - self.lineWidth
-            self.dialog.boxTitle.width = self.width + self.lineWidth * 2
-            self.dialog.boxTitle.height = button_height - self.lineWidth * 2
-            functions.background_color = text_color
-            title.canvas.after.clear()
-            pos_y = title.y + title.height / 2 - title.texture_size[1] / 2
-            self.dialog.canvas.after.clear()
-            with self.dialog.canvas.after:
-                Color(rgba=text_color)
-                Rectangle(pos=title.pos,
-                          size=(title.width, title.height + 1))
-                Color(rgba=background_color)
-                Rectangle(pos=(title.x + 8, pos_y), size=title.texture_size, texture=title.texture)
+        if self.dialog:
+            title = self.dialog.titleWidget
+            if title:
+                self.dialog.boxTitle.size_hint = (None, None)
+                self.dialog.boxTitle.x = self.x - self.lineWidth
+                self.dialog.boxTitle.width = self.width + self.lineWidth * 2
+                self.dialog.boxTitle.height = button_height - self.lineWidth * 2
+                functions.background_color = text_color
+                title.canvas.after.clear()
+                pos_y = title.y + title.height / 2 - title.texture_size[1] / 2
+                self.dialog.canvas.after.clear()
+                with self.dialog.canvas.after:
+                    Color(rgba=text_color)
+                    Rectangle(pos=title.pos,
+                              size=(title.width, title.height + 1))
+                    Color(rgba=background_color)
+                    Rectangle(pos=(title.x + 8, pos_y), size=title.texture_size, texture=title.texture)
 
     def CreateBoxButtons(self, txtOk, txtCancel):
         boxButtons = MyStackLayout()
@@ -198,21 +201,18 @@ class Dialog(ModalWindow):
 
 class Progress(ModalWindow):
 
-    def __init__(self, dialog, max_value=100, text='', **kwargs):
+    def __init__(self, dialog=None, max_value=100, text='', **kwargs):
         super().__init__(dialog, **kwargs)
         self.padding = [16, 0, 16, 0]
 
-        layout1 = AnchorLayout()
-        layout1.anchor_x = 'left'
-        layout1.anchor_y = 'bottom'
+        layout1 = StackLayout()
+        layout1.orientation = 'lr-bt'
         label = Label(text=text)
         label.height = 32
         label.size_hint = (None, None)
         layout1.add_widget(label)
 
-        layout2 = AnchorLayout()
-        layout2.anchor_x = 'center'
-        layout2.anchor_y = 'top'
+        layout2 = StackLayout()
         progress = Widget()
         progress.size_hint = (1, None)
         layout2.add_widget(progress)
@@ -221,9 +221,35 @@ class Progress(ModalWindow):
         self.add_widget(layout2)
         self.dialog = dialog
         self.progress = progress
-        self.max = max_value
-        self.value = 0
+        self._value = 0
         self.label = label
+        self.max = max_value
+
+    max = NumericProperty(default=0)
+
+    def _get_value(self):
+        self.canvas.ask_update()
+        return self._value
+
+    def _set_value(self, value):
+        value = max(0, min(self.max, value))
+        if value != self._value:
+            self._value = value
+            return True
+
+    value = AliasProperty(_get_value, _set_value)
+
+    def get_norm_value(self):
+        d = self.max
+        if d == 0:
+            return 0
+        return self.value / float(d)
+
+    def set_norm_value(self, value):
+        self.value = value * self.max
+
+    value_normalized = AliasProperty(get_norm_value, set_norm_value,
+                                     bind=('value', 'max'), cache=True)
 
     def update_layout(self, instr):
         self.label.width = self.label.texture_size[0]
@@ -232,9 +258,9 @@ class Progress(ModalWindow):
         super().update_layout(instr)
 
     def update_progress(self, value, message):
-        self.value = value
         self.label.text = message
-        self.draw_bar()
+        self.value = value
+        self.canvas.ask_update()
 
     def draw_bar(self):
         self.progress.canvas.after.clear()
@@ -242,7 +268,7 @@ class Progress(ModalWindow):
             Color(rgba=text_color)
 
             pos = self.progress.to_window(self.progress.x, self.progress.center_y - 6)
-            width = self.progress.width * self.value / self.max
+            width = self.progress.width * self._value / self.max
             Rectangle(pos=pos, size=(width, 12))
 
             pos = self.progress.to_window(self.progress.x, self.progress.center_y)
@@ -253,3 +279,17 @@ class Progress(ModalWindow):
             Line(points=[point1, point2, point3, point4, point1], width=1)
 
 
+class FileProgress(FileChooserProgress):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.clear_widgets()
+        self.progress = Progress(max_value=self.total)
+        self.add_widget(self.progress)
+        self.canvas.add(Callback(self.update_layout))
+
+    def update_layout(self, instr):
+        self.progress.pos = (0, 0)
+        self.progress.size = self.size
+        self.progress.max = self.total
+        self.progress.update_progress(self.index, str(self.index) + ' / ' + str(self.total))

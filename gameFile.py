@@ -161,49 +161,53 @@ class GameFile():
         if os.path.exists(functions.downloadPath + filename):
             os.remove(functions.downloadPath + filename)
 
-        gzdoomUrl = self.GetGzDoomUrl()
-        url = gzdoomUrl[0]
-        version = gzdoomUrl[1]
-        file = Url(url, filename)
-        gameData = GameDefDb()
-        localHash = functions.filehash(localFileName)
+        result = False
+        try:
+            gzdoomUrl = self.GetGzDoomUrl()
+            url = gzdoomUrl[0]
+            version = gzdoomUrl[1]
+            file = Url(url, filename)
+            gameData = GameDefDb()
+            localHash = functions.filehash(localFileName)
 
-        if (not os.path.isfile(localFileName)) or (not gameData.CheckGzDoomVersion(version, localHash)):
-            self.DownloadFile(file)
+            if (not os.path.isfile(localFileName)) or (not gameData.CheckGzDoomVersion(version, localHash)):
+                self.DownloadFile(file)
 
-            if os.name == "nt":
-                zipfile = ZipFile(filename, "zip")
-            else:
-                zipfile = ZipFile(filename, "xz")
-
-            extractOK = False
-            if zipfile.TestFileName("gzdoom"):
                 if os.name == "nt":
-                    if zipfile.ExtractTo(functions.gzDoomPath):
-                        extractOK = True
+                    zipfile = ZipFile(filename, "zip")
                 else:
-                    try:
-                        if zipfile.ExtractTo(functions.tempDir):
-                            extractOK = True
-                        dirs = os.listdir(functions.tempDir)
-                        for d in dirs:
-                            if d.lower().find("gzdoom") >= 0:
-                                if os.path.exists(functions.gzDoomPath):
-                                    shutil.rmtree(functions.gzDoomPath)
-                                shutil.copytree(functions.tempDir + d, functions.gzDoomPath)
-                        localHash = functions.filehash(localFileName)
-                        # if showMessage:
-                        #     progress.Destroy()
-                    except Exception as e:
-                        functions.log(e)
-                gameData.UpdateGzdoomVersion(version, localHash)
-                if os.path.exists(functions.tempDir):
-                    shutil.rmtree(functions.tempDir)
+                    zipfile = ZipFile(filename, "xz")
 
-            result = extractOK and (os.path.isfile(functions.gzDoomExec)
-                                    or os.path.isfile(functions.gzDoomExec))
-        else:
-            result = 2
+                extractOK = False
+                if zipfile.TestFileName("gzdoom"):
+                    if os.name == "nt":
+                        if zipfile.ExtractTo(functions.gzDoomPath):
+                            extractOK = True
+                    else:
+                        try:
+                            if zipfile.ExtractTo(functions.tempDir):
+                                extractOK = True
+                            dirs = os.listdir(functions.tempDir)
+                            for d in dirs:
+                                if d.lower().find("gzdoom") >= 0:
+                                    if os.path.exists(functions.gzDoomPath):
+                                        shutil.rmtree(functions.gzDoomPath)
+                                    shutil.copytree(functions.tempDir + d, functions.gzDoomPath)
+                            localHash = functions.filehash(localFileName)
+                            # if showMessage:
+                            #     progress.Destroy()
+                        except Exception as e:
+                            functions.log(e)
+                    gameData.UpdateGzdoomVersion(version, localHash)
+                    if os.path.exists(functions.tempDir):
+                        shutil.rmtree(functions.tempDir)
+
+                result = extractOK and (os.path.isfile(functions.gzDoomExec)
+                                        or os.path.isfile(functions.gzDoomExec))
+            else:
+                result = 2
+        except Exception as e:
+            functions.log(e)
 
         return result
 

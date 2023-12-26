@@ -8,6 +8,8 @@ from kivy.uix.textinput import TextInput
 from functions import text_color, background_color, button_height
 from icon import Icon
 from myButton import MyCheckBox, DropdownItem, MyButtonBorder
+from myPopup import MyPopup
+from fileChooserDialog import FileChooserDialog
 
 
 class GenericForm(GridLayout):
@@ -86,6 +88,7 @@ class GenericForm(GridLayout):
         aux_box.width = self.children_height
         button_file = MyButtonBorder(icon=Icon('folder'))
         button_file.size_hint = (1, 1)
+        button_file.bind(on_release=self.open_file_dialog)
         aux_box.add_widget(button_file)
 
         self.add_widget(label)
@@ -126,3 +129,9 @@ class GenericForm(GridLayout):
 
         for lb in self.labels:
             lb.parent.width = max_size
+
+    def open_file_dialog(self, widget):
+        popup = MyPopup()
+        popup.content = FileChooserDialog(popup)
+        popup.open()
+
