@@ -3,7 +3,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import CoreLabel
 from kivy.graphics import Color, Line, Callback, Rectangle
 
-from functions import text_color, highlight_color, background_color
+from functions import text_color, highlight_color, background_color, button_height
 from icon import Icon
 
 
@@ -84,7 +84,7 @@ class MyButtonBorder(MyButton):
         self.canvas.ask_update()
 
 
-class DropdownItem(ToggleButtonBehavior, MyButtonBorder):
+class DropdownMainButton(ToggleButtonBehavior, MyButtonBorder):
 
     def draw_border(self):
         super().draw_border()
@@ -142,3 +142,12 @@ class MyCheckBox(MyToggleButton):
         self.choose_icon()
         self.draw_button()
         self.canvas.ask_update()
+
+
+class DropDownItem(MyButtonBorder):
+    def __init__(self, game, **kwargs):
+        super().__init__(**kwargs)
+        self.game = game
+        self.height = button_height
+        if game:
+            self.text = game.name

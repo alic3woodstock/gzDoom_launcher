@@ -18,7 +18,7 @@ Config.set('kivy', 'default_font', '["RobotoMono", '
                                    '"fonts/RobotoMono-BoldItalic.ttf"]')
 
 Config.set('kivy', 'kivy_clock', 'free_all')
-Config.set('graphics', 'custom_titlebar', '1')
+Config.set('graphics', 'borderless', '1')
 Config.set('graphics', 'resizable', '0')
 Config.set('graphics', 'minimum_width', '640')
 Config.set('graphics', 'minimum_height', '480')
@@ -104,7 +104,6 @@ class FrmGzdlauncher(BoxLayout):
         Window.bind(mouse_pos=self.mouse_pos)
 
     def _keyboard_closed(self):
-        print('My keyboard have been closed!')
         self._keyboard.unbind(on_key_down=self._on_keyboard_down)
         self._keyboard = None
 
@@ -287,7 +286,6 @@ class GzdLauncher(App):
         functions.setDataPath()
         self.title = "GZDoom Launcher"
         self.icon = functions.pentagram
-        Window.set_custom_titlebar(BoxLayout())
 
         gameDefDb = GameDefDb()
 

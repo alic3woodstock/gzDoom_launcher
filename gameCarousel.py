@@ -9,7 +9,7 @@ from functions import button_height
 from gameDef import GameDef
 from gameGrid import GameGrid
 from gridContainer import GridContainer
-from myButton import MyButtonBorder, DropdownItem
+from myButton import MyButtonBorder, DropdownMainButton, DropDownItem
 from myLayout import MyStackLayout
 
 
@@ -28,7 +28,6 @@ class GameCarousel(BoxLayout):
         spinnerBox.height = button_height + spinnerBox.padding[3]
         label = Label(text='Mod:')
         label.size_hint = (None, 1)
-        print(label.texture_size)
         spinnerBox.add_widget(label)
         dropDown = DropDown()
         dropDown.size_hint = (1, None)
@@ -116,14 +115,14 @@ class GameCarousel(BoxLayout):
     def grid_on_change_selection(self, widget):
         self.dropDown.clear_widgets()
 
-        modButton = ModButton(self.noMod)
+        modButton = DropDownItem(self.noMod)
         modButton.bind(on_press=self.btnDrop_on_press)
         self.dropDown.add_widget(modButton)
 
         if widget:
             for game in self.modList:
                 if game.group.GetGroupId() == widget.game.group.GetGroupId():
-                    modButton = ModButton(game)
+                    modButton = DropDownItem(game)
                     modButton.bind(on_press=self.btnDrop_on_press)
                     self.dropDown.add_widget(modButton)
 
@@ -191,16 +190,7 @@ class MyCarousel(Carousel):
             self.current_slide.btnTitle.state = 'down'
 
 
-class ModButton(MyButtonBorder):
-    def __init__(self, game, **kwargs):
-        super().__init__(**kwargs)
-        self.game = game
-        self.height = button_height
-        if game:
-            self.text = game.name
-
-
-class MainModButton(DropdownItem):
+class MainModButton(DropdownMainButton):
     def __init__(self, game, **kwargs):
         super().__init__(**kwargs)
         self.game = game

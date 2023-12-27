@@ -1,23 +1,23 @@
 class GameTabConfig:
     def GetIndex(self):
-        return self._index
+        return self.index
 
     def SetIndex(self, index):
-        self._index = index
+        self.index = index
 
     def GetName(self):
-        return self._name
+        return self.name
 
     def SetName(self, name):
-        self._name = name
+        self.name = name
 
     def IsEnabled(self):
-        return self._isEnabled
+        return self.is_enabled
 
     def SetEnabled(self, isEnabled):
-        self._isEnabled = isEnabled
+        self.is_enabled = isEnabled
 
     def __init__(self, index=0, name="", isEnabled=False):
-        self._index = index
-        self._name = name
-        self._isEnabled = isEnabled
+        self.index = index
+        self.name = name
+        self.is_enabled = isEnabled

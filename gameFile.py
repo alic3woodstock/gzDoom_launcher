@@ -120,7 +120,6 @@ class GameFile:
                         downloadF.write(chunk)
                     if i < total_length:
                         self.value = math.floor(self.value) + (i / total_length)
-                        print(self.value)
 
                     i += 1024
 

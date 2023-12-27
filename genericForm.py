@@ -1,6 +1,7 @@
 from kivy.graphics import Callback
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.dropdown import DropDown
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
@@ -8,7 +9,7 @@ from kivy.uix.textinput import TextInput
 from fileChooserDialog import FileChooserDialog
 from functions import text_color, background_color, button_height
 from icon import Icon
-from myButton import MyCheckBox, DropdownItem, MyButtonBorder
+from myButton import MyCheckBox, DropdownMainButton, MyButtonBorder
 from myPopup import MyPopup
 
 
@@ -49,11 +50,13 @@ class GenericForm(GridLayout):
         value_input.id = field_name
         self.add_widget(label)
         self.add_widget(value_input)
+        self.ids[field_name] = value_input
 
     def add_checkbox(self, text='', field_name=''):
         checkBox = MyCheckBox()
         checkBox.size_hint = (None, 1)
         checkBox.width = self.children_height - 16
+        checkBox.id = field_name
         label = self.add_label(text)
 
         container = GridLayout()
@@ -64,12 +67,12 @@ class GenericForm(GridLayout):
         container.height = self.children_height
         container.add_widget(checkBox)
         container.add_widget(label)
-        container.id = field_name
 
         self.add_widget(BoxLayout(size_hint=(None, None), height=self.children_height))
         self.add_widget(container)
 
         self.canvas.add(Callback(self.update_form))
+        self.ids[field_name] = checkBox
 
     def add_file_field(self, text='', field_name=''):
         label = self.add_label(text)
@@ -95,13 +98,18 @@ class GenericForm(GridLayout):
         box_file.add_widget(value_input)
         box_file.add_widget(aux_box)
         self.add_widget(box_file)
+        self.ids[field_name] = value_input
 
     def add_dropdown(self, text='', field_name=''):
         label = self.add_label(text)
 
-        mainButton = DropdownItem()
+        mainButton = DropdownMainButton()
         mainButton.id = field_name
         mainButton.size_hint = (1, 1)
+
+        dropdown = DropDown()
+        mainButton.bind(on_release=dropdown.open)
+
 
         dropBox = BoxLayout()
         dropBox.size_hint = (1, None)
@@ -111,11 +119,17 @@ class GenericForm(GridLayout):
 
         self.add_widget(label)
         self.add_widget(dropBox)
+        self.ids[field_name] = dropdown
 
     def get_value(self, field_name):
         for c in self.children:
             if isinstance(c, TextInput) and c.id == field_name:
                 return c.text
+
+    def get_widget(self, field_name):
+        for c in self.children:
+            if c.id == field_name:
+                return c
 
     def update_form(self, _instr):
         max_size = 0
