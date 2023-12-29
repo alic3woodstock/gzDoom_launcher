@@ -9,6 +9,8 @@ from kivy.graphics import Callback
 from kivy.metrics import Metrics
 
 import functions
+from gameCarousel import GameCarousel
+from myLayout import MyStackLayout, MyBoxLayout
 
 kivy.require('2.1.0')
 Config.set('kivy', 'default_font', '["RobotoMono", '
@@ -29,9 +31,10 @@ Config.set('input', 'mouse', 'mouse,disable_multitouch')
 from frmManageGames import FrmManageGames
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.stacklayout import StackLayout
 from kivy.core.window import Window
 from kivy.clock import Clock
-from myButton import TopMenuButton
+from myButton import TopMenuButton, MyButtonBorder
 from gameDefDb import GameDefDb
 from myPopup import MyPopup, Dialog, Progress
 from menu import Menu
@@ -71,6 +74,57 @@ def run_game(game):
 class FrmGzdlauncher(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.orientation = 'vertical'
+        self.padding = 1
+
+        main_menu_box = BoxLayout()
+        main_menu_box.size_hint = (1, None)
+        main_menu_box.height = 42
+
+        self.main_menu = StackLayout()
+        self.main_menu.padding = (0, 0, 2, 4)
+        self.main_menu.size_hint = (None, 1)
+
+        main_menu_box.add_widget(self.main_menu)
+        self.add_widget(main_menu_box)
+
+        main_box = BoxLayout()
+        main_box.id = 'mainBox'
+        main_box.orientation = 'horizontal'
+
+        game_panel = MyBoxLayout()
+        game_panel.id = 'gamePanel'
+        game_panel.orientation = 'vertical'
+        game_panel.borders = ['left', 'right', 'bottom']
+
+        game_carousel = GameCarousel()
+        game_carousel.id = 'gameTabs'
+        game_carousel.do_default_tab = False
+
+        self.ids['mainBox'] = main_box
+        self.ids['gamePanel'] = game_panel
+        self.ids['gameTabs'] = game_carousel
+
+        game_panel.add_widget(game_carousel)
+        main_box.add_widget(game_panel)
+        self.add_widget(main_box)
+
+        box_buttons = MyStackLayout()
+        box_buttons.size_hint = (1, None)
+        box_buttons.height = 64
+        box_buttons.orientation = 'rl-tb'
+        box_buttons.padding = (8, 10, 8, 8)
+        box_buttons.borders = ['left', 'right', 'bottom']
+
+        run_button = MyButtonBorder()
+        run_button.size_hint = (None, 1)
+        run_button.width = 128
+        run_button.text = 'Run Game'
+        run_button.bind(on_release=self.btnRun_on_press)
+
+        box_buttons.add_widget(run_button)
+        self.add_widget(box_buttons)
+
 
         self._keyboard = Window.request_keyboard(
             self._keyboard_closed, self, 'text')
@@ -79,12 +133,12 @@ class FrmGzdlauncher(BoxLayout):
         menuApp = Menu()
         menuApp.bind(on_select=self.menuApp_on_select)
         btnMenuApp = TopMenuButton(menuApp, text='Application')
-        self.ids.mainMenu.add_widget(btnMenuApp)
+        self.main_menu.add_widget(btnMenuApp)
 
         menuGames = Menu()
         menuGames.bind(on_select=self.menuGames_on_select)
         btnMenuGames = TopMenuButton(menuGames, text='Games')
-        self.ids.mainMenu.add_widget(btnMenuGames)
+        self.main_menu.add_widget(btnMenuGames)
 
         menuGames.add_item('Manage Games')
         menuGames.add_item('Reset to Default')
@@ -100,7 +154,7 @@ class FrmGzdlauncher(BoxLayout):
         self.menuGames = menuGames
         self.popup = MyPopup()
         self.height = Window.height - 32
-        self.ids.mainMenu.canvas.add(Callback(self.main_menu_cupdate))
+        self.main_menu.canvas.add(Callback(self.main_menu_cupdate))
         Window.bind(mouse_pos=self.mouse_pos)
 
     def _keyboard_closed(self):
@@ -240,7 +294,7 @@ class FrmGzdlauncher(BoxLayout):
         pos = args[1]
         x = pos[0] * Metrics.dpi / 96
         y = pos[1] * Metrics.dpi / 96
-        topPanel = self.ids.mainMenu
+        topPanel = self.main_menu
         pressed = False
         btnPressed = None
         for btn in topPanel.children:
@@ -268,9 +322,9 @@ class FrmGzdlauncher(BoxLayout):
 
     def main_menu_cupdate(self, _instr):
         i = 0
-        for c in self.ids.mainMenu.children:
+        for c in self.main_menu.children:
             i += c.width
-        self.ids.mainMenu.width = i + self.ids.mainMenu.padding[2] * 2
+        self.main_menu.width = i + self.main_menu.padding[2] * 2
 
 
 class GzdLauncher(App):

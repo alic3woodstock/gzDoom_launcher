@@ -20,6 +20,11 @@ pentagram = "pentagram.png"
 dataPath = 'data'
 rootFolder = ""
 
+text_color = [1, 1, 1, 1]
+highlight_color = [0.5, 0, 0, 1]
+background_color = [0, 0, 0, 1]
+button_height = 42
+button_width = 128
 
 def log(text, error=True):
     logging.basicConfig(filename=logFile, encoding='utf-8', level=LOGLEVEL, format=FORMAT)
@@ -93,10 +98,3 @@ def setDataPath():
         logFile = logFile.replace('/', '\\')
         gzDoomExec = gzDoomPath + "gzdoom.exe"
         pentagram = pentagram.replace('/', '\\')
-
-
-text_color = [1, 1, 1, 1]
-highlight_color = [0.5, 0, 0, 1]
-background_color = [0, 0, 0, 1]
-button_height = 42
-button_width = 128
