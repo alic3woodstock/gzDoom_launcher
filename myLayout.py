@@ -1,3 +1,4 @@
+import os
 from functools import partial
 
 import screeninfo
@@ -106,10 +107,11 @@ class SystemIcons(BoxLayout):
         self.closeButton.size_hint = (None, None)
         self.closeButton.bind(on_release=self.close_event)
 
-        self.add_widget(self.btnMove)
-        self.add_widget(self.minButton)
-        self.add_widget(self.maxButton)
-        self.add_widget(self.closeButton)
+        if Window.borderless:
+            self.add_widget(self.btnMove)
+            self.add_widget(self.minButton)
+            self.add_widget(self.maxButton)
+            self.add_widget(self.closeButton)
 
         self.canvas.add(Callback(self.update_layout))
         self.old_size = Window.system_size
@@ -127,9 +129,9 @@ class SystemIcons(BoxLayout):
         if not self.maximized:
             self.old_pos = (Window.left, Window.top)
         self.canvas.ask_update()
-        Window.bind(on_mouse_move=self.mouse_move)
-        Window.bind(on_mouse_down=self.mouse_down)
-        Window.bind(on_mouse_up=self.mouse_up)
+        # Window.bind(on_mouse_move=self.mouse_move)
+        # Window.bind(on_mouse_down=self.mouse_down)
+        # Window.bind(on_mouse_up=self.mouse_up)
         self.monitor = screeninfo.get_monitors()
 
     def close_event(self, _widget):

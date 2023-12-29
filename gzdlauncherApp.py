@@ -18,8 +18,8 @@ Config.set('kivy', 'default_font', '["RobotoMono", '
                                    '"fonts/RobotoMono-BoldItalic.ttf"]')
 
 Config.set('kivy', 'kivy_clock', 'free_all')
-Config.set('graphics', 'borderless', '1')
-Config.set('graphics', 'resizable', '0')
+Config.set('graphics', 'borderless', '0')
+Config.set('graphics', 'resizable', '1')
 Config.set('graphics', 'minimum_width', '640')
 Config.set('graphics', 'minimum_height', '480')
 Config.set('graphics', 'width', '800')
