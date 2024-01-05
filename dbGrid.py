@@ -17,6 +17,8 @@ class DBGrid(GridLayout):
         self.title = []
         self.canvas.add(Callback(self.update_grid))
         self.titleGrid = None
+        self.blank_button = None
+        self.scroll_bar = None
 
     def get_values(self, fields, sql):
         gameDefDb = GameDefDb()
@@ -37,11 +39,11 @@ class DBGrid(GridLayout):
                 self.titleGrid.add_widget(TitleButton(-1, j, text=title))
             j += 1
 
-        if self.scroll:
+        if self.scroll_bar:
             self.titleGrid.cols += 1
-            blankButton = TitleButton(0, j, text='')
-            blankButton.size_hint = (1, 1)
-            self.titleGrid.add_widget(blankButton)
+            self.blank_button = TitleButton(0, j, text='')
+            self.blank_button.size_hint = (1, 1)
+            self.titleGrid.add_widget(self.blank_button)
 
         i = 0
         for row in self.row_values:

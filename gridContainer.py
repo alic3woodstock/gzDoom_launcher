@@ -55,12 +55,14 @@ class GridContainer(AnchorLayout):
                 scroll = widget
                 break
 
+
         if self.scroll.viewport_size[1] > self.scroll.height:
             if not scroll:
-                self.container.add_widget(VertScrollBar(self.scroll))
-
+                self.grid.scroll_bar = VertScrollBar(self.scroll)
+                self.container.add_widget(self.grid.scroll_bar)
         elif scroll:
             self.container.remove_widget(scroll)
+            self.grid.scroll_bar = None
 
         if scroll:
             self.container.width = self.grid.width + scroll.width
