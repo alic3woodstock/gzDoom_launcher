@@ -1,6 +1,6 @@
 # gzDoom_launcher
 
-# Obs.: I'm continuing the development at the kivy branch (using kivy insteand of wxpython, it's harder but proved more stable, specially on Windows). I will replace the master branch when all features are done in kivy.
+Obs.: I'm continuing the development at the kivy branch (using kivy insteand of wxpython, it's harder but proved more stable, specially on Windows). I will replace the master branch when all features are done in kivy.
 
 An attempt to rewrite tclgz_launcher in python. </br>
 <p>
