@@ -1,4 +1,7 @@
 # gzDoom_launcher
+
+# Obs.: I'm continuing the development at the kivy branch (using kivy insteand of wxpython, it's harder but proved more stable, specially on Windows). I will replace the master branch when all features are done in kivy.
+
 An attempt to rewrite tclgz_launcher in python. </br>
 <p>
 It's a launcher that makes easy to run gzdooom designed maps, games, mods, etc... it's not meant to be original or the best out there, but it works and it's fast to set up and start playing.
