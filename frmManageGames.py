@@ -22,7 +22,7 @@ class FrmManageGames(ModalWindow):
         self.CreateBoxButtons('Delete', 'Close')
         self.btnEdit = self.AddButon('Edit')
         self.btnAdd = self.AddButon('Add')
-        if self.grid.children[0].row_index > 0:
+        if len(self.grid.children) and self.grid.children[0].row_index > 0:
             self.topGrid.select_index(0)
         self.dialog.size = Window.size
         self.popup = MyPopup()
