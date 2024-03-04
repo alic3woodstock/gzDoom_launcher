@@ -64,6 +64,7 @@ def run_game(game):
                 command.append(cmd)
 
             if len(command) > 0:
+                print(command)
                 result = subprocess.run(command, shell=True)
                 if result.returncode == 0:
                     gameDefDb = GameDefDb()
@@ -182,13 +183,13 @@ class FrmGzdlauncher(BoxLayout):
                 run_game(gameTabs.get_run_params())
         elif isinstance(self.popup.content, FrmManageGames):
             if keycode[1] == 'down':
-                self.popup.content.topLayout.load_next()
+                self.popup.content.topGrid.load_next()
             elif keycode[1] == 'up':
-                self.popup.content.topLayout.load_previous()
+                self.popup.content.topGrid.load_previous()
             elif keycode[1] == 'pagedown':
-                self.popup.content.topLayout.page_down()
+                self.popup.content.topGrid.page_down()
             elif keycode[1] == 'pageup':
-                self.popup.content.topLayout.page_up()
+                self.popup.content.topGrid.page_up()
 
         # Keycode is composed of an integer + a string
         # If we hit escape, release the keyboard
