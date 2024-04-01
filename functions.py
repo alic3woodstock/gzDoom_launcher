@@ -2,7 +2,7 @@ import hashlib
 import logging
 import os
 
-LOGLEVEL = logging.DEBUG
+LOGLEVEL = logging.ERROR
 FORMAT = '%(levelname)s: %(asctime)s - %(message)s'
 APPVERSION = "2.00.00"
 AUTHOR = "Copyright 2022-2023 © Alice Woodstock"
@@ -25,6 +25,7 @@ highlight_color = [0.5, 0, 0, 1]
 background_color = [0, 0, 0, 1]
 button_height = 42
 button_width = 128
+
 
 def log(text, error=True):
     logging.basicConfig(filename=logFile, encoding='utf-8', level=LOGLEVEL, format=FORMAT)

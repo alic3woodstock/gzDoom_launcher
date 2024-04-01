@@ -37,13 +37,8 @@ class DBGrid(GridLayout):
         for title in self.title:
             if j > 0:
                 self.titleGrid.add_widget(TitleButton(-1, j, text=title))
+                print(j)
             j += 1
-
-        if self.scroll_bar:
-            self.titleGrid.cols += 1
-            self.blank_button = TitleButton(0, j, text='')
-            self.blank_button.size_hint = (1, 1)
-            self.titleGrid.add_widget(self.blank_button)
 
         i = 0
         for row in self.row_values:
@@ -57,6 +52,17 @@ class DBGrid(GridLayout):
 
     def update_grid(self, _instr):
         grid_width = 0
+        if self.scroll_bar:
+            if not self.blank_button:
+                self.titleGrid.cols += 1
+                j = self.titleGrid.cols
+                self.blank_button = TitleButton(-1, j, text=' ')
+                self.blank_button.width = self.scroll_bar.width
+                self.titleGrid.add_widget(self.blank_button)
+                # self.titleGrid.width += self.blank_button.width + 8
+        elif self.blank_button:
+            self.titleGrid.remove_widget(self.blank_button)
+
         for i in range(len(self.title)):
             if i > 0:
                 max_width = 0
