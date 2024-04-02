@@ -67,7 +67,6 @@ def run_game(game):
                 result = subprocess.run(command)
                 if result.returncode == 0:
                     gameDefDb = GameDefDb()
-                    gameDefDb = GameDefDb()
                     gameDefDb.UpdateLastRunMod(game[0], game[1])
                     game[0].lastMod = game[1].id
 

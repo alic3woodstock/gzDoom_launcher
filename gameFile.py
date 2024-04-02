@@ -260,6 +260,7 @@ class GameFile:
             zipFiles.append(ZipFile(m, functions.modPath))
 
         blasphemWad = ""
+        blasphemTexture = ""
 
         gameExec = functions.gzDoomExec
 
@@ -267,10 +268,11 @@ class GameFile:
         for z in zipFiles:
             try:
                 fullPath = z.GetFormat() + z.GetName()
+
                 if z.TestFileName("blasphem"):
-                    blasphemWad = fullPath  # works because wad comes first in the list
+                    blasphemWad = fullPath
                 elif z.TestFileName("bls"):
-                    games.append(GameDef(i, "Blasphem", 0, gameExec, 2, 0, blasphemWad, [fullPath]))
+                    blasphemTexture = fullPath
                 elif z.TestFileName("freedoom1"):
                     games.append(GameDef(i, "Freedoom Phase 1", 0, gameExec, 1, 0, fullPath))
                 elif z.TestFileName("freedoom2"):
@@ -294,6 +296,12 @@ class GameFile:
                     elif z.TestFileName("brutal"):
                         games.append(GameDef(i, "Brutal Doom", -1, gameExec, 1, 0,
                                              "", [fullPath]))
+
+                if blasphemWad.strip() and blasphemTexture.strip(): # insert game only if both files are ok
+                    games.append(GameDef(i, "Blasphem", 0, gameExec, 2, 0, blasphemWad, [blasphemTexture]))
+                    blasphemWad = ""
+                    blasphemTexture = ""
+
             except Exception as e:
                 functions.log("CreateDB - " + str(e))
 
