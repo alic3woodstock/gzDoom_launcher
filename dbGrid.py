@@ -59,7 +59,6 @@ class DBGrid(GridLayout):
                 self.blank_button = TitleButton(-1, j, text=' ')
                 self.blank_button.width = self.scroll_bar.width
                 self.titleGrid.add_widget(self.blank_button)
-                # self.titleGrid.width += self.blank_button.width + 8
         elif self.blank_button:
             self.titleGrid.remove_widget(self.blank_button)
 

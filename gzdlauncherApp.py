@@ -4,15 +4,9 @@ from functools import partial
 from threading import Thread
 
 import kivy
-from kivy.config import Config
-from kivy.graphics import Callback
-from kivy.metrics import Metrics
-
-import functions
-from gameCarousel import GameCarousel
-from myLayout import MyStackLayout, MyBoxLayout
-
 kivy.require('2.1.0')
+from kivy.config import Config
+
 Config.set('kivy', 'default_font', '["RobotoMono", '
                                    '"fonts/RobotoMono-Regular.ttf", '
                                    '"fonts/RobotoMono-Italic.ttf", '
@@ -22,12 +16,17 @@ Config.set('kivy', 'default_font', '["RobotoMono", '
 Config.set('kivy', 'kivy_clock', 'free_all')
 Config.set('graphics', 'borderless', '0')
 Config.set('graphics', 'resizable', '1')
-Config.set('graphics', 'minimum_width', '640')
-Config.set('graphics', 'minimum_height', '480')
-Config.set('graphics', 'width', '800')
-Config.set('graphics', 'height', '600')
+Config.set('graphics', 'minimum_width', '800')
+Config.set('graphics', 'minimum_height', '600')
+Config.set('graphics', 'width', '1024')
+Config.set('graphics', 'height', '768')
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
+import functions
+from kivy.graphics import Callback
+from kivy.metrics import Metrics
+from gameCarousel import GameCarousel
+from myLayout import MyStackLayout, MyBoxLayout
 from frmManageGames import FrmManageGames
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
@@ -263,7 +262,7 @@ class FrmGzdlauncher(BoxLayout):
                 self.btnUpdate_onPress(data)
             elif data.index == 2:
                 self.popup.content = Dialog(self.popup, text="GZDoom launcher " + functions.APPVERSION
-                                                             + "\nBy Alice Woodtstock 2022-2023",
+                                                             + "\nBy Alice Woodtstock 2022-2024",
                                             txtCancel='OK', txtOk='', icon='pentagram')
             else:
                 self.popup.content = Dialog(self.popup, text='Under contruction', txtCancel='OK', txtOk='',
