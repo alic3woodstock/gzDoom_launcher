@@ -37,7 +37,6 @@ class DBGrid(GridLayout):
         for title in self.title:
             if j > 0:
                 self.titleGrid.add_widget(TitleButton(-1, j, text=title))
-                print(j)
             j += 1
 
         i = 0
