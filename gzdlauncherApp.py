@@ -222,7 +222,7 @@ class FrmGzdlauncher(BoxLayout):
             dialog.btnOk.bind(on_release=self.btnYes1_onPress)
             self.popup.content = dialog
         else:
-            self.popup.content = Dialog(self.popup, text='Under contruction', txtCancel='OK', txtOk='',
+            self.popup.content = Dialog(self.popup, text='Under construction', txtCancel='OK', txtOk='',
                                         icon='information')
         self.popup.open()
 
@@ -262,7 +262,7 @@ class FrmGzdlauncher(BoxLayout):
                 self.btnUpdate_onPress(data)
             elif data.index == 2:
                 self.popup.content = Dialog(self.popup, text="GZDoom launcher " + functions.APPVERSION
-                                                             + "\nBy Alice Woodtstock 2022-2024",
+                                                             + "\nBy Alice Woodstock 2022-2024",
                                             txtCancel='OK', txtOk='', icon='pentagram')
             else:
                 self.popup.content = Dialog(self.popup, text='Under contruction', txtCancel='OK', txtOk='',
