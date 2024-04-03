@@ -101,9 +101,6 @@ class GameCarousel(BoxLayout):
         if widget.state == 'normal':
             widget.state = 'down'
 
-    def btnDrop_on_press(self, widget):
-        self.dropDown.select(widget.game)
-
     def dropDown_on_select(self, _widget, data):
         self.mainBtnDrop.text = data.name
         self.mainBtnDrop.game = data
@@ -116,14 +113,13 @@ class GameCarousel(BoxLayout):
         self.dropDown.clear_widgets()
 
         modButton = DropDownItem(self.noMod)
-        modButton.bind(on_press=self.btnDrop_on_press)
+        # modButton.bind(on_press=self.btnDrop_on_press)
         self.dropDown.add_widget(modButton)
 
         if widget:
             for game in self.modList:
-                if game.group.GetGroupId() == widget.game.group.GetGroupId():
+                if game.group.id == widget.game.group.id:
                     modButton = DropDownItem(game)
-                    modButton.bind(on_press=self.btnDrop_on_press)
                     self.dropDown.add_widget(modButton)
 
             if widget.game.lastMod > 0:

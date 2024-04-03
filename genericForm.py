@@ -116,6 +116,8 @@ class GenericForm(GridLayout):
         mainButton.size_hint = (1, 1)
 
         dropdown = DropDown()
+        dropdown.bind(on_select=self.dropDown_on_select)
+        dropdown.bind(on_dismiss=self.dropDown_on_dismiss)
         mainButton.bind(on_release=dropdown.open)
 
         dropBox = BoxLayout()
@@ -163,3 +165,13 @@ class GenericForm(GridLayout):
         self.add_widget(label)
         self.add_widget(topGrid)
         self.ids[field_name] = grid
+
+    def dropDown_on_select(self, widget, data):
+        if widget.attach_to:
+            widget.attach_to.text = data.name
+            widget.attach_to.game = data
+            widget.attach_to.state = 'normal'
+
+    def dropDown_on_dismiss(self, widget):
+        if widget.attach_to:
+            widget.attach_to.state = 'normal'

@@ -1,7 +1,7 @@
+from kivy.graphics import Color, Line, Callback, Rectangle
 from kivy.uix.behaviors.togglebutton import ToggleButtonBehavior
 from kivy.uix.button import Button
 from kivy.uix.label import CoreLabel
-from kivy.graphics import Color, Line, Callback, Rectangle
 
 from functions import text_color, highlight_color, background_color, button_height
 from icon import Icon
@@ -151,3 +151,8 @@ class DropDownItem(MyButtonBorder):
         self.height = button_height
         if game:
             self.text = game.name
+
+    def on_press(self):
+        if self.parent and self.parent.parent:
+            dropDown = self.parent.parent
+            dropDown.select(self.game)

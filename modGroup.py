@@ -1,10 +1,4 @@
 class ModGroup:
-    def __init__(self, groupId, groupName):
-        self._groupId = groupId
-        self._groupName = groupName
-
-    def GetGroupId(self):
-        return self._groupId
-
-    def GetGroupName(self):
-        return self._groupName
+    def __init__(self, group_id, name):
+        self.id = group_id
+        self.name = name

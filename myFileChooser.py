@@ -11,7 +11,6 @@ from scrollBar import VertScrollBar
 
 
 class MyFileChooser(FileChooserListLayout):
-
     VIEWNAME = 'list'
     _ENTRY_TEMPLATE = 'FileListEntry'
 
@@ -29,7 +28,6 @@ class MyFileChooser(FileChooserListLayout):
         self.path_text = TextInput(multiline=False)
         self.path_text.bind(on_text_validate=self.path_text_on_text_validate)
         title_box.add_widget(self.path_text)
-
 
         self.children[0].add_widget(title_box)
         self.children[0].add_widget(self.container)
@@ -56,4 +54,3 @@ class MyFileChooser(FileChooserListLayout):
     def path_text_on_text_validate(self, _widget):
         if os.path.exists(self.path_text.text):
             self.controller.path = self.path_text.text
-

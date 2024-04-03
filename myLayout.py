@@ -1,21 +1,20 @@
-import os
 from functools import partial
 
 import screeninfo
 from kivy.clock import Clock
-
 from kivy.core.window import Window
+from kivy.graphics import Color, Line, Callback
 from kivy.metrics import Metrics
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.layout import Layout
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.stacklayout import StackLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.graphics import Color, Line, Callback
+
+from functions import text_color
 from getBorders import GetBorders
 from icon import Icon
 from myButton import MyButton
-from functions import text_color
 
 
 class MyLayout(Layout):
@@ -191,4 +190,3 @@ class SystemIcons(BoxLayout):
     def restore_size_schedule(self, size):
         Window.size = size
         Window.canvas.ask_update()
-

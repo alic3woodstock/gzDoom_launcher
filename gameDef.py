@@ -4,7 +4,7 @@ import modGroup
 
 class GameDef:
     def GetGroupName(self):
-        return self.group.GetGroupName()
+        return self.group.name
 
     def AppendFile(self, file):
         self.files.append(file)

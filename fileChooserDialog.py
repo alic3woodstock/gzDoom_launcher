@@ -1,9 +1,9 @@
 import os
-import string
 
 from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.filechooser import FileChooser
+
 import functions
 from gridContainer import GridContainer
 from localDriveGrid import LocalDriveGrid
@@ -44,4 +44,3 @@ class FileChooserDialog(ModalWindow):
         self.add_widget(file_grid)
         self.CreateBoxButtons(txtOk='OK', txtCancel='Cancel')
         self.dialog.size = Window.size
-

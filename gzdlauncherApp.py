@@ -4,6 +4,7 @@ from functools import partial
 from threading import Thread
 
 import kivy
+
 kivy.require('2.1.0')
 from kivy.config import Config
 
@@ -124,7 +125,6 @@ class FrmGzdlauncher(BoxLayout):
 
         box_buttons.add_widget(run_button)
         self.add_widget(box_buttons)
-
 
         self._keyboard = Window.request_keyboard(
             self._keyboard_closed, self, 'text')

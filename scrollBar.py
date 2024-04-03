@@ -6,9 +6,9 @@ from kivy.graphics import Callback
 from kivy.metrics import Metrics
 from kivy.uix.relativelayout import RelativeLayout
 
+from functions import text_color
 from icon import Icon
 from myButton import MyButtonBorder
-from functions import text_color
 from myLayout import MyBoxLayout
 
 
@@ -40,9 +40,8 @@ class VertScrollBar(MyBoxLayout):
         trail.add_widget(trailButton)
         trailButton.pos_hint = {'y': 0}
         trailButton.center = trail.center
-        self.trail=trail
+        self.trail = trail
         self.trailButton = trailButton
-
 
         bottomButton = MyButtonBorder(icon=Icon('downarrow'))
         bottomButton.size_hint = (1, None)
@@ -124,7 +123,7 @@ class VertScrollBar(MyBoxLayout):
                         self.movdown2 = False
                 self.canvas.ask_update()
 
-        if self.collide_point(*self.to_widget(x,y)):
+        if self.collide_point(*self.to_widget(x, y)):
             if button == 'scrolldown':
                 self.move_scroll('up')
             if button == 'scrollup':
@@ -170,7 +169,6 @@ class VertScrollBar(MyBoxLayout):
             self.scroll.scroll_y = 0
         if self.scroll.scroll_y > 1:
             self.scroll.scroll_y = 1
-
 
     def on_state(self, widget, _value):
         if widget.state == 'down':
