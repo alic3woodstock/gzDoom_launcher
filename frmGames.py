@@ -19,7 +19,8 @@ class FrmGames(ModalWindow):
         self.formLayout.add_dropdown(text='Mod Group:', field_name='modgroup' )
         self.formLayout.add_file_field(text='Wad:', field_name='wad')
         self.formLayout.add_text_field(text='Cmd. Parameters:', field_name='params')
-        self.formLayout.add_file_field(text='Files', field_name='files')
+        self.formLayout.add_file_field(text='Files:', field_name='files')
+        self.formLayout.add_file_list(text='', field_name='filelist')
         self.add_widget(self.formLayout)
 
         game_data = GameDefDb()

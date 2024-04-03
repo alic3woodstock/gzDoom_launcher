@@ -6,11 +6,19 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 
+from dbGrid import DBGrid
 from fileChooserDialog import FileChooserDialog
 from functions import text_color, background_color, button_height
+from gridContainer import GridContainer
 from icon import Icon
 from myButton import MyCheckBox, DropdownMainButton, MyButtonBorder
 from myPopup import MyPopup
+
+
+def open_file_dialog(_widget):
+    popup = MyPopup()
+    popup.content = FileChooserDialog(popup)
+    popup.open()
 
 
 class GenericForm(GridLayout):
@@ -91,7 +99,7 @@ class GenericForm(GridLayout):
         aux_box.width = self.children_height
         button_file = MyButtonBorder(icon=Icon('folder'))
         button_file.size_hint = (1, 1)
-        button_file.bind(on_release=self.open_file_dialog)
+        button_file.bind(on_release=open_file_dialog)
         aux_box.add_widget(button_file)
 
         self.add_widget(label)
@@ -109,7 +117,6 @@ class GenericForm(GridLayout):
 
         dropdown = DropDown()
         mainButton.bind(on_release=dropdown.open)
-
 
         dropBox = BoxLayout()
         dropBox.size_hint = (1, None)
@@ -142,7 +149,17 @@ class GenericForm(GridLayout):
         for lb in self.labels:
             lb.parent.width = max_size
 
-    def open_file_dialog(self, _widget):
-        popup = MyPopup()
-        popup.content = FileChooserDialog(popup)
-        popup.open()
+    def add_file_list(self, text='', field_name=''):
+        label = self.add_label(text)
+        # label.height = 100
+        grid = DBGrid()
+        params = [-1]
+        grid.get_values(['id', 'Filename'],
+                        """SELECT id,file FROM FILES WHERE gameid=?""", params)
+        topGrid = GridContainer(grid=grid, has_title=False)
+        topGrid.container.size_hint = (1, 1)
+        topGrid.padding = 2
+
+        self.add_widget(label)
+        self.add_widget(topGrid)
+        self.ids[field_name] = grid

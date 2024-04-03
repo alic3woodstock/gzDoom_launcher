@@ -297,7 +297,7 @@ class GameFile:
                         games.append(GameDef(i, "Brutal Doom", -1, gameExec, 1, 0,
                                              "", [fullPath]))
 
-                if blasphemWad.strip() and blasphemTexture.strip(): # insert game only if both files are ok
+                if blasphemWad.strip() and blasphemTexture.strip():  # insert game only if both files are ok
                     games.append(GameDef(i, "Blasphem", 0, gameExec, 2, 0, blasphemWad, [blasphemTexture]))
                     blasphemWad = ""
                     blasphemTexture = ""

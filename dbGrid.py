@@ -20,9 +20,9 @@ class DBGrid(GridLayout):
         self.blank_button = None
         self.scroll_bar = None
 
-    def get_values(self, fields, sql):
+    def get_values(self, fields, sql, params=""):
         gameDefDb = GameDefDb()
-        values = gameDefDb.SelectGridValues(sql)
+        values = gameDefDb.SelectGridValues(sql, params)
         self.title = fields
         self.cols = len(fields)
         for v in values:
@@ -32,12 +32,13 @@ class DBGrid(GridLayout):
             self.row_values.append(values)
 
         j = 0
-        self.titleGrid.cols = len(self.title) - 1
-        self.titleGrid.clear_widgets()
-        for title in self.title:
-            if j > 0:
-                self.titleGrid.add_widget(TitleButton(-1, j, text=title))
-            j += 1
+        if self.titleGrid:
+            self.titleGrid.cols = len(self.title) - 1
+            self.titleGrid.clear_widgets()
+            for title in self.title:
+                if j > 0:
+                    self.titleGrid.add_widget(TitleButton(-1, j, text=title))
+                j += 1
 
         i = 0
         for row in self.row_values:
@@ -52,7 +53,7 @@ class DBGrid(GridLayout):
     def update_grid(self, _instr):
         grid_width = 0
         if self.scroll_bar:
-            if not self.blank_button:
+            if (not self.blank_button) and self.titleGrid:
                 self.titleGrid.cols += 1
                 j = self.titleGrid.cols
                 self.blank_button = TitleButton(-1, j, text=' ')
@@ -68,9 +69,10 @@ class DBGrid(GridLayout):
                     if (btn.col_index == i) and (btn.texture_size[0] > max_width):
                         max_width = btn.texture_size[0]
 
-                for btn in self.titleGrid.children:
-                    if (btn.col_index == i) and (btn.texture_size[0] > max_width):
-                        max_width = btn.texture_size[0]
+                if self.titleGrid:
+                    for btn in self.titleGrid.children:
+                        if (btn.col_index == i) and (btn.texture_size[0] > max_width):
+                            max_width = btn.texture_size[0]
 
                 max_width += 8  # left + right padding
 
@@ -78,9 +80,10 @@ class DBGrid(GridLayout):
                     if (btn.col_index == i) and (btn.width < max_width):
                         btn.width = max_width
 
-                for btn in self.titleGrid.children:
-                    if (btn.col_index == i) and (btn.width < max_width):
-                        btn.width = max_width
+                if self.titleGrid:
+                    for btn in self.titleGrid.children:
+                        if (btn.col_index == i) and (btn.width < max_width):
+                            btn.width = max_width
 
                 grid_width += max_width
 

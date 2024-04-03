@@ -525,9 +525,9 @@ class GameDefDb:
         dataCon.CloseConnection()
         return urls
 
-    def SelectGridValues(self, sql):
+    def SelectGridValues(self, sql, params=""):
         dataCon = self.ConnectDb()
-        result = dataCon.ExecSQL(sql)
+        result = dataCon.ExecSQL(sql, params)
         values = []
         for r in result:
             values.append(r)
