@@ -336,7 +336,6 @@ class ZipFile:
                 return True
             except Exception as e:
                 functions.log("ExtractTo - " + str(e))
-                print("Extracting " + self.GetName() + " failed")
         return False
 
     def CopyTo(self, path):

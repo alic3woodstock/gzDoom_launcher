@@ -50,7 +50,7 @@ class DBGrid(GridLayout):
 
         self.height = len(self.row_values) * self.row_height
 
-    def update_grid(self, _instr):
+    def update_grid(self, _instr=None):
         grid_width = 0
         if self.scroll_bar:
             if (not self.blank_button) and self.titleGrid:
@@ -62,32 +62,37 @@ class DBGrid(GridLayout):
         elif self.blank_button:
             self.titleGrid.remove_widget(self.blank_button)
 
-        for i in range(len(self.title)):
-            if i > 0:
-                max_width = 0
-                for btn in self.children:
-                    if (btn.col_index == i) and (btn.texture_size[0] > max_width):
-                        max_width = btn.texture_size[0]
-
-                if self.titleGrid:
-                    for btn in self.titleGrid.children:
+        if self.cols > 2 and not self.size_hint_x:
+            for i in range(len(self.title)):
+                if i > 0:
+                    max_width = 0
+                    for btn in self.children:
                         if (btn.col_index == i) and (btn.texture_size[0] > max_width):
                             max_width = btn.texture_size[0]
 
-                max_width += 8  # left + right padding
+                    if self.titleGrid:
+                        for btn in self.titleGrid.children:
+                            if (btn.col_index == i) and (btn.texture_size[0] > max_width):
+                                max_width = btn.texture_size[0]
 
-                for btn in self.children:
-                    if (btn.col_index == i) and (btn.width < max_width):
-                        btn.width = max_width
+                    max_width += 8  # left + right padding
 
-                if self.titleGrid:
-                    for btn in self.titleGrid.children:
+                    for btn in self.children:
                         if (btn.col_index == i) and (btn.width < max_width):
                             btn.width = max_width
 
-                grid_width += max_width
+                    if self.titleGrid:
+                        for btn in self.titleGrid.children:
+                            if (btn.col_index == i) and (btn.width < max_width):
+                                btn.width = max_width
 
-        self.width = grid_width
+                    grid_width += max_width
+            self.width = grid_width
+        else:
+            for btn in self.children:
+                if btn.col_index == 1:
+                    btn.width = self.width
+
         self.canvas.ask_update()
 
 

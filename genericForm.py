@@ -155,16 +155,26 @@ class GenericForm(GridLayout):
         label = self.add_label(text)
         # label.height = 100
         grid = DBGrid()
-        params = [-1]
-        grid.get_values(['id', 'Filename'],
-                        """SELECT id,file FROM FILES WHERE gameid=?""", params)
-        topGrid = GridContainer(grid=grid, has_title=False)
-        topGrid.container.size_hint = (1, 1)
-        topGrid.padding = 2
+        file_grid = GridContainer(grid=grid, has_title=False)
+        file_grid.container.size_hint = (1, 1)
+        grid.size_hint = (1, None)
+        file_grid.padding = 2
+
+        top_grid = BoxLayout()
+        top_grid.orientation = 'horizontal'
+        # top_grid.add_widget(file_grid)
 
         self.add_widget(label)
-        self.add_widget(topGrid)
+        self.add_widget(file_grid)
         self.ids[field_name] = grid
+
+    def refresh_file_list(self, index):
+        params = [index]
+        grid = self.ids.filelist
+        if grid:
+            grid.get_values(['id', 'Filename'],
+                            """SELECT id,file FROM FILES WHERE gameid=?""", params)
+
 
     def dropDown_on_select(self, widget, data):
         if widget.attach_to:

@@ -9,9 +9,9 @@ from scrollBar import VertScrollBar
 
 
 class GridContainer(AnchorLayout):
-    def __init__(self, grid, has_title=False, **kwargs):
+    def __init__(self, grid, has_title=False, anchor_x='center', **kwargs):
         super().__init__(**kwargs)
-        self.anchor_x = 'center'
+        self.anchor_x = anchor_x
         self.padding = 16
 
         self.container = MyBoxLayout()

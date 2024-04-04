@@ -64,7 +64,6 @@ def run_game(game):
                 command.append(cmd)
 
             if len(command) > 0:
-                print(command)
                 result = subprocess.run(command)
                 if result.returncode == 0:
                     gameDefDb = GameDefDb()
