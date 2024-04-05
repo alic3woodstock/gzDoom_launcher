@@ -162,10 +162,23 @@ class GenericForm(GridLayout):
 
         top_grid = BoxLayout()
         top_grid.orientation = 'horizontal'
-        # top_grid.add_widget(file_grid)
+        top_grid.add_widget(file_grid)
+
+        box_buttons = GridLayout(rows=3, cols=1, size_hint=(None, 1), width=108,
+                                 padding=[6, 2, 2, 2])
+
+        action_buttons = [MyButtonBorder(text="Add"), MyButtonBorder(text="Del"),
+                          MyButtonBorder(text="Clear")]
+        for b in action_buttons:
+            b.size_hint = (None, None)
+            b.width = 100
+            b.height = 30
+            box_buttons.add_widget(b)
+
+        top_grid.add_widget(box_buttons)
 
         self.add_widget(label)
-        self.add_widget(file_grid)
+        self.add_widget(top_grid)
         self.ids[field_name] = grid
 
     def refresh_file_list(self, index):
@@ -174,7 +187,6 @@ class GenericForm(GridLayout):
         if grid:
             grid.get_values(['id', 'Filename'],
                             """SELECT id,file FROM FILES WHERE gameid=?""", params)
-
 
     def dropDown_on_select(self, widget, data):
         if widget.attach_to:

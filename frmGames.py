@@ -21,7 +21,7 @@ class FrmGames(ModalWindow):
         self.formLayout.add_text_field(text='Cmd. Parameters:', field_name='params')
         self.formLayout.add_file_field(text='Files:', field_name='files')
         self.formLayout.add_file_list(text='', field_name='filelist')
-        self.formLayout.refresh_file_list(1)  # test value
+        # self.formLayout.refresh_file_list(1)  # test value
         self.add_widget(self.formLayout)
 
         game_data = GameDefDb()
