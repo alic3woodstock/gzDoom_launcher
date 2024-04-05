@@ -1,11 +1,11 @@
 from kivy.graphics import Callback
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.dropdown import DropDown
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 
+from Mydropdown import MyDropdown
 from dbGrid import DBGrid
 from fileChooserDialog import FileChooserDialog
 from functions import text_color, background_color, button_height
@@ -15,9 +15,9 @@ from myButton import MyCheckBox, DropdownMainButton, MyButtonBorder
 from myPopup import MyPopup
 
 
-def open_file_dialog(_widget):
+def open_file_dialog(txt_input):
     popup = MyPopup()
-    popup.content = FileChooserDialog(popup)
+    popup.content = FileChooserDialog(popup, txt_input)
     popup.open()
 
 
@@ -99,7 +99,7 @@ class GenericForm(GridLayout):
         aux_box.width = self.children_height
         button_file = MyButtonBorder(icon=Icon('folder'))
         button_file.size_hint = (1, 1)
-        button_file.bind(on_release=open_file_dialog)
+        button_file.bind(on_release=lambda f: open_file_dialog(txt_input=value_input))
         aux_box.add_widget(button_file)
 
         self.add_widget(label)
@@ -112,13 +112,8 @@ class GenericForm(GridLayout):
         label = self.add_label(text)
 
         mainButton = DropdownMainButton()
-        mainButton.id = field_name
         mainButton.size_hint = (1, 1)
-
-        dropdown = DropDown()
-        dropdown.bind(on_select=self.dropDown_on_select)
-        dropdown.bind(on_dismiss=self.dropDown_on_dismiss)
-        mainButton.bind(on_release=dropdown.open)
+        dropdown = MyDropdown(mainButton)
 
         dropBox = BoxLayout()
         dropBox.size_hint = (1, None)
@@ -187,13 +182,3 @@ class GenericForm(GridLayout):
         if grid:
             grid.get_values(['id', 'Filename'],
                             """SELECT id,file FROM FILES WHERE gameid=?""", params)
-
-    def dropDown_on_select(self, widget, data):
-        if widget.attach_to:
-            widget.attach_to.text = data.name
-            widget.attach_to.game = data
-            widget.attach_to.state = 'normal'
-
-    def dropDown_on_dismiss(self, widget):
-        if widget.attach_to:
-            widget.attach_to.state = 'normal'

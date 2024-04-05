@@ -30,12 +30,14 @@ class FrmGames(ModalWindow):
         for t in tabs:
             btnTab = DropDownItem(game=t, text=t.name)
             dropdown.add_widget(btnTab)
+        dropdown.select(tabs[0])
 
         groups = game_data.SelectAllGroups()
         dropdown = self.formLayout.ids.modgroup
         for g in groups:
             btnGroup = DropDownItem(game=g, text=g.name)
             dropdown.add_widget(btnGroup)
+        dropdown.select(groups[0])
 
         self.CreateBoxButtons(
             'OK', 'Cancel')

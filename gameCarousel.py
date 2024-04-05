@@ -1,10 +1,10 @@
 from kivy.graphics import Callback
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.carousel import Carousel
-from kivy.uix.dropdown import DropDown
 from kivy.uix.label import Label
 from kivy.uix.togglebutton import ToggleButtonBehavior
 
+from Mydropdown import MyDropdown
 from functions import button_height
 from gameDef import GameDef
 from gameGrid import GameGrid
@@ -28,16 +28,16 @@ class GameCarousel(BoxLayout):
         spinnerBox.height = button_height + spinnerBox.padding[3]
         label = Label(text='Mod:')
         label.size_hint = (None, 1)
+
         spinnerBox.add_widget(label)
-        dropDown = DropDown()
+        mainBtnDrop = MainModButton(game=GameDef(0, '-- None --', -1), text='None',
+                                    height=button_height)
+
+        dropDown = MyDropdown(mainBtnDrop)
         dropDown.size_hint = (1, None)
         dropDown.sync_height = True
         dropDown.height = button_height
-        dropDown.bind(on_select=self.dropDown_on_select)
-        dropDown.bind(on_dismiss=self.dropDown_on_dismiss)
-        mainBtnDrop = MainModButton(game=GameDef(0, '-- None --', -1), text='None',
-                                    height=button_height)
-        mainBtnDrop.bind(on_release=dropDown.open)
+
         self.noMod = mainBtnDrop.game
         self.modList = []
         spinnerBox.add_widget(mainBtnDrop)
@@ -100,14 +100,6 @@ class GameCarousel(BoxLayout):
     def btnTitle_on_press(self, widget):
         if widget.state == 'normal':
             widget.state = 'down'
-
-    def dropDown_on_select(self, _widget, data):
-        self.mainBtnDrop.text = data.name
-        self.mainBtnDrop.game = data
-        self.mainBtnDrop.state = 'normal'
-
-    def dropDown_on_dismiss(self, _widget):
-        self.mainBtnDrop.state = 'normal'
 
     def grid_on_change_selection(self, widget):
         self.dropDown.clear_widgets()
