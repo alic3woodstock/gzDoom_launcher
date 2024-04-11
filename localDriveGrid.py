@@ -39,7 +39,7 @@ class LocalDriveGrid(DBGrid):
             btnLetter.bind(on_release=self.btn_on_release)
             self.add_widget(btnLetter)
 
-    def update_grid(self, _instr):
+    def update_grid(self, _instr=None):
         for btn in self.children:
             btn.height = self.row_height
         self.height = len(self.row_values) * self.row_height
