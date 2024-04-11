@@ -95,6 +95,12 @@ class DBGrid(GridLayout):
 
         self.canvas.ask_update()
 
+    def add_row(self, row_values):
+        j = 0
+        for r in row_values:
+            self.add_widget(GridButton(self.rows, j, text=r, height=self.row_height))
+            j += 1
+
 
 class GridButton(ToggleButtonBehavior, MyButtonBorder):
 

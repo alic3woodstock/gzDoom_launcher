@@ -20,8 +20,9 @@ class FrmGames(ModalWindow):
         self.formLayout.add_file_field(text='Wad:', field_name='wad')
         self.formLayout.add_text_field(text='Cmd. Parameters:', field_name='params')
         self.formLayout.add_file_field(text='Files:', field_name='files')
-        self.formLayout.add_file_list(text='', field_name='filelist')
-        self.formLayout.refresh_file_list(-1)
+        self.formLayout.add_file_list(self.formLayout.ids.files,
+                                      field_name='filelist')
+        self.formLayout.ids.filelist.refresh_file_list(-1)
         self.add_widget(self.formLayout)
 
         game_data = GameDefDb()

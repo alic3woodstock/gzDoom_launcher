@@ -294,3 +294,14 @@ class FileProgress(FileChooserProgress):
     def update_layout(self, _instr):
         self.progress.max = self.total
         self.progress.update_progress(self.index, str(self.index) + ' / ' + str(self.total))
+
+
+class MessageBox:
+    def __init__(self):
+        self.dialog = None  # if dialog is outside a class, popup don't get the correct size
+
+    def alert(self, text=''):
+        self.dialog = MyPopup()
+        self.dialog.content = Dialog(self.dialog, text=text, txtOk='', txtCancel='OK',
+                                     icon='exclamation')
+        self.dialog.open()

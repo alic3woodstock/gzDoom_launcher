@@ -6,10 +6,9 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 
 from Mydropdown import MyDropdown
-from dbGrid import DBGrid
 from fileChooserDialog import FileChooserDialog
+from fileGrid import FileGrid
 from functions import text_color, background_color, button_height
-from gridContainer import GridContainer
 from icon import Icon
 from myButton import MyCheckBox, DropdownMainButton, MyButtonBorder
 from myPopup import MyPopup
@@ -146,39 +145,10 @@ class GenericForm(GridLayout):
         for lb in self.labels:
             lb.parent.width = max_size
 
-    def add_file_list(self, text='', field_name=''):
-        label = self.add_label(text)
-        # label.height = 100
-        grid = DBGrid()
-        file_grid = GridContainer(grid=grid, has_title=False)
-        file_grid.container.size_hint = (1, 1)
-        grid.size_hint = (1, None)
-        file_grid.padding = 2
-
-        top_grid = BoxLayout()
-        top_grid.orientation = 'horizontal'
-        top_grid.add_widget(file_grid)
-
-        box_buttons = GridLayout(rows=3, cols=1, size_hint=(None, 1), width=108,
-                                 padding=[6, 2, 2, 2])
-
-        action_buttons = [MyButtonBorder(text="Add"), MyButtonBorder(text="Del"),
-                          MyButtonBorder(text="Clear")]
-        for b in action_buttons:
-            b.size_hint = (None, None)
-            b.width = 100
-            b.height = 30
-            box_buttons.add_widget(b)
-
-        top_grid.add_widget(box_buttons)
+    def add_file_list(self, input_widget, field_name=''):
+        label = self.add_label('')
+        top_grid = FileGrid(input_widget)
 
         self.add_widget(label)
         self.add_widget(top_grid)
-        self.ids[field_name] = grid
-
-    def refresh_file_list(self, index):
-        params = [index]
-        grid = self.ids.filelist
-        if grid:
-            grid.get_values(['id', 'Filename'],
-                            """SELECT id,file FROM FILES WHERE gameid=?""", params)
+        self.ids[field_name] = top_grid

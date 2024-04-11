@@ -145,7 +145,7 @@ class SystemIcons(BoxLayout):
             Window.left = self.old_pos[0]
             Window.top = self.old_pos[1]
             Window.always_on_top = False
-            widget.icon = self.maxIcon
+            widget.icon_type = self.maxIcon
         else:
             self.maximized = True
             monitor = self.monitor[0]
@@ -157,7 +157,7 @@ class SystemIcons(BoxLayout):
             Window.top = monitor.y
             Window.left = monitor.x
             Window.always_on_top = True
-            widget.icon = self.restoreIcon
+            widget.icon_type = self.restoreIcon
         widget.canvas.ask_update()
 
     def minimize_event(self, _widget):
