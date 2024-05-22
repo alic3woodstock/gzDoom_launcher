@@ -142,7 +142,7 @@ class GameFile:
             dataCon = GameDefDb()
             self.message = 'GZDoom updated to version: ' + dataCon.ReadConfig('gzdversion', 'text')
         else:
-            self.message = 'Update failed, read ' + functions.logFile + 'for more details!'
+            self.message = 'Update failed!\nRead ' + functions.logFile + ' for more details!'
         self.value = self.max_range
         self.finishTask()
 
@@ -333,9 +333,27 @@ class ZipFile:
                     z = tarfile.open(fromFile, 'r:xz')
                     z.extractall(path)
 
+                if self.GetFormat() == "deb":
+                    from ar import Archive
+                    with open(fromFile, 'rb') as f:
+                        archive = Archive(f)
+                        content = archive.open("data.tar.xz", 'rb').read()
+                        tmp_data = functions.downloadPath + "data.tar.xz"
+                        output = open(tmp_data, "wb")
+                        output.write(content)
+                        zip_file = ZipFile("data.tar.xz", "xz")
+                        zip_file.ExtractTo(path)
+                        os.remove(tmp_data)
+                        # for entry in archive:
+                        #     with open(entry.name, 'wb') as output:
+                        #         content = archive.open(entry, 'rb').read()
+                        #         output.write(path + content)
+
                 return True
             except Exception as e:
                 functions.log("ExtractTo - " + str(e))
+        else:
+            functions.log("File: " + fromFile + " not found!")
         return False
 
     def CopyTo(self, path):
