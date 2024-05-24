@@ -74,7 +74,6 @@ def setDataPath():
         dataPath = sys.argv[2].strip()
     else:
         dataPath = dataPath.replace("functions.py", "data")
-    print(dataPath)
 
     # global paths
     dbPath = dataPath + "/games.sqlite3"
