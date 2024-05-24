@@ -1,6 +1,7 @@
 import hashlib
 import logging
 import os
+import sys
 
 LOGLEVEL = logging.ERROR
 FORMAT = '%(levelname)s: %(asctime)s - %(message)s'
@@ -69,7 +70,11 @@ def setDataPath():
     dataPath = os.path.realpath(__file__)
     pentagram = dataPath.replace("functions.py", "pentagram.png")
     rootFolder = dataPath.replace("functions.py", "")
-    dataPath = dataPath.replace("functions.py", "data")
+    if sys.argv[1].strip() == '-datapath' and sys.argv[2].strip():
+        dataPath = sys.argv[2].strip()
+    else:
+        dataPath = dataPath.replace("functions.py", "data")
+    print(dataPath)
 
     # global paths
     dbPath = dataPath + "/games.sqlite3"
