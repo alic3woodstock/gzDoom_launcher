@@ -70,7 +70,7 @@ def setDataPath():
     dataPath = os.path.realpath(__file__)
     pentagram = dataPath.replace("functions.py", "pentagram.png")
     rootFolder = dataPath.replace("functions.py", "")
-    if sys.argv[1].strip() == '-datapath' and sys.argv[2].strip():
+    if len(sys.argv) > 1 and sys.argv[1].strip() == '-datapath' and sys.argv[2].strip():
         dataPath = sys.argv[2].strip()
     else:
         dataPath = dataPath.replace("functions.py", "data")
