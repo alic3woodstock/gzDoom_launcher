@@ -64,6 +64,7 @@ def run_game(game):
                 command.append(cmd)
 
             if len(command) > 0:
+                functions.log(command, False)
                 result = subprocess.run(command)
                 if result.returncode == 0:
                     gameDefDb = GameDefDb()
@@ -251,6 +252,7 @@ class FrmGzdlauncher(BoxLayout):
         if gameFile.done:
             self.popup.content = Dialog(self.popup, text=gameFile.message, txtCancel='OK', txtOk='',
                                         icon='information')
+            self.ReadDB()
 
     def menuApp_on_select(self, _widget, data):
         if data.index == 3:

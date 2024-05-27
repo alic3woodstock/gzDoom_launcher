@@ -467,6 +467,12 @@ class GameDefDb:
                   "download/V21.11.2/brutalv21.11.2.pk3", "brutal.pk3"]
         dataCon.ExecSQL(sql, params)
 
+        # Enhanced Vanilla Project
+        params = ["https://drive.usercontent.google.com/"
+                  "download?id=1fVi8SlOkvxrrclni9lcqRXHDI4fxu6y3&export="
+                  "download&authuser=1", "evp.zip"]
+        dataCon.ExecSQL(sql, params)
+
         # maps
         params = ["https://youfailit.net/pub/idgames/levels/doom2/megawads/av.zip", "av.zip"]
         dataCon.ExecSQL(sql, params)

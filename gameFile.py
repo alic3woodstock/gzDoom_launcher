@@ -76,9 +76,18 @@ class GameFile:
                                 if not os.path.exists(functions.wadPath):
                                     os.makedirs(functions.wadPath)
                                 shutil.copy(h, functions.wadPath)
+            elif z.TestFileName("evp"):
+                z.ExtractTo(functions.tempDir)
+                tempNames = os.listdir(functions.tempDir)
+                for f in tempNames:
+                    if f.lower().find("evp") >= 0 and f.lower().find("pk3") >= 0:
+                        h = functions.tempDir + f
+                        if not os.path.exists(functions.modPath):
+                            os.makedirs(functions.modPath)
+                        shutil.copy(h, functions.modPath)
             elif z.TestFileName("pk3") or z.TestFileName("150skins"):
                 z.CopyTo(functions.modPath)
-            elif not z.TestFileName("gzdoom"):
+            elif not z.TestFileName("gzdoom") and not z.TestFileName("evp"):
                 z.CopyTo(functions.mapPath)
             self.value += 1
 
@@ -322,12 +331,18 @@ class GameFile:
                         games.append(
                             GameDef(i, "150 Skins", -1, gameExec, 2, 0,  # 150 Skins also works with heretic
                                     "", [fullPath]))
+                        games.append(
+                            GameDef(i, "150 Skins", -1, gameExec, 1, 0,  # 150 Skins also works with heretic
+                                    "", [fullPath]))
                     elif z.TestFileName("beautiful"):
                         games.append(GameDef(i, "Beautiful Doom", -1, gameExec, 1, 0,
                                              "", [functions.modPath + "150skins.zip", fullPath]))
                     elif z.TestFileName("brutal"):
                         games.append(GameDef(i, "Brutal Doom", -1, gameExec, 1, 0,
                                              "", [fullPath]))
+                    elif z.TestFileName("evp") and z.TestFileName("pk3"):
+                        games.append(GameDef(i, "Enhanced Vanilla Project", -1, gameExec, 1, 0,
+                                             "", [functions.modPath + "150skins.zip", fullPath]))
 
                 if blasphemWad.strip() and blasphemTexture.strip():  # insert game only if both files are ok
                     games.append(GameDef(i, "Blasphem", 0, gameExec, 2, 0, blasphemWad, [blasphemTexture]))

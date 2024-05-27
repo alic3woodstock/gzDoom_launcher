@@ -6,7 +6,7 @@ import sys
 LOGLEVEL = logging.ERROR
 FORMAT = '%(levelname)s: %(asctime)s - %(message)s'
 APPVERSION = "2.00.00"
-AUTHOR = "Copyright 2022-2023 © Alice Woodstock"
+AUTHOR = "Copyright 2022-2024 © Alice Woodstock"
 WINE_GZDOOM = True  # linux gzdoom works only on ubuntu for now.
 
 dbPath = "games.sqlite3"
@@ -30,11 +30,12 @@ button_width = 128
 
 
 def log(text, error=True):
+    log_file = logging.getLogger(__name__)
     logging.basicConfig(filename=logFile, encoding='utf-8', level=LOGLEVEL, format=FORMAT)
     if error:
-        logging.error(text)
+        log_file.error(text)
     else:
-        logging.debug(text)
+        log_file.debug(text)
 
 
 def filehash(file_name):
