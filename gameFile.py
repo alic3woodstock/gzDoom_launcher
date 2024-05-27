@@ -1,6 +1,7 @@
 import math
 import os
 import shutil
+import stat
 import tarfile
 import zipfile
 
@@ -131,10 +132,14 @@ class GameFile:
 
     def verifyUpdate(self):
         self.done = False
-        self.max_range = 1
+        if os.name != "nt" and functions.WINE_GZDOOM:
+            self.max_range = 2
+            self.totalDownloads = 2
+        else:
+            self.max_range = 1
+            self.totalDownloads = 1
         self.message = 'Verifying GZDoom Version...'
-        self.totalDownloads = 1
-        self.currentDownload = 0
+        self.currentDownload = 1
         result = self.UpdateGzDoom()
         if result == 2:
             self.message = 'GZDoom already at latest version.'
@@ -150,19 +155,28 @@ class GameFile:
         if not os.path.exists(functions.downloadPath):
             os.mkdir(functions.downloadPath)
 
-        if os.name == "nt":
+        gzdoom_windows = (os.name == "nt") or functions.WINE_GZDOOM
+        wine_gzdoom = not (os.name == "nt") and functions.WINE_GZDOOM
+
+        if gzdoom_windows:
             filename = "gzdoom.zip"
         else:
             filename = "gzdoom.tar.xz"
 
-        localFileName = functions.gzDoomExec
+        if wine_gzdoom:
+            localFileName = functions.gzDoomExec + ".exe"
+        else:
+            localFileName = functions.gzDoomExec
 
         if os.path.exists(functions.downloadPath + filename):
             os.remove(functions.downloadPath + filename)
 
+        if os.path.exists(functions.downloadPath + 'wine.tar.xz'):
+            os.remove(functions.downloadPath + 'wine.tar.xz')
+
         result = False
         try:
-            gzdoomUrl = self.GetGzDoomUrl()
+            gzdoomUrl = self.GetGzDoomUrl(gzdoom_windows)
             url = gzdoomUrl[0]
             version = gzdoomUrl[1]
             file = Url(url, filename)
@@ -172,14 +186,14 @@ class GameFile:
             if (not os.path.isfile(localFileName)) or (not gameData.CheckGzDoomVersion(version, localHash)):
                 self.DownloadFile(file)
 
-                if os.name == "nt":
+                if gzdoom_windows:
                     zip_file = ZipFile(filename, "zip")
                 else:
                     zip_file = ZipFile(filename, "xz")
 
                 extractOK = False
                 if zip_file.TestFileName("gzdoom"):
-                    if os.name == "nt":
+                    if gzdoom_windows:
                         if zip_file.ExtractTo(functions.gzDoomPath):
                             extractOK = True
                     else:
@@ -201,8 +215,26 @@ class GameFile:
                     if os.path.exists(functions.tempDir):
                         shutil.rmtree(functions.tempDir)
 
-                result = extractOK and (os.path.isfile(functions.gzDoomExec)
-                                        or os.path.isfile(functions.gzDoomExec))
+                result = extractOK and (os.path.isfile(localFileName))
+
+                if wine_gzdoom:
+                    url = Url("https://github.com/GloriousEggroll/wine-ge-custom/releases"
+                              "/download/GE-Proton8-26/wine-lutris-GE-Proton8-26-x86_64.tar.xz",
+                              "wine.tar.xz")
+                    self.value = math.floor(self.value)
+                    self.value += 1
+                    self.DownloadFile(url)
+                    self.message = "Extracting wine..."
+                    zip_file = ZipFile('wine.tar.xz', 'xz')
+                    zip_file.ExtractTo(functions.gzDoomPath)
+                    wine_cmd = ('WINEPREFIX=' + functions.dataPath + '/.wine '
+                                + functions.gzDoomPath + 'lutris-GE-Proton8-26-x86_64/bin/wine '
+                                + localFileName + ' $1 $2 $3 $4 $5 $6 $7 $8 $9')
+                    file = open(functions.gzDoomExec, 'wt')
+                    file.writelines(['#!/bin/bash\n',
+                                     wine_cmd])
+                    file.close()
+                    os.chmod(functions.gzDoomExec, stat.S_IREAD | stat.S_IWRITE | stat.S_IEXEC)
             else:
                 result = 2
         except Exception as e:
@@ -210,7 +242,7 @@ class GameFile:
 
         return result
 
-    def GetGzDoomUrl(self):
+    def GetGzDoomUrl(self, gzdoom_windows):
         r = requests.get("https://github.com/coelckers/gzdoom/releases/latest", stream=False)
 
         tmpStr = r.text
@@ -226,8 +258,8 @@ class GameFile:
 
         start = tmpStr.find("/ZDoom/gzdoom/releases/download")
         tmpStr = tmpStr[start:]
-        if os.name == "nt":
-            start = tmpStr.lower().find('windows-64bit.zip')
+        if gzdoom_windows:
+            start = tmpStr.lower().find('windows.zip')
         else:
             start = tmpStr.lower().find('linux')
         start = tmpStr.find("/ZDoom/gzdoom/releases/download", start - 200, )
