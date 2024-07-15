@@ -237,7 +237,7 @@ class GameFile:
                     zip_file = ZipFile('wine.tar.xz', 'xz')
                     zip_file.ExtractTo(functions.gzDoomPath)
                     wine_cmd = ('WINEPREFIX=' + functions.dataPath + '/.wine '
-                                + functions.gzDoomPath + 'lutris-GE-Proton8-26-x86_64/bin/wine '
+                                + functions.gzDoomPath + 'lutris-GE-Proton8-26-x86_64/bin/wine64 '
                                 + localFileName + ' $1 $2 $3 $4 $5 $6 $7 $8 $9')
                     file = open(functions.gzDoomExec, 'wt')
                     file.writelines(['#!/bin/bash\n',
@@ -380,17 +380,17 @@ class ZipFile:
                     z = tarfile.open(fromFile, 'r:xz')
                     z.extractall(path)
 
-                if self.GetFormat() == "deb":
-                    from ar import Archive
-                    with open(fromFile, 'rb') as f:
-                        archive = Archive(f)
-                        content = archive.open("data.tar.xz", 'rb').read()
-                        tmp_data = functions.downloadPath + "data.tar.xz"
-                        output = open(tmp_data, "wb")
-                        output.write(content)
-                        zip_file = ZipFile("data.tar.xz", "xz")
-                        zip_file.ExtractTo(path)
-                        os.remove(tmp_data)
+                # if self.GetFormat() == "deb":
+                #     from ar import Archive
+                #     with open(fromFile, 'rb') as f:
+                #         archive = Archive(f)
+                #         content = archive.open("data.tar.xz", 'rb').read()
+                #         tmp_data = functions.downloadPath + "data.tar.xz"
+                #         output = open(tmp_data, "wb")
+                #         output.write(content)
+                #         zip_file = ZipFile("data.tar.xz", "xz")
+                #         zip_file.ExtractTo(path)
+                #         os.remove(tmp_data)
                         # for entry in archive:
                         #     with open(entry.name, 'wb') as output:
                         #         content = archive.open(entry, 'rb').read()
