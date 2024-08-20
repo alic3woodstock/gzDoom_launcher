@@ -36,43 +36,9 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from myButton import TopMenuButton, MyButtonBorder
 from gameDefDb import GameDefDb
-from myPopup import MyPopup, Dialog, Progress
+from myPopup import MyPopup, Dialog, Progress, EmptyDialog
 from menu import Menu
 from gameFile import GameFile
-
-
-def run_game(game):
-    if game[0]:
-        command = []
-        if game[0].exec.strip() != "":
-            command.append(game[0].exec)
-
-            if game[0].iWad.strip() != "":
-                command.append('-iwad')
-                command.append(game[0].iWad.strip())
-
-            if len(game[0].files) > 0:
-                command.append('-file')
-
-            for file in game[0].files:
-                command.append(file.strip())
-
-            if game[1]:
-                if len(game[0].files) <= 0 < len(game[1].files):
-                    command.append('-file')
-                for file in game[1].files:
-                    command.append(file.strip())
-
-            for cmd in list(game[0].cmdParams):
-                command.append(cmd)
-
-            if len(command) > 0:
-                functions.log(command, False)
-                result = subprocess.run(command)
-                if result.returncode == 0:
-                    gameDefDb = GameDefDb()
-                    gameDefDb.UpdateLastRunMod(game[0], game[1])
-                    game[0].lastMod = game[1].id
 
 
 class FrmGzdlauncher(BoxLayout):
@@ -182,7 +148,7 @@ class FrmGzdlauncher(BoxLayout):
             elif keycode[1] == 'spacebar':
                 gameTabs.spacebar()
             elif keycode[1] == 'enter':
-                run_game(gameTabs.get_run_params())
+                self.btnRun_on_press(None)
         elif isinstance(self.popup.content, FrmManageGames):
             if keycode[1] == 'down':
                 self.popup.content.topGrid.load_next()
@@ -210,7 +176,10 @@ class FrmGzdlauncher(BoxLayout):
         return True
 
     def btnRun_on_press(self, _widget):
-        run_game(self.ids.gameTabs.get_run_params())
+        self.popup.content = EmptyDialog(self.popup, 'Loading...')
+        self.popup.title = ''
+        self.popup.open()
+        Clock.schedule_once(self.run_game, 1)
 
     def menuGames_on_select(self, _widget, data):
         self.popup.title = data.text
@@ -329,6 +298,42 @@ class FrmGzdlauncher(BoxLayout):
         for c in self.main_menu.children:
             i += c.width
         self.main_menu.width = i + self.main_menu.padding[2] * 2
+
+    def run_game(self, _clock = None):
+        print(_clock)
+        game = self.ids.gameTabs.get_run_params()
+        if game[0]:
+            command = []
+            if game[0].exec.strip() != "":
+                command.append(game[0].exec)
+
+                if game[0].iWad.strip() != "":
+                    command.append('-iwad')
+                    command.append(game[0].iWad.strip())
+
+                if len(game[0].files) > 0:
+                    command.append('-file')
+
+                for file in game[0].files:
+                    command.append(file.strip())
+
+                if game[1]:
+                    if len(game[0].files) <= 0 < len(game[1].files):
+                        command.append('-file')
+                    for file in game[1].files:
+                        command.append(file.strip())
+
+                for cmd in list(game[0].cmdParams):
+                    command.append(cmd)
+
+                if len(command) > 0:
+                    functions.log(command, False)
+                    result = subprocess.run(command)
+                    self.popup.dismiss()
+                    if result.returncode == 0:
+                        gameDefDb = GameDefDb()
+                        gameDefDb.UpdateLastRunMod(game[0], game[1])
+                        game[0].lastMod = game[1].id
 
 
 class GzdLauncher(App):

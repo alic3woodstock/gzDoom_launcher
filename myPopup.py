@@ -17,7 +17,7 @@ from myLayout import MyStackLayout, MyBoxLayout
 
 class MyPopup(ModalView):
 
-    def __init__(self, **kwargs):
+    def __init__(self, can_close=True, **kwargs):
         super().__init__(**kwargs)
         self.background_color = background_color
         self.size_hint = (None, None)
@@ -101,6 +101,10 @@ class ModalWindow(MyBoxLayout):
             self.dialog.auto_dismiss = False
         self.buttons = []
         self.borders = ['left', 'bottom', 'right']
+        if not self.dialog.closeButton.icon:
+            self.dialog.closeButton.icon = (
+                Icon('close', button_margin=10, color=background_color))
+
 
     def update_layout(self, instr):
         self.draw_title()
@@ -162,6 +166,39 @@ class ModalWindow(MyBoxLayout):
         btnOk.width = 128
         self.boxButtons.add_widget(btnOk)
         return btnOk
+
+class EmptyDialog(ModalWindow):
+    def __init__(self, dialog, text='', icon='', **kwargs):
+        super().__init__(dialog, **kwargs)
+
+        textLayout = BoxLayout()
+        textLayout.padding = (16, 0, 16, 0)
+        label = Label(text=text)
+        self.size = label.size
+        self.label = label
+
+        separator = BoxLayout()
+        separator.size_hint = (None, 1)
+        separator.width = 16
+        icon = Icon(icon)  # Image(source=rootFolder + 'images/icon_information.png')
+        icon.size_hint = (None, 1)
+        icon.width = 48
+        self.icon = icon
+
+        textLayout.add_widget(icon)
+        textLayout.add_widget(separator)
+        textLayout.add_widget(label)
+        self.add_widget(textLayout)
+        self.dialog.closeButton.icon = ""
+
+    def update_layout(self, instr):
+        label = self.label
+        if self.icon:
+            self.dialog.width = label.texture_size[0] + self.icon.width + 80
+        else:
+            self.dialog.width = label.texture_size[0] + 64
+        self.dialog.height = self.dialog.boxTitle.height + label.texture_size[1] + 64
+        super().update_layout(instr)
 
 
 class Dialog(ModalWindow):
@@ -225,6 +262,7 @@ class Progress(ModalWindow):
         self._value = 0
         self.label = label
         self.max = max_value
+        self.dialog.closeButton.icon = ""
 
     max = NumericProperty(default=0)
 
