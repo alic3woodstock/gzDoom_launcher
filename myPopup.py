@@ -99,11 +99,11 @@ class ModalWindow(MyBoxLayout):
         self.canvas.add(Callback(self.update_layout))
         if self.dialog:
             self.dialog.auto_dismiss = False
+            if not self.dialog.closeButton.icon:
+                self.dialog.closeButton.icon = (
+                    Icon('close', button_margin=10, color=background_color))
         self.buttons = []
         self.borders = ['left', 'bottom', 'right']
-        if not self.dialog.closeButton.icon:
-            self.dialog.closeButton.icon = (
-                Icon('close', button_margin=10, color=background_color))
 
 
     def update_layout(self, instr):
@@ -189,7 +189,8 @@ class EmptyDialog(ModalWindow):
         textLayout.add_widget(separator)
         textLayout.add_widget(label)
         self.add_widget(textLayout)
-        self.dialog.closeButton.icon = ""
+        if self.dialog:
+            self.dialog.closeButton.icon = ""
 
     def update_layout(self, instr):
         label = self.label
@@ -262,7 +263,8 @@ class Progress(ModalWindow):
         self._value = 0
         self.label = label
         self.max = max_value
-        self.dialog.closeButton.icon = ""
+        if self.dialog:
+            self.dialog.closeButton.icon = ""
 
     max = NumericProperty(default=0)
 
