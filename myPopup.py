@@ -54,6 +54,7 @@ class MyPopup(ModalView):
         self.pre_open_size = 0
 
     def on_pre_open(self):
+        self.is_open = True
         self.topLayout.clear_widgets()
         self.opacity = 0
 
@@ -63,7 +64,6 @@ class MyPopup(ModalView):
             self.titleWidget.text = self.title
         if self.content:
             self.boxContent.add_widget(self.content)
-        self.is_open = True
         self.topLayout.add_widget(self.boxTitle)
         self.topLayout.add_widget(self.boxContent)
 

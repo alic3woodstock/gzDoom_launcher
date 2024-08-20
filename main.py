@@ -95,6 +95,7 @@ class FrmGzdlauncher(BoxLayout):
         box_buttons.add_widget(run_button)
         self.add_widget(box_buttons)
 
+        self.is_game_running = False
         self._keyboard = Window.request_keyboard(
             self._keyboard_closed, self, 'text')
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
@@ -132,7 +133,7 @@ class FrmGzdlauncher(BoxLayout):
 
     def _on_keyboard_down(self, _keyboard, keycode, _text, _modifiers):
         gameTabs = self.ids.gameTabs
-        if not self.popup.is_open:
+        if not self.popup.is_open and not self.is_game_running:
             if keycode[1] == 'left':
                 gameTabs.carousel.load_previous()
             elif keycode[1] == 'right':
@@ -300,7 +301,7 @@ class FrmGzdlauncher(BoxLayout):
         self.main_menu.width = i + self.main_menu.padding[2] * 2
 
     def run_game(self, _clock = None):
-        print(_clock)
+        self.is_game_running = True
         game = self.ids.gameTabs.get_run_params()
         if game[0]:
             command = []
@@ -334,6 +335,8 @@ class FrmGzdlauncher(BoxLayout):
                         gameDefDb = GameDefDb()
                         gameDefDb.UpdateLastRunMod(game[0], game[1])
                         game[0].lastMod = game[1].id
+
+        self.is_game_running = False
 
 
 class GzdLauncher(App):
