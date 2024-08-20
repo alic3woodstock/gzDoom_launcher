@@ -129,12 +129,14 @@ class MyCheckBox(MyToggleButton):
     def __init__(self, **kwargs):
         super().__init__(icon=Icon('maximize'), **kwargs)
         self.highlight_color = self.background_color
+        self.active = False
 
     def choose_icon(self):
         if self.state == 'down':
             self.icon = Icon('check', color=highlight_color, line_width=1)
         else:
             self.icon = Icon('maximize', line_width=1)
+        self.active = self.state == 'down'
         self.icon.buttonMargin = 0
 
     def update_button(self, instr):
@@ -142,7 +144,6 @@ class MyCheckBox(MyToggleButton):
         self.choose_icon()
         self.draw_button()
         self.canvas.ask_update()
-
 
 class DropDownItem(MyButtonBorder):
     def __init__(self, game, **kwargs):

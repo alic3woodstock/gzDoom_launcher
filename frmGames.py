@@ -4,7 +4,9 @@ from gameDefDb import GameDefDb
 from genericForm import GenericForm
 from myButton import DropDownItem
 from myPopup import ModalWindow
-
+from gameDef import GameDef
+from myPopup import MessageBox
+from os.path import isfile
 
 class FrmGames(ModalWindow):
 
@@ -44,3 +46,33 @@ class FrmGames(ModalWindow):
             'OK', 'Cancel')
         self.game = game
         self.dialog.size = Window.size
+        self.btnOk.bind(on_release=self.btnok_on_release)
+
+    def btnok_on_release(self, _widget):
+        # AddGame
+        if self.formLayout.ids.ismod.active:
+            tab = -1
+        else:
+            tab = self.formLayout.ids.tab.main_button.game.index
+
+        gameDef = GameDef(0,
+                          self.formLayout.ids.name.text.strip(),
+                          tab,
+                          self.formLayout.ids.gamexec.text.strip(),
+                          self.formLayout.ids.modgroup.main_button.game.id,
+                          0,
+                          self.formLayout.ids.wad.text.strip(),
+                          self.formLayout.ids.filelist.get_all_files(),
+                          self.formLayout.ids.params.text.strip())
+
+        msg = MessageBox()
+
+        if not gameDef.name:
+            msg.alert('Invalid name!')
+        elif not isfile(gameDef.exec):
+                msg.alert('Invalid game executable!')
+        elif gameDef.iWad and not isfile(gameDef.iWad):
+            msg.alert('Invalid game wad!')
+        else:
+            gameDefDb = GameDefDb()
+            gameDefDb.InsertGame(gameDef)

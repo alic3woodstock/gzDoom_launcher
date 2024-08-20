@@ -1,8 +1,7 @@
-from os.path import isfile
-
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 
+from os.path import isfile
 from dbGrid import DBGrid
 from gridContainer import GridContainer
 from myButton import MyButtonBorder
@@ -53,3 +52,10 @@ class FileGrid(BoxLayout):
     def btn_add_onrelease(self, _widget):
         if self.input_widget:
             self.add_value(self.input_widget.text)
+
+    def get_all_files(self):
+        files = []
+        if len(self.grid.children) > 0:
+            for i in range(len(self.grid.children) - 2, -1, -2):
+                files.append(self.grid.children[i].text)
+        return files

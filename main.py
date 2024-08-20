@@ -51,13 +51,16 @@ def run_game(game):
                 command.append('-iwad')
                 command.append(game[0].iWad.strip())
 
-            for file in game[0].files:
+            if len(game[0].files) > 0:
                 command.append('-file')
+
+            for file in game[0].files:
                 command.append(file.strip())
 
             if game[1]:
-                for file in game[1].files:
+                if len(game[0].files) <= 0 < len(game[1].files):
                     command.append('-file')
+                for file in game[1].files:
                     command.append(file.strip())
 
             for cmd in list(game[0].cmdParams):
