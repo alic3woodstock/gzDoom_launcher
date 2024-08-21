@@ -341,7 +341,10 @@ class MessageBox:
         self.dialog = None  # if dialog is outside a class, popup don't get the correct size
 
     def alert(self, text=''):
+        self.message(text,'exclamation')
+
+    def message(self, text='', icon=''):
         self.dialog = MyPopup()
         self.dialog.content = Dialog(self.dialog, text=text, txtOk='', txtCancel='OK',
-                                     icon='exclamation')
+                                     icon=icon)
         self.dialog.open()

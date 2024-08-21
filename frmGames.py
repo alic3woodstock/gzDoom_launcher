@@ -5,13 +5,14 @@ from genericForm import GenericForm
 from myButton import DropDownItem
 from myPopup import ModalWindow
 from gameDef import GameDef
-from myPopup import MessageBox
+from myPopup import MyPopup, MessageBox, Dialog
 from os.path import isfile
 
 class FrmGames(ModalWindow):
 
     def __init__(self, dialog, game=None, **kwargs):
         super().__init__(dialog, **kwargs)
+        self.popup = MyPopup()
 
         self.formLayout = GenericForm()
         self.formLayout.add_text_field(text='Name:', field_name='name')
@@ -76,3 +77,10 @@ class FrmGames(ModalWindow):
         else:
             gameDefDb = GameDefDb()
             gameDefDb.InsertGame(gameDef)
+            self.popup.content = Dialog(self.popup, text="New game/mod successfully added!",
+                                        txtCancel="OK")
+            self.dialog.dismiss()
+
+    def clear_content(self):
+        pass
+

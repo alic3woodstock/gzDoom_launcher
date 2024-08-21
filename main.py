@@ -123,6 +123,7 @@ class FrmGzdlauncher(BoxLayout):
         self.menuApp = menuApp
         self.menuGames = menuGames
         self.popup = MyPopup()
+        self.popup.bind(on_dismiss=lambda r: self.ReadDB())
         self.height = Window.height - 32
         self.main_menu.canvas.add(Callback(self.main_menu_cupdate))
         Window.bind(mouse_pos=self.mouse_pos)
@@ -225,7 +226,6 @@ class FrmGzdlauncher(BoxLayout):
         if gameFile.done:
             self.popup.content = Dialog(self.popup, text=gameFile.message, txtCancel='OK', txtOk='',
                                         icon='information')
-            self.ReadDB()
 
     def menuApp_on_select(self, _widget, data):
         if data.index == 3:
@@ -357,6 +357,12 @@ class GzdLauncher(App):
 
         if not os.path.isfile(functions.dbPath):
             gameDefDb.CreateGameTable()
+            dialog = Dialog(self.frmGzLauncher.popup,
+                            text="Download default games now? (games -> reset to default)",
+                            txtCancel='No', txtOk='Yes', icon='exclamation')
+            dialog.btnOk.bind(on_release=self.frmGzLauncher.btnYes1_onPress)
+            self.frmGzLauncher.popup.content = dialog
+            self.frmGzLauncher.popup.open()
         else:
             gameDefDb.UpdateDatabase()
 

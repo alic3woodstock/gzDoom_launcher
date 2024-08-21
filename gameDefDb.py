@@ -458,7 +458,7 @@ class GameDefDb:
         dataCon.ExecSQL(sql, params)
 
         # Beautiful Doom
-        params = ["https://github.com/jekyllgrim/Beautiful-Doom/releases/download/7.1.6/Beautiful_Doom_716.pk3",
+        params = ["https://github.com/jekyllgrim/Beautiful-Doom/archive/refs/heads/master.zip",
                   "Beautiful_Doom.pk3"]
         dataCon.ExecSQL(sql, params)
 
