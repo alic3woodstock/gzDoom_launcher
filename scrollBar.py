@@ -20,6 +20,7 @@ class VertScrollBar(MyBoxLayout):
         self.size_hint = (None, 1)
         self.width = 20
         self.scroll = scroll
+        self.scroll.bar_width = 0
         self.lineWidth = 1
 
         topButton = MyButtonBorder(icon=Icon('uparrow'))
