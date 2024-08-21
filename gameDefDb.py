@@ -452,6 +452,10 @@ class GameDefDb:
         params = ["https://github.com/freedoom/freedoom/releases/download/v0.12.1/freedoom-0.12.1.zip", "freedoom.zip"]
         dataCon.ExecSQL(sql, params)
 
+        # Harmony
+        params = ["https://youfailit.net/pub/idgames/levels/doom2/Ports/g-i/harmonyc.zip", "harmonyc.zip"]
+        dataCon.ExecSQL(sql, params)
+
         # 150skins
         params = ["https://awxdeveloper.edu.eu.org/downloads/150skins.zip",
                   "150skins.zip"]  # my personal wordpress site

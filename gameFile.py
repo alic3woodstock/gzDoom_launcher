@@ -87,6 +87,15 @@ class GameFile:
                         shutil.copy(h, functions.modPath)
             elif z.TestFileName("pk3") or z.TestFileName("150skins"):
                 z.CopyTo(functions.modPath)
+            elif z.TestFileName("harmonyc"):
+                z.ExtractTo(functions.tempDir)
+                tempNames = os.listdir(functions.tempDir)
+                for f in tempNames:
+                    if f.lower().find("harmonyc") >= 0:
+                        shutil.copy(functions.tempDir + f, functions.wadPath)
+                    if f.lower().find("extra") >= 0:
+                        shutil.copy(functions.tempDir + f + '/Harm-WS.wad', functions.wadPath)
+                z.ExtractTo(functions.wadPath)
             elif not z.TestFileName("gzdoom") and not z.TestFileName("evp"):
                 z.CopyTo(functions.mapPath)
             self.value += 1
@@ -318,6 +327,11 @@ class GameFile:
                     games.append(GameDef(i, "Freedoom Phase 1", 0, gameExec, 1, 0, fullPath))
                 elif z.TestFileName("freedoom2"):
                     games.append(GameDef(i, "Freedoom Phase 2", 0, gameExec, 1, 0, fullPath))
+                elif z.TestFileName("harmonyc.wad"):
+                    games.append(GameDef(i, 'Harmony', 0, gameExec, 5, 0,
+                                         fullPath,
+                                         [z.GetFormat() + 'HarmonyC.deh',
+                                          z.GetFormat() + 'Harm-WS.wad']))
                 elif z.GetFormat().find("maps") >= 0:
                     if z.TestFileName("htchest") or z.TestFileName("unbeliev"):
                         games.append(GameDef(i, z.GetMapName(), 1, gameExec, 2, 0,
@@ -391,10 +405,10 @@ class ZipFile:
                 #         zip_file = ZipFile("data.tar.xz", "xz")
                 #         zip_file.ExtractTo(path)
                 #         os.remove(tmp_data)
-                        # for entry in archive:
-                        #     with open(entry.name, 'wb') as output:
-                        #         content = archive.open(entry, 'rb').read()
-                        #         output.write(path + content)
+                # for entry in archive:
+                #     with open(entry.name, 'wb') as output:
+                #         content = archive.open(entry, 'rb').read()
+                #         output.write(path + content)
 
                 return True
             except Exception as e:
