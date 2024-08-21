@@ -5,7 +5,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 
-from Mydropdown import MyDropdown
+from myDropdown import MyDropdown
 from fileChooserDialog import FileChooserDialog
 from fileGrid import FileGrid
 from functions import text_color, background_color, button_height

@@ -4,7 +4,7 @@ from kivy.uix.carousel import Carousel
 from kivy.uix.label import Label
 from kivy.uix.togglebutton import ToggleButtonBehavior
 
-from Mydropdown import MyDropdown
+from myDropdown import MyDropdown
 from functions import button_height
 from gameDef import GameDef
 from gameGrid import GameGrid

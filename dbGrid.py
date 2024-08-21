@@ -21,6 +21,7 @@ class DBGrid(GridLayout):
         self.scroll_bar = None
 
     def get_values(self, fields, sql, params=""):
+        self.clear_widgets()
         gameDefDb = GameDefDb()
         values = gameDefDb.SelectGridValues(sql, params)
         self.title = fields
@@ -100,6 +101,14 @@ class DBGrid(GridLayout):
         for r in row_values:
             self.add_widget(GridButton(self.rows, j, text=r, height=self.row_height))
             j += 1
+
+    def get_selected_id(self):
+        return self.get_selected_field(0)
+
+    def get_selected_field(self, col_index = 0):
+        for btn in self.children:
+            if isinstance(btn, GridButton) and btn.state == 'down' and btn.col_index == col_index:
+                return btn.text
 
 
 class GridButton(ToggleButtonBehavior, MyButtonBorder):

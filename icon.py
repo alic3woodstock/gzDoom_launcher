@@ -123,7 +123,17 @@ class Icon(Widget):
                 point3 = (x + size, y + size - 5)
                 point4 = (x + size, y)
                 Line(points=[point1, point2, point3, point4], width=self.line_width, close=True)
-            else:
+            elif self.icon_type == 'question':
+                Line(ellipse=(x, y, size, size), width=self.line_width)
+                Line(circle=(pos_center[0], y + size - 14, 7, -75, 135), width=2)
+                point1 = (pos_center[0] + 5, y + size - 20)
+                point2 = (pos_center[0], y + size - 28)
+                Line(points=[point1, point2], width=2)
+                point3 = (pos_center[0], y + 16)
+                point4 = (pos_center[0], y + 8)
+                Line(points=[point2, point3], width=2)
+                Line(points=[point4, point4], width=2)
+            else:  # information
                 point1 = (pos_center[0], y + 12)
                 point2 = (pos_center[0], y + size - 20)
                 point3 = (pos_center[0], y + size - 12)
