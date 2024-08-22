@@ -1,5 +1,6 @@
 from kivy.core.window import Window
 
+import frmManageGames
 from gameDefDb import GameDefDb
 from genericForm import GenericForm
 from myButton import DropDownItem
@@ -75,6 +76,7 @@ class FrmGames(ModalWindow):
         elif gameDef.iWad and not isfile(gameDef.iWad):
             msg.alert('Invalid game wad!')
         else:
+            frmManageGames.refresh_database = True
             gameDefDb = GameDefDb()
             gameDefDb.InsertGame(gameDef)
             self.popup.content = Dialog(self.popup, text="New game/mod successfully added!",

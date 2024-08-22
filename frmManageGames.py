@@ -6,6 +6,7 @@ from gameDefDb import GameDefDb
 from gridContainer import GridContainer
 from myPopup import ModalWindow, MyPopup, Dialog
 
+refresh_database = False
 
 class FrmManageGames(ModalWindow):
 
@@ -35,11 +36,15 @@ class FrmManageGames(ModalWindow):
                              """SELECT g.id, g.name, t.label, r.groupname FROM gamedef g 
                              LEFT JOIN tabs t ON g.tabindex=t.tabindex
                              LEFT JOIN groups r ON g.modgroup=r.id""")
+        global refresh_database
+        refresh_database = True
         self.popup.dismiss()
 
     def popup_dismiss(self):
-        # refresh database
-        self.create_grid()
+        global refresh_database
+        if refresh_database:
+            self.create_grid()
+            refresh_database = False
 
     def create_grid(self):
         self.clear_widgets()
@@ -47,9 +52,12 @@ class FrmManageGames(ModalWindow):
         self.topGrid = GridContainer(grid=self.grid, has_title=True)
         self.add_widget(self.topGrid)
         self.grid.get_values(['id', 'Name', 'Tab', 'Mod Group'],
-                             """SELECT g.id, g.name, t.label, r.groupname FROM gamedef g 
-                             LEFT JOIN tabs t ON g.tabindex=t.tabindex
-                             LEFT JOIN groups r ON g.modgroup=r.id""")
+                             """SELECT g.id, g.name, t.label, r.groupname
+                                    FROM gamedef g 
+                                    LEFT JOIN tabs t ON g.tabindex=t.tabindex
+                                    LEFT JOIN groups r ON g.modgroup=r.id
+                                    order by (CASE WHEN g.tabindex == -1 
+                                    THEN 99999 ELSE g.tabindex END), g.name""")
         self.topGrid.scroll.scroll_y = 0
         self.CreateBoxButtons('Delete', 'Close')
         self.btnEdit = self.AddButon('Edit')

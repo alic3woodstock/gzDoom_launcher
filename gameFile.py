@@ -76,15 +76,6 @@ class GameFile:
                                 if not os.path.exists(functions.wadPath):
                                     os.makedirs(functions.wadPath)
                                 shutil.copy(h, functions.wadPath)
-            elif z.TestFileName("evp"):
-                z.ExtractTo(functions.tempDir)
-                tempNames = os.listdir(functions.tempDir)
-                for f in tempNames:
-                    if f.lower().find("evp") >= 0 and f.lower().find("pk3") >= 0:
-                        h = functions.tempDir + f
-                        if not os.path.exists(functions.modPath):
-                            os.makedirs(functions.modPath)
-                        shutil.copy(h, functions.modPath)
             elif z.TestFileName("pk3") or z.TestFileName("150skins"):
                 z.CopyTo(functions.modPath)
             elif z.TestFileName("harmonyc"):
@@ -96,7 +87,7 @@ class GameFile:
                     if f.lower().find("extra") >= 0:
                         shutil.copy(functions.tempDir + f + '/Harm-WS.wad', functions.wadPath)
                 z.ExtractTo(functions.wadPath)
-            elif not z.TestFileName("gzdoom") and not z.TestFileName("evp"):
+            elif not z.TestFileName("gzdoom") and not z.TestFileName("wine"):
                 z.CopyTo(functions.mapPath)
             self.value += 1
 
