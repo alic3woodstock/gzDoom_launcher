@@ -1,13 +1,15 @@
+from os.path import isfile
+
 from kivy.core.window import Window
 
 import frmManageGames
+from gameDef import GameDef
 from gameDefDb import GameDefDb
 from genericForm import GenericForm
 from myButton import DropDownItem
 from myPopup import ModalWindow
-from gameDef import GameDef
 from myPopup import MyPopup, MessageBox, Dialog
-from os.path import isfile
+
 
 class FrmGames(ModalWindow):
 
@@ -49,6 +51,8 @@ class FrmGames(ModalWindow):
         self.game = game
         self.dialog.size = Window.size
         self.btnOk.bind(on_release=self.btnok_on_release)
+        if game:
+            self.load_game()
 
     def btnok_on_release(self, _widget):
         # AddGame
@@ -57,7 +61,12 @@ class FrmGames(ModalWindow):
         else:
             tab = self.formLayout.ids.tab.main_button.game.index
 
-        gameDef = GameDef(0,
+        if self.game:
+            gameId = self.game.id
+        else:
+            gameId = 0
+
+        gameDef = GameDef(gameId,
                           self.formLayout.ids.name.text.strip(),
                           tab,
                           self.formLayout.ids.gamexec.text.strip(),
@@ -72,17 +81,32 @@ class FrmGames(ModalWindow):
         if not gameDef.name:
             msg.alert('Invalid name!')
         elif not isfile(gameDef.exec):
-                msg.alert('Invalid game executable!')
+            msg.alert('Invalid game executable!')
         elif gameDef.iWad and not isfile(gameDef.iWad):
             msg.alert('Invalid game wad!')
         else:
             frmManageGames.refresh_database = True
             gameDefDb = GameDefDb()
-            gameDefDb.InsertGame(gameDef)
+            if gameId > 0:
+                gameDefDb.UpdateGame(gameDef, True)
+            else:
+                gameDefDb.InsertGame(gameDef)
             self.popup.content = Dialog(self.popup, text="New game/mod successfully added!",
                                         txtCancel="OK")
             self.dialog.dismiss()
 
-    def clear_content(self):
-        pass
+    def load_game(self):
+        self.formLayout.ids.name.text = self.game.name
 
+        if self.game.tabId < 0:
+            self.formLayout.ids.ismod.state = 'down'
+        else:
+            self.formLayout.ids.tab.select(self.game.tab)
+
+        self.formLayout.ids.gamexec.text = self.game.exec
+        self.formLayout.ids.modgroup.select(self.game.group)
+        self.formLayout.ids.wad.text = self.game.iWad
+        self.formLayout.ids.params.text = self.game.cmdParams
+
+        for f in self.game.files:
+            self.formLayout.ids.filelist.add_value(f)

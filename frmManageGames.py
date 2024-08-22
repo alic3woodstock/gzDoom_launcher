@@ -8,6 +8,7 @@ from myPopup import ModalWindow, MyPopup, Dialog
 
 refresh_database = False
 
+
 class FrmManageGames(ModalWindow):
 
     def __init__(self, dialog, **kwargs):
@@ -21,10 +22,16 @@ class FrmManageGames(ModalWindow):
         self.popup.content = FrmGames(self.popup)
         self.popup.open()
 
+    def btnEdit_on_press(self, _widget):
+        gameDefDb = GameDefDb()
+        game = gameDefDb.SelectGameById(self.grid.get_selected_id())
+        self.popup.content = FrmGames(self.popup, game)
+        self.popup.open()
+
     def btnDelete_on_press(self, _widget):
         game = self.grid.get_selected_field(1)
         dialog = Dialog(self.popup, "Delete game " + str(game) + "?", txtOk="Yes",
-                                    txtCancel="No", icon="question")
+                        txtCancel="No", icon="question")
         self.popup.content = dialog
         dialog.btnOk.bind(on_release=self.btnDelete_on_click)
         self.popup.open()
@@ -32,10 +39,6 @@ class FrmManageGames(ModalWindow):
     def btnDelete_on_click(self, _widget):
         gameDefDb = GameDefDb()
         gameDefDb.DeleteGameById(self.grid.get_selected_id())
-        self.grid.get_values(['id', 'Name', 'Tab', 'Mod Group'],
-                             """SELECT g.id, g.name, t.label, r.groupname FROM gamedef g 
-                             LEFT JOIN tabs t ON g.tabindex=t.tabindex
-                             LEFT JOIN groups r ON g.modgroup=r.id""")
         global refresh_database
         refresh_database = True
         self.popup.dismiss()
@@ -66,4 +69,4 @@ class FrmManageGames(ModalWindow):
             self.topGrid.select_index(0)
         self.btnAdd.bind(on_release=self.btnAdd_on_press)
         self.btnOk.bind(on_release=self.btnDelete_on_press)
-
+        self.btnEdit.bind(on_release=self.btnEdit_on_press)

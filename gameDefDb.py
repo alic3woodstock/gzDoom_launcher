@@ -111,7 +111,7 @@ class GameDefDb:
         sql = """INSERT INTO gamedef(name,tabindex,gamexec,modgroup,lastrunmod,iwad,cmdparams)
             VALUES (?,?,?,?,?,?,?);"""
 
-        params = (game.name, game.tab, game.exec, game.group.id,
+        params = (game.name, game.tabId, game.exec, game.group.id,
                   game.lastMod, game.iWad, game.cmdParams)
 
         dataCon.ExecSQL(sql, params)
@@ -131,15 +131,13 @@ class GameDefDb:
         games = []
 
         dataCon = self.ConnectDb()
-        sql = """SELECT a.id, a.name, a.tabindex, a.gamexec, a.modgroup, a.lastrunmod, 
-            a.iwad, b.groupname, a.cmdparams 
-            FROM gamedef a LEFT JOIN groups b ON b.id = a.modgroup 
+        sql = """SELECT id, name, tabindex, gamexec, modgroup, lastrunmod, iwad, cmdparams 
+            FROM gamedef
             ORDER BY tabindex,name"""
 
         gameData = dataCon.ExecSQL(sql)
         for game in gameData:
-            g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6], [], game[7],
-                                game[8])
+            g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6], [], game[7])
             g.files = []
             fileData = dataCon.ExecSQL("""SELECT file FROM files WHERE gameid = ?""", [game[0]])
             for f in fileData:
@@ -166,12 +164,14 @@ class GameDefDb:
 
     def SelectGameById(self, gameId):
         dataCon = self.ConnectDb()
-        gameData = dataCon.ExecSQL("""SELECT a.id, a.name, a.tabindex, a.gamexec, a.modgroup, a.lastrunmod, 
-            a.iwad, b.groupname, a.cmdparams 
-            FROM gamedef a LEFT JOIN groups b ON b.id = a.modgroup 
-            WHERE a.id=?""", [gameId])
+        sql = """SELECT id, name, tabindex, gamexec, modgroup, 
+            lastrunmod, iwad, cmdparams 
+            FROM gamedef 
+            WHERE id=?"""
+        params = [gameId]
+        gameData = dataCon.ExecSQL(sql, params)
         game = gameData.fetchone()
-        g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6], [], game[7], game[8])
+        g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6], [], game[7])
         g.files = []
         fileData = dataCon.ExecSQL("""SELECT file FROM files WHERE gameid = ?""", [game[0]])
         for f in fileData:
@@ -185,17 +185,16 @@ class GameDefDb:
 
         sql = """UPDATE gamedef SET name=?, tabindex=?, gamexec=?, modgroup=?, iwad=?, cmdparams=?
          WHERE id=?"""
-        params = [game.GetItem().GetText(), game.GetTab(), game.GetExec(), game.group.id, game.GetIWad(),
-                  game.GetCmdParams(), game.GetItem().GetData()]
+        params = [game.name, game.tabId, game.exec, game.groupId, game.iWad, game.cmdParams, game.id]
         dataCon.ExecSQL(sql, params)
 
         if updateFiles:
             sql = """DELETE FROM files WHERE gameid=?"""
-            params = [game.GetItem().GetData()]
+            params = [game.id]
             dataCon.ExecSQL(sql, params)
             sql = """INSERT INTO files(gameid,file) values(?,?)"""
-            for f in game.GetFiles():
-                params = ([game.GetItem().GetData(), f])
+            for f in game.files:
+                params = [game.id, f]
                 dataCon.ExecSQL(sql, params)
 
         dataCon.Commit()
@@ -203,12 +202,12 @@ class GameDefDb:
 
     def SelectGroupById(self, groupId):
         dataCon = self.ConnectDb()
-
-        sql = "SELECT groupname FROM groups where id=?"
+        sql = """SELECT id, groupname FROM groups WHERE id=?"""
         params = [groupId]
-
         groupData = dataCon.ExecSQL(sql, params)
-        return groupData(0, 0)
+        g = groupData.fetchone()
+        group = modGroup.ModGroup(g[0], g[1])
+        return group
 
     def SelectAllGroups(self):
         dataCon = self.ConnectDb()
@@ -429,6 +428,18 @@ class GameDefDb:
             tabConfigs.append(gameTabConfig.GameTabConfig(r[0], r[1], r[2]))
         dataCon.CloseConnection()
         return tabConfigs
+
+    def SelectGameTabById(self, id):
+        dataCon = self.ConnectDb()
+        tab = None
+        sql = """SELECT tabindex, label, enabled FROM tabs WHERE tabindex = ?"""
+        params = [id]
+        result = dataCon.ExecSQL(sql, params)
+        r = result.fetchone()
+        tab = gameTabConfig.GameTabConfig(r[0], r[1], r[2])
+        dataCon.CloseConnection()
+        return tab
+
 
     def InsertDefaultUrls(self, dataCon=None):
         if dataCon:

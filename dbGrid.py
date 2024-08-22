@@ -98,8 +98,9 @@ class DBGrid(GridLayout):
 
     def add_row(self, row_values):
         j = 0
+        row_count = len(self.children) // 2
         for r in row_values:
-            self.add_widget(GridButton(self.rows, j, text=r, height=self.row_height))
+            self.add_widget(GridButton(row_count, j, text=r, height=self.row_height))
             j += 1
 
     def get_selected_id(self):

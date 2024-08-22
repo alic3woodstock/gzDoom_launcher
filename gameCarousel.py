@@ -74,12 +74,12 @@ class GameCarousel(BoxLayout):
 
     def insert_game(self, game=None):
         if game:
-            if game.tab < 0:
+            if game.tabId < 0:
                 self.modList.append(game)
                 self.modList.sort(key=self.list_sort)
             else:
                 for gameTab in self.carousel.slides:
-                    if gameTab.tabId == game.tab:
+                    if gameTab.tabId == game.tabId:
                         gameTab.gameGrid.grid.insert_game(game)
 
     def list_sort(self, game):

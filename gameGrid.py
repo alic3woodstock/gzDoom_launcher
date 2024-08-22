@@ -16,7 +16,7 @@ class GameGrid(GridLayout):
         self.height = 0
 
         self.games = []
-        self.empty_game = GameDef(gameId=0, name='Empty Tab', tab=-2)
+        self.empty_game = GameDef(id=0, name='Empty Tab', tabId=-2)
         self.empty_game.exec = ''
         self.insert_game(self.empty_game)
         self.container = None

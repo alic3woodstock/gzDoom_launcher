@@ -1,8 +1,9 @@
+from os.path import isfile
+
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 
-from os.path import isfile
-from dbGrid import DBGrid
+from dbGrid import DBGrid, GridButton
 from gridContainer import GridContainer
 from myButton import MyButtonBorder
 from myPopup import MessageBox
@@ -34,6 +35,8 @@ class FileGrid(BoxLayout):
             box_buttons.add_widget(b)
 
         action_buttons[0].bind(on_release=self.btn_add_onrelease)
+        action_buttons[1].bind(on_release=self.btn_del_onrelease)
+        action_buttons[2].bind(on_release=self.btn_clear_onrelease)
         self.add_widget(box_buttons)
 
     def refresh_file_list(self, index):
@@ -43,15 +46,29 @@ class FileGrid(BoxLayout):
                                  """SELECT id,file FROM FILES WHERE gameid=?""", params)
 
     def add_value(self, value):
-        if isfile(value):
-            self.grid.add_row(['-1', value])
-            self.input_widget.text = ''
-        else:
-            MessageBox().alert('File not found!')
+        tmpId = len(self.grid.children) // 2
+        self.grid.add_row([str(tmpId), value])
+        self.input_widget.text = ''
 
     def btn_add_onrelease(self, _widget):
         if self.input_widget:
-            self.add_value(self.input_widget.text)
+            value = self.input_widget.text
+            if isfile(value):
+                self.add_value(value)
+            else:
+                MessageBox().alert('File not found!')
+
+    def btn_del_onrelease(self, _widget):
+        values = []
+        for c in self.grid.children:
+            if isinstance(c, GridButton) and c.state == "normal":
+                values.append(c.text)
+        self.grid.clear_widgets()
+        for i in range(0, len(values) - 1, 2):
+            self.add_value(values[i])
+
+    def btn_clear_onrelease(self, _widget):
+        self.grid.clear_widgets()
 
     def get_all_files(self):
         files = []

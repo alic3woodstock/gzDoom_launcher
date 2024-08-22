@@ -1,27 +1,31 @@
 import functions
-import modGroup
+from gameDefDb import GameDefDb
 
 
 class GameDef:
-    def GetGroupName(self):
-        return self.group.name
+    @property
+    def tab(self):
+        gameDefDb = GameDefDb()
+        return gameDefDb.SelectGameTabById(self.tabId)
 
-    def AppendFile(self, file):
-        self.files.append(file)
+    @property
+    def group(self):
+        gameDefDb = GameDefDb()
+        return gameDefDb.SelectGroupById(self.groupId)
 
     # Id,Name,Tab Index,Exe,Group,Last run mod,iWad,files...
-    def __init__(self, gameId, name, tab, gameExec="", groupId=1, lastMod=0, wad='freedoom1.wad',
-                 files=None, groupName=None, cmdParams=""):
+    def __init__(self, id, name, tabId, gameExec="", groupId=1, lastMod=0, wad='freedoom1.wad',
+                 files=None, cmdParams=""):
         if not gameExec.strip():
             gameExec = functions.gzDoomExec
 
         if files is None:
             files = []
-        self.id = gameId
+        self.id = id
         self.name = name
-        self.tab = tab
+        self.tabId = tabId
         self.exec = gameExec
-        self.group = modGroup.ModGroup(groupId, groupName)
+        self.groupId = groupId
         self.lastMod = lastMod
         self.iWad = wad
         self.files = files
