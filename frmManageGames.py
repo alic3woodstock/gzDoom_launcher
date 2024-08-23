@@ -16,7 +16,7 @@ class FrmManageGames(ModalWindow):
         super().__init__(dialog, **kwargs)
         self.dialog.size = Window.size
         self.popup = MyPopup()
-        self.popup.bind(on_dismiss=lambda f: self.popup_dismiss())
+        self.popup.bind(on_dismiss=self.popup_dismiss)
         self.create_grid()
 
     def btnAdd_on_press(self, _widget):
@@ -44,7 +44,7 @@ class FrmManageGames(ModalWindow):
         refresh_database = True
         self.popup.dismiss()
 
-    def popup_dismiss(self):
+    def popup_dismiss(self, _widget):
         global refresh_database
         if refresh_database:
             self.create_grid()
