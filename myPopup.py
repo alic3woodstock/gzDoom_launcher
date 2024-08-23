@@ -67,6 +67,10 @@ class MyPopup(ModalView):
         self.topLayout.add_widget(self.boxTitle)
         self.topLayout.add_widget(self.boxContent)
 
+    def on_pre_dismiss(self):
+        super().on_pre_dismiss()
+        self.is_open = False
+
     def on_dismiss(self):
         super().on_dismiss()
         self.boxContent.clear_widgets()
