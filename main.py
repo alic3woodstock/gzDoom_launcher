@@ -133,8 +133,7 @@ class FrmGzdlauncher(BoxLayout):
         Window.bind(mouse_pos=self.mouse_pos)
 
     def _keyboard_closed(self):
-        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
-        self._keyboard = None
+        pass
 
     def _on_keyboard_down(self, _keyboard, keycode, _text, _modifiers):
         gameTabs = self.ids.gameTabs
