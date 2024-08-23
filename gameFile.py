@@ -10,7 +10,8 @@ from kivy.clock import Clock
 
 import functions
 from gameDef import GameDef
-from gameDefDb import GameDefDb
+from createDB import CreateDB
+from gameDefDB import delete_game_table, insert_game
 from url import Url
 
 
@@ -28,7 +29,7 @@ class GameFile:
         self.done = False
         self.message = 'Downloading files...'
 
-        dataCon = GameDefDb()
+        dataCon = CreateDB()
 
         if not os.path.exists(functions.downloadPath):
             os.mkdir(functions.downloadPath)
@@ -153,7 +154,7 @@ class GameFile:
         if result == 2:
             self.message = 'GZDoom already at latest version.'
         elif result:
-            dataCon = GameDefDb()
+            dataCon = CreateDB()
             self.message = 'GZDoom updated to version: ' + dataCon.ReadConfig('gzdversion', 'text')
         else:
             self.message = 'Update failed!\nRead ' + functions.logFile + ' for more details!'
@@ -189,7 +190,7 @@ class GameFile:
             url = gzdoomUrl[0]
             version = gzdoomUrl[1]
             file = Url(url, filename)
-            gameData = GameDefDb()
+            gameData = CreateDB()
             localHash = functions.filehash(localFileName)
 
             if (not os.path.isfile(localFileName)) or (not gameData.CheckGzDoomVersion(version, localHash)):
@@ -280,9 +281,9 @@ class GameFile:
         return [tmpStr, version]
 
     def CreateDb(self):
-        dbGames = GameDefDb()
-        dbGames.DeleteGameTable()
-        dbGames.CreateGameTable()
+        dbGames = CreateDB()
+        delete_game_table()
+        dbGames.create_game_table()
 
         zipFiles = []
         games = []
@@ -360,7 +361,7 @@ class GameFile:
             i += 1
 
         for g in games:
-            dbGames.InsertGame(g)
+            insert_game(g)
 
 
 class ZipFile:

@@ -1,11 +1,12 @@
-from os.path import isfile
-
-from kivy.core.window import Window
-
 import frmManageGames
+from os.path import isfile
+from kivy.core.window import Window
 from gameDef import GameDef
-from gameDefDb import GameDefDb
+from createDB import CreateDB
+from gameDefDB import insert_game, update_game
+from gameTabDB import select_all_game_tab_configs
 from genericForm import GenericForm
+from groupDB import select_all_groups
 from myButton import DropDownItem
 from myPopup import ModalWindow
 from myPopup import MyPopup, MessageBox, Dialog
@@ -31,15 +32,15 @@ class FrmGames(ModalWindow):
         self.formLayout.ids.filelist.refresh_file_list(-1)
         self.add_widget(self.formLayout)
 
-        game_data = GameDefDb()
-        tabs = game_data.SelectAllGameTabConfigs()
+        game_data = CreateDB()
+        tabs = select_all_game_tab_configs()
         dropdown = self.formLayout.ids.tab
         for t in tabs:
             btnTab = DropDownItem(game=t, text=t.name)
             dropdown.add_widget(btnTab)
         dropdown.select(tabs[0])
 
-        groups = game_data.SelectAllGroups()
+        groups = select_all_groups()
         dropdown = self.formLayout.ids.modgroup
         for g in groups:
             btnGroup = DropDownItem(game=g, text=g.name)
@@ -86,11 +87,10 @@ class FrmGames(ModalWindow):
             msg.alert('Invalid game wad!')
         else:
             frmManageGames.refresh_database = True
-            gameDefDb = GameDefDb()
             if gameId > 0:
-                gameDefDb.UpdateGame(gameDef, True)
+                update_game(gameDef, True)
             else:
-                gameDefDb.InsertGame(gameDef)
+                insert_game(gameDef)
             self.popup.content = Dialog(self.popup, text="New game/mod successfully added!",
                                         txtCancel="OK")
             self.dialog.dismiss()

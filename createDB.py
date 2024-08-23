@@ -1,9 +1,5 @@
-import dataConnect
 import functions
-import gameDef
-import gameTabConfig
-import modGroup
-from url import Url
+from functions import ConnectDb
 
 CREATE_CONFIG = """CREATE TABLE IF NOT EXISTS config(
                     id INTEGER PRIMARY KEY,
@@ -37,204 +33,59 @@ CREATE_DOWNLOADLIST = """CREATE TABLE IF NOT EXISTS downloadlist(
             """
 
 
-class GameDefDb:
-    _dataCon = None
+class CreateDB:
 
-    def GetDataCon(self):
-        return self._dataCon
+    def create_game_table(self):
+        data_con = ConnectDb()
 
-    def ConnectDb(self):
-        self._dataCon = dataConnect.SqliteDB(functions.dbPath)
-        return self._dataCon
-
-    def CreateGameTable(self):
-        dataCon = self.ConnectDb()
-
-        dataCon.StartTransaction()
-        dataCon.ExecSQL("""CREATE TABLE IF NOT EXISTS groups(
+        data_con.StartTransaction()
+        data_con.ExecSQL("""CREATE TABLE IF NOT EXISTS groups(
                 id integer PRIMARY KEY AUTOINCREMENT,
                 groupname text);
             """)
 
-        dataCon.ExecSQL("""INSERT INTO groups(groupname) VALUES ('doom'),('heretic'),('hexen'),
+        data_con.ExecSQL("""INSERT INTO groups(groupname) VALUES ('doom'),('heretic'),('hexen'),
                 ('strife'),('other');
             """)
 
         sql = CREATE_TABS
-        dataCon.ExecSQL(sql)
+        data_con.ExecSQL(sql)
 
         sql = """INSERT or IGNORE INTO tabs(tabindex, label, enabled)
             VALUES (?,?,?)"""
         params = [-1, "Mods", True]
-        dataCon.ExecSQL(sql, params)
+        data_con.ExecSQL(sql, params)
         params = [0, "Games", True]
-        dataCon.ExecSQL(sql, params)
+        data_con.ExecSQL(sql, params)
         params = [1, "Maps", True]
-        dataCon.ExecSQL(sql, params)
+        data_con.ExecSQL(sql, params)
 
-        dataCon.ExecSQL(CREATE_GAMEDEF)
+        data_con.ExecSQL(CREATE_GAMEDEF)
 
-        dataCon.ExecSQL("""CREATE TABLE IF NOT EXISTS files(
+        data_con.ExecSQL("""CREATE TABLE IF NOT EXISTS files(
                 id integer PRIMARY KEY AUTOINCREMENT,
                 gameid integer,                        
                 file text,
                 FOREIGN KEY (gameid) REFERENCES gamedef(id) ON DELETE CASCADE);
             """)
 
-        dataCon.ExecSQL(CREATE_CONFIG)
+        data_con.ExecSQL(CREATE_CONFIG)
 
         sql = """REPLACE INTO config (param, numvalue)
             VALUES ('dbversion', ?)"""
         params = [20000]
-        dataCon.ExecSQL(sql, params)
+        data_con.ExecSQL(sql, params)
 
-        dataCon.ExecSQL(CREATE_DOWNLOADLIST)
-        self.InsertDefaultUrls(dataCon)
+        data_con.ExecSQL(CREATE_DOWNLOADLIST)
+        self.InsertDefaultUrls(data_con)
 
-        dataCon.Commit()
-        dataCon.CloseConnection()
+        data_con.Commit()
+        data_con.CloseConnection()
 
         self.WriteConfig("checkupdate", True, "bool")
 
-    def DeleteGameTable(self):
-        dataCon = self.ConnectDb()
-        dataCon.StartTransaction()
-        dataCon.ExecSQL("""DROP TABLE IF EXISTS files;""")
-        dataCon.ExecSQL("""DROP TABLE IF EXISTS gamedef;""")
-        dataCon.ExecSQL("""DROP TABLE IF EXISTS groups""")
-        dataCon.Commit()
-        dataCon.CloseConnection()
-
-    def InsertGame(self, game):
-        dataCon = self.ConnectDb()
-        dataCon.StartTransaction()
-        sql = """INSERT INTO gamedef(name,tabindex,gamexec,modgroup,lastrunmod,iwad,cmdparams)
-            VALUES (?,?,?,?,?,?,?);"""
-
-        params = (game.name, game.tabId, game.exec, game.group.id,
-                  game.lastMod, game.iWad, game.cmdParams)
-
-        dataCon.ExecSQL(sql, params)
-
-        gameIds = dataCon.ExecSQL("""SELECT id FROM gamedef ORDER BY id DESC LIMIT 1;""")
-        gameId = gameIds.fetchall()[0][0]
-
-        sql = """INSERT INTO files(gameid,file) VALUES(?,?)"""
-        for f in game.files:
-            params = (gameId, f)
-            dataCon.ExecSQL(sql, params)
-
-        dataCon.Commit()
-        dataCon.CloseConnection()
-
-    def SelectAllGames(self):
-        games = []
-
-        dataCon = self.ConnectDb()
-        sql = """SELECT id, name, tabindex, gamexec, modgroup, lastrunmod, iwad, cmdparams 
-            FROM gamedef
-            ORDER BY tabindex,name"""
-
-        gameData = dataCon.ExecSQL(sql)
-        for game in gameData:
-            g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6], [], game[7])
-            g.files = []
-            fileData = dataCon.ExecSQL("""SELECT file FROM files WHERE gameid = ?""", [game[0]])
-            for f in fileData:
-                g.files.append(f[0])
-            games.append(g)
-        dataCon.CloseConnection()
-        return games
-
-    def UpdateLastRunMod(self, game, mod):
-        dataCon = self.ConnectDb()
-        dataCon.StartTransaction()
-        dataCon.ExecSQL("""UPDATE gamedef SET lastrunmod=? WHERE id=?""", [mod.id, game.id])
-        dataCon.Commit()
-
-    def DeleteGame(self, game):
-        self.DeleteGameById(game.GetItem().GetData())
-
-    def DeleteGameById(self, gameId):
-        dataCon = self.ConnectDb()
-        dataCon.StartTransaction()
-        dataCon.ExecSQL("""DELETE FROM gamedef WHERE id=?""", [gameId])
-        dataCon.Commit()
-        dataCon.CloseConnection()
-
-    def SelectGameById(self, gameId):
-        dataCon = self.ConnectDb()
-        sql = """SELECT id, name, tabindex, gamexec, modgroup, 
-            lastrunmod, iwad, cmdparams 
-            FROM gamedef 
-            WHERE id=?"""
-        params = [gameId]
-        gameData = dataCon.ExecSQL(sql, params)
-        game = gameData.fetchone()
-        g = gameDef.GameDef(game[0], game[1], game[2], game[3], game[4], game[5], game[6], [], game[7])
-        g.files = []
-        fileData = dataCon.ExecSQL("""SELECT file FROM files WHERE gameid = ?""", [game[0]])
-        for f in fileData:
-            g.files.append(f[0])
-        dataCon.CloseConnection()
-        return g
-
-    def UpdateGame(self, game, updateFiles=False):
-        dataCon = self.ConnectDb()
-        dataCon.StartTransaction()
-
-        sql = """UPDATE gamedef SET name=?, tabindex=?, gamexec=?, modgroup=?, iwad=?, cmdparams=?
-         WHERE id=?"""
-        params = [game.name, game.tabId, game.exec, game.groupId, game.iWad, game.cmdParams, game.id]
-        dataCon.ExecSQL(sql, params)
-
-        if updateFiles:
-            sql = """DELETE FROM files WHERE gameid=?"""
-            params = [game.id]
-            dataCon.ExecSQL(sql, params)
-            sql = """INSERT INTO files(gameid,file) values(?,?)"""
-            for f in game.files:
-                params = [game.id, f]
-                dataCon.ExecSQL(sql, params)
-
-        dataCon.Commit()
-        dataCon.CloseConnection()
-
-    def SelectGroupById(self, groupId):
-        dataCon = self.ConnectDb()
-        sql = """SELECT id, groupname FROM groups WHERE id=?"""
-        params = [groupId]
-        groupData = dataCon.ExecSQL(sql, params)
-        g = groupData.fetchone()
-        group = modGroup.ModGroup(g[0], g[1])
-        return group
-
-    def SelectAllGroups(self):
-        dataCon = self.ConnectDb()
-
-        sql = "SELECT * FROM groups ORDER BY id"
-        groupData = dataCon.ExecSQL(sql)
-
-        groups = []
-        for g in groupData:
-            groups.append(modGroup.ModGroup(g[0], g[1]))
-        dataCon.CloseConnection()
-
-        return groups
-
-    def UpdateWad(self, wad, modgroup):
-        dataCon = self.ConnectDb()
-        dataCon.StartTransaction()
-
-        sql = """UPDATE gamedef SET iwad=? WHERE tabindex=1 AND modgroup=?"""
-        params = [wad, modgroup]
-        dataCon.ExecSQL(sql, params)
-        if modgroup == 2:
-            dataCon.ExecSQL("""DELETE FROM files WHERE file LIKE '%BLSMPTXT%'""")
-        dataCon.Commit()
-
     def UpdateDatabase(self):
-        dataCon = self.ConnectDb()
+        dataCon = ConnectDb()
         dbVersion = self.CheckDbVersion()
 
         dataCon.StartTransaction()
@@ -322,7 +173,7 @@ class GameDefDb:
             return False
 
     def CheckDbVersion(self):
-        dataCon = self.ConnectDb()
+        dataCon = ConnectDb()
         sql = """SELECT sql FROM sqlite_master WHERE tbl_name = ?"""
         params = ["config"]
         text = dataCon.ExecSQL(sql, params)
@@ -342,7 +193,7 @@ class GameDefDb:
             return int(version)
 
     def ReadConfig(self, param="", valuetype="text"):
-        dataCon = self.ConnectDb()
+        dataCon = ConnectDb()
         if valuetype == "num":
             sql = """SELECT numvalue"""
             defaultValue = 0
@@ -364,7 +215,7 @@ class GameDefDb:
         return returnValue
 
     def WriteConfig(self, param="", value=None, value_type="text"):
-        dataCon = self.ConnectDb()
+        dataCon = ConnectDb()
         sql = """REPLACE INTO config (param,"""
         if value_type == "num":
             sql += """numvalue)"""
@@ -385,67 +236,23 @@ class GameDefDb:
         dataCon.CloseConnection()
 
     def SelctGameTabConfigByIndex(self, tabIndex):
+        from gameTab import GameTabConfig
         sql = """SELECT label, enabled FROM tabs WHERE tabindex = ?"""
         params = [tabIndex]
-        dataCon = self.ConnectDb()
-        tabs = dataCon.ExecSQL(sql, params)
-        tabConfig = gameTabConfig.GameTabConfig(tabIndex, "", False)
-        for t in tabs:
-            tabConfig.SetName(t[0])
-            tabConfig.SetEnabled(t[1])
-
-        dataCon.CloseConnection()
-
-        return tabConfig
-
-    def UpdateGameTabConfig(self, gameTab):
-        if not (gameTab is None):
-            dataCon = self.ConnectDb()
-            sql = """REPLACE INTO tabs(tabindex, label, enabled) 
-             VALUES(?, ?, ?)"""
-            dataCon.StartTransaction()
-
-            for g in gameTab:
-                params = [g.GetIndex(),
-                          g.GetName(),
-                          g.IsEnabled()]
-                dataCon.ExecSQL(sql, params)
-
-            # Clean unnamed tabs that aren't in any game
-            sql = """DELETE FROM tabs WHERE tabindex NOT IN (SELECT DISTINCT(tabindex)
-             FROM gamedef) AND label == '' AND enabled = false"""
-            dataCon.ExecSQL(sql)
-
-            dataCon.Commit()
-            dataCon.CloseConnection()
-
-    def SelectAllGameTabConfigs(self):
-        dataCon = self.ConnectDb()
-        tabConfigs = []
-        sql = """SELECT tabindex, label, enabled FROM tabs WHERE tabindex >= 0 ORDER BY tabindex"""
-        result = dataCon.ExecSQL(sql)
-        for r in result:
-            tabConfigs.append(gameTabConfig.GameTabConfig(r[0], r[1], r[2]))
-        dataCon.CloseConnection()
-        return tabConfigs
-
-    def SelectGameTabById(self, id):
-        dataCon = self.ConnectDb()
-        tab = None
-        sql = """SELECT tabindex, label, enabled FROM tabs WHERE tabindex = ?"""
-        params = [id]
+        dataCon = ConnectDb()
         result = dataCon.ExecSQL(sql, params)
-        r = result.fetchone()
-        tab = gameTabConfig.GameTabConfig(r[0], r[1], r[2])
+        tab = GameTabConfig(tabIndex, "", False)
+        result.fetchone()
+        tab.name = result[0]
+        tab.is_enabled = result[1]
         dataCon.CloseConnection()
         return tab
-
 
     def InsertDefaultUrls(self, dataCon=None):
         if dataCon:
             commit = False
         else:
-            dataCon = self.ConnectDb()
+            dataCon = ConnectDb()
             dataCon.StartTransaction()
             commit = True
 
@@ -531,7 +338,8 @@ class GameDefDb:
             dataCon.CloseConnection()
 
     def SelectDefaultUrls(self):
-        dataCon = self.ConnectDb()
+        from url import Url
+        dataCon = ConnectDb()
         sql = """SELECT url, filename FROM downloadlist"""
         result = dataCon.ExecSQL(sql)
         urls = []
@@ -541,7 +349,7 @@ class GameDefDb:
         return urls
 
     def SelectGridValues(self, sql, params=""):
-        dataCon = self.ConnectDb()
+        dataCon = ConnectDb()
         result = dataCon.ExecSQL(sql, params)
         values = []
         for r in result:

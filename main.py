@@ -5,6 +5,9 @@ from threading import Thread
 
 import kivy
 
+from gameDefDB import select_all_games, update_last_run_mod
+from gameTabDB import select_all_game_tab_configs
+
 kivy.require('2.1.0')
 from kivy.config import Config
 
@@ -35,10 +38,11 @@ from kivy.uix.stacklayout import StackLayout
 from kivy.core.window import Window
 from kivy.clock import Clock
 from myButton import TopMenuButton, MyButtonBorder
-from gameDefDb import GameDefDb
+from createDB import CreateDB
 from myPopup import MyPopup, Dialog, Progress, EmptyDialog
 from menu import Menu
 from gameFile import GameFile
+from frmReplaceWad import FrmReplaceWad
 
 
 class FrmGzdlauncher(BoxLayout):
@@ -112,8 +116,8 @@ class FrmGzdlauncher(BoxLayout):
 
         menuGames.add_item('Manage Games')
         menuGames.add_item('Reset to Default')
-        menuGames.add_item('Replace Doom Wad')
-        menuGames.add_item('Replace Heretic Wad')
+        menuGames.add_item('Replace freedoom2.wad')
+        menuGames.add_item('Replace blasphemer.wad')
 
         menuApp.add_item('Update GZDoom')
         menuApp.add_item('Settings')
@@ -195,6 +199,12 @@ class FrmGzdlauncher(BoxLayout):
                             txtCancel='No', txtOk='Yes', icon='exclamation')
             dialog.btnOk.bind(on_release=self.btnYes1_onPress)
             self.popup.content = dialog
+        elif data.index == 2:
+            dialog = FrmReplaceWad(self.popup, mod_group=1)
+            self.popup.content = dialog
+        elif data.index == 3:
+            dialog = FrmReplaceWad(self.popup, mod_group=2)
+            self.popup.content = dialog
         else:
             self.popup.content = Dialog(self.popup, text='Under construction', txtCancel='OK', txtOk='',
                                         icon='information')
@@ -247,12 +257,12 @@ class FrmGzdlauncher(BoxLayout):
     def ReadDB(self):
         gameTabs = self.ids.gameTabs
         gameTabs.clear_tabs()
-        gameData = GameDefDb()
-        dbTabs = gameData.SelectAllGameTabConfigs()
-        games = gameData.SelectAllGames()
+        gameData = CreateDB()
+        dbTabs = select_all_game_tab_configs()
+        games = select_all_games()
         for tab in dbTabs:
             if tab.IsEnabled():
-                gameTabs.add_tab(tab.GetName(), tab.GetIndex())
+                gameTabs.add_tab(tab.name, tab.index)
 
         for game in games:
             gameTabs.insert_game(game)
@@ -332,8 +342,8 @@ class FrmGzdlauncher(BoxLayout):
                     result = subprocess.run(command)
                     self.popup.dismiss()
                     if result.returncode == 0:
-                        gameDefDb = GameDefDb()
-                        gameDefDb.UpdateLastRunMod(game[0], game[1])
+                        gameDefDb = CreateDB()
+                        update_last_run_mod(game[0], game[1])
                         game[0].lastMod = game[1].id
 
         self.is_game_running = False
@@ -353,10 +363,10 @@ class GzdLauncher(App):
         self.title = "GZDoom Launcher"
         self.icon = functions.pentagram
 
-        gameDefDb = GameDefDb()
+        gameDefDb = CreateDB()
 
         if not os.path.isfile(functions.dbPath):
-            gameDefDb.CreateGameTable()
+            gameDefDb.create_game_table()
             dialog = Dialog(self.frmGzLauncher.popup,
                             text="Download default games now? (games -> reset to default)",
                             txtCancel='No', txtOk='Yes', icon='exclamation')

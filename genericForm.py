@@ -30,6 +30,7 @@ class GenericForm(GridLayout):
         self.labels = []
         self.spacing = 16
         self.children_height = button_height
+        self.canvas.add(Callback(self.update_form))
 
     def add_label(self, text):
         label = Label()
@@ -77,8 +78,6 @@ class GenericForm(GridLayout):
 
         self.add_widget(BoxLayout(size_hint=(None, None), height=self.children_height))
         self.add_widget(container)
-
-        self.canvas.add(Callback(self.update_form))
         self.ids[field_name] = checkBox
 
     def add_file_field(self, text='', field_name=''):

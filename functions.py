@@ -105,3 +105,8 @@ def setDataPath():
         logFile = logFile.replace('/', '\\')
         gzDoomExec = gzDoomPath + "gzdoom.exe"
         pentagram = pentagram.replace('/', '\\')
+
+
+def ConnectDb():
+    from dataConnect import SqliteDB
+    return SqliteDB(dbPath)

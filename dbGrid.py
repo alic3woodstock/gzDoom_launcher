@@ -3,7 +3,7 @@ from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.gridlayout import GridLayout
 
 from functions import text_color, background_color
-from gameDefDb import GameDefDb
+from createDB import CreateDB
 from myButton import MyButtonBorder
 
 
@@ -22,7 +22,7 @@ class DBGrid(GridLayout):
 
     def get_values(self, fields, sql, params=""):
         self.clear_widgets()
-        gameDefDb = GameDefDb()
+        gameDefDb = CreateDB()
         values = gameDefDb.SelectGridValues(sql, params)
         self.title = fields
         self.cols = len(fields)

@@ -2,7 +2,8 @@ from kivy.core.window import Window
 
 from dbGrid import DBGrid
 from frmGames import FrmGames
-from gameDefDb import GameDefDb
+from createDB import CreateDB
+from gameDefDB import delete_game_by_id, select_game_by_id
 from gridContainer import GridContainer
 from myPopup import ModalWindow, MyPopup, Dialog
 
@@ -23,8 +24,8 @@ class FrmManageGames(ModalWindow):
         self.popup.open()
 
     def btnEdit_on_press(self, _widget):
-        gameDefDb = GameDefDb()
-        game = gameDefDb.SelectGameById(self.grid.get_selected_id())
+        gameDefDb = CreateDB()
+        game = select_game_by_id(self.grid.get_selected_id())
         self.popup.content = FrmGames(self.popup, game)
         self.popup.open()
 
@@ -37,8 +38,8 @@ class FrmManageGames(ModalWindow):
         self.popup.open()
 
     def btnDelete_on_click(self, _widget):
-        gameDefDb = GameDefDb()
-        gameDefDb.DeleteGameById(self.grid.get_selected_id())
+        gameDefDb = CreateDB()
+        delete_game_by_id(self.grid.get_selected_id())
         global refresh_database
         refresh_database = True
         self.popup.dismiss()

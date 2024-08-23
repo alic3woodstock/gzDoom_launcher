@@ -1,17 +1,19 @@
 import functions
-from gameDefDb import GameDefDb
+from createDB import CreateDB
+from gameTabDB import select_game_tab_by_id
+from groupDB import select_group_by_id
 
 
 class GameDef:
     @property
     def tab(self):
-        gameDefDb = GameDefDb()
-        return gameDefDb.SelectGameTabById(self.tabId)
+        gameDefDb = CreateDB()
+        return select_game_tab_by_id(self.tabId)
 
     @property
     def group(self):
-        gameDefDb = GameDefDb()
-        return gameDefDb.SelectGroupById(self.groupId)
+        gameDefDb = CreateDB()
+        return select_group_by_id(self.groupId)
 
     # Id,Name,Tab Index,Exe,Group,Last run mod,iWad,files...
     def __init__(self, id, name, tabId, gameExec="", groupId=1, lastMod=0, wad='freedoom1.wad',
