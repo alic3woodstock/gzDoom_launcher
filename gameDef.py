@@ -1,5 +1,4 @@
 import functions
-from createDB import CreateDB
 from gameTabDB import select_game_tab_by_id
 from groupDB import select_group_by_id
 
@@ -7,12 +6,10 @@ from groupDB import select_group_by_id
 class GameDef:
     @property
     def tab(self):
-        gameDefDb = CreateDB()
         return select_game_tab_by_id(self.tabId)
 
     @property
     def group(self):
-        gameDefDb = CreateDB()
         return select_group_by_id(self.groupId)
 
     # Id,Name,Tab Index,Exe,Group,Last run mod,iWad,files...

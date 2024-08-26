@@ -5,12 +5,12 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 
-from myDropdown import MyDropdown
 from fileChooserDialog import FileChooserDialog
 from fileGrid import FileGrid
 from functions import text_color, background_color, button_height
 from icon import Icon
 from myButton import MyCheckBox, DropdownMainButton, MyButtonBorder
+from myDropdown import MyDropdown
 from myPopup import MyPopup
 
 
@@ -21,14 +21,13 @@ def open_file_dialog(txt_input):
 
 
 class GenericForm(GridLayout):
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.cols = 2
-        self.padding = 16
+        self.padding = [16, 16]
         self.values = []
         self.labels = []
-        self.spacing = 16
+        self.spacing = [16, 16]
         self.children_height = button_height
         self.canvas.add(Callback(self.update_form))
 
@@ -151,3 +150,7 @@ class GenericForm(GridLayout):
         self.add_widget(label)
         self.add_widget(top_grid)
         self.ids[field_name] = top_grid
+
+    def get_height(self):
+        return ((self.children_height + self.spacing[1]) * (len(self.children) // 2)
+                + self.padding[1] + self.padding[3])

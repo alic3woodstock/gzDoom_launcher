@@ -2,10 +2,11 @@ from os.path import isfile
 
 from kivy.core.window import Window
 
-from genericForm import GenericForm
-from myPopup import MyPopup, ModalWindow, MessageBox
+from functions import button_height
 from gameDefDB import update_wad
 from gameTabDB import select_game_tab_by_id
+from genericForm import GenericForm
+from myPopup import MyPopup, ModalWindow, MessageBox
 
 
 class FrmReplaceWad(ModalWindow):
@@ -29,8 +30,8 @@ class FrmReplaceWad(ModalWindow):
             'OK', 'Cancel')
         self.btnOk.bind(on_release=self.btnOk_on_press)
         self.dialog.width = Window.width
-        # box buttons height + generic form height for 1 component
-        self.dialog.height = 64 + 64 + self.formLayout.padding[0] * 2 + self.formLayout.spacing[0]
+        self.dialog.height = (button_height * 2  # box buttons height + tithe height
+                              + self.formLayout.get_height())
 
     def btnOk_on_press(self, _widget):
         msg = MessageBox()

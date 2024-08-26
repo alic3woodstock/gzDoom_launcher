@@ -365,6 +365,7 @@ class GzdLauncher(App):
 
     def on_start(self):
         functions.setDataPath()
+        os.chdir(functions.dataPath)
         self.title = "GZDoom Launcher"
         self.icon = functions.pentagram
 
