@@ -5,6 +5,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.filechooser import FileChooser
 
 import functions
+from fileGrid import FileGrid
 from gridContainer import GridContainer
 from localDriveGrid import LocalDriveGrid
 from myFileChooser import MyFileChooser
@@ -51,5 +52,8 @@ class FileChooserDialog(ModalWindow):
 
     def on_ok_click(self, _widget):
         if len(self.file_chooser.selection) > 0:
-            self.txt_input.text = self.file_chooser.selection[0]
+            if isinstance(self.txt_input, FileGrid):
+                self.txt_input.add_value(self.file_chooser.selection[0])
+            else:
+                self.txt_input.text = self.file_chooser.selection[0]
         self.dialog.dismiss()

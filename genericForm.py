@@ -20,6 +20,10 @@ def open_file_dialog(txt_input):
     popup.open()
 
 
+def open_file_event(input_value, _widget):
+    open_file_dialog(input_value)
+
+
 class GenericForm(GridLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -96,7 +100,8 @@ class GenericForm(GridLayout):
         aux_box.width = self.children_height
         button_file = MyButtonBorder(icon=Icon('folder'))
         button_file.size_hint = (1, 1)
-        button_file.bind(on_release=lambda f: open_file_dialog(txt_input=value_input))
+        button_file.fbind('on_release', open_file_event, value_input)
+        # button_file.bind(on_release=lambda f: open_file_dialog(txt_input=value_input))
         aux_box.add_widget(button_file)
 
         self.add_widget(label)
@@ -154,3 +159,11 @@ class GenericForm(GridLayout):
     def get_height(self):
         return ((self.children_height + self.spacing[1]) * (len(self.children) // 2)
                 + self.padding[1] + self.padding[3])
+
+    def link_file_list(self, file_list_id, input_id):
+        button = self.ids[input_id].parent.children[0].children[0]
+        uid = button.get_property_observers(name='on_release', args=True)
+        if uid:
+            uid = uid[0][4]
+            button.unbind_uid('on_release', uid)
+        button.fbind('on_release', open_file_event, self.ids[file_list_id])

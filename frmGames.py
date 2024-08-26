@@ -30,6 +30,7 @@ class FrmGames(ModalWindow):
         self.formLayout.add_file_list(self.formLayout.ids.files,
                                       field_name='filelist')
         self.formLayout.ids.filelist.refresh_file_list(-1)
+        self.formLayout.link_file_list('filelist', 'files')
         self.add_widget(self.formLayout)
 
         game_data = CreateDB()
