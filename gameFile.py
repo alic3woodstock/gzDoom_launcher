@@ -237,9 +237,12 @@ class GameFile:
                     self.message = "Extracting wine..."
                     zip_file = ZipFile('wine.tar.xz', 'xz')
                     zip_file.ExtractTo(functions.gzDoomPath)
+                    tmp_params = ""
+                    for i in range (1, 20):
+                        tmp_params += ' "$' + str(i) + '" '
                     wine_cmd = ('WINEPREFIX=' + functions.dataPath + '/.wine '
                                 + functions.gzDoomPath + 'lutris-GE-Proton8-26-x86_64/bin/wine64 '
-                                + localFileName + ' $1 $2 $3 $4 $5 $6 $7 $8 $9')
+                                + localFileName + tmp_params)
                     file = open(functions.gzDoomExec, 'wt')
                     file.writelines(['#!/bin/bash\n',
                                      wine_cmd])

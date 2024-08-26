@@ -336,12 +336,18 @@ class FrmGzdlauncher(BoxLayout):
                 for cmd in list(game[0].cmdParams):
                     command.append(cmd)
 
+                if ' '.join(command).strip().lower().find('-savedir') < 0:
+                    command.append('-savedir')
+                    if os.name == 'nt':
+                        command.append(functions.dataPath + '\\saves\\' + str(game[0].id))
+                    else:
+                        command.append(functions.dataPath + '/saves/' + str(game[0].id))
+
                 if len(command) > 0:
                     functions.log(command, False)
                     result = subprocess.run(command)
                     self.popup.dismiss()
                     if result.returncode == 0:
-                        gameDefDb = CreateDB()
                         update_last_run_mod(game[0], game[1])
                         game[0].lastMod = game[1].id
 
