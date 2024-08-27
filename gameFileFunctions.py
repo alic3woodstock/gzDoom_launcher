@@ -2,11 +2,12 @@ import math
 import os
 import shutil
 import stat
-import tarfile
-import zipfile
+from tarfile import open as TarFile
+from zipfile import ZipFile
 
 import requests
 from kivy.clock import Clock
+from py7zr import SevenZipFile
 
 import functions
 from createDB import CreateDB
@@ -16,7 +17,7 @@ from url import Url
 from urlDB import insert_default_urls, select_default_urls
 
 
-class GameFile:
+class GameFileFunctions:
     def __init__(self):
         self.value = 0
         self.message = 'Starting ...'
@@ -53,15 +54,15 @@ class GameFile:
         fileNames = os.listdir(functions.downloadPath)
         self.message = "Extracting/Copying files..."
 
-        zipFiles = []
+        game_files = []
         for z in fileNames:
             extPos = z.rfind(".")
             fileFormat = "zip"
             if extPos >= 0:
                 fileFormat = z[extPos + 1:].lower()
-            zipFiles.append(ZipFile(z, fileFormat))
+            game_files.append(GameFile(z, fileFormat))
 
-        for z in zipFiles:
+        for z in game_files:
             if z.TestFileName("blasphem"):
                 z.ExtractTo(functions.wadPath)
             elif z.TestFileName("freedoom"):
@@ -87,6 +88,19 @@ class GameFile:
                     if f.lower().find("extra") >= 0:
                         shutil.copy(functions.tempDir + f + '/Harm-WS.wad', functions.wadPath)
                 z.ExtractTo(functions.wadPath)
+            elif z.TestFileName("cats"):  # space cats saga is a total conversion, can run as a game and as a mod
+                z.ExtractTo(functions.tempDir)
+                tempNames = os.listdir(functions.tempDir)
+                for f in tempNames:
+                    if f.lower().find("cats") >= 0:
+                        tempNames2 = os.listdir(functions.tempDir + f)
+                        for g in tempNames2:
+                            if g.lower().find("wad") >= 0:
+                                h = functions.tempDir + f + "/" + g
+                                if not os.path.exists(functions.modPath):
+                                    os.makedirs(functions.modPath)
+                                shutil.copy(h, functions.modPath)
+
             elif not z.TestFileName("gzdoom") and not z.TestFileName("wine"):
                 z.CopyTo(functions.mapPath)
             self.value += 1
@@ -196,9 +210,9 @@ class GameFile:
                 self.DownloadFile(file)
 
                 if gzdoom_windows:
-                    zip_file = ZipFile(filename, "zip")
+                    zip_file = GameFile(filename, "zip")
                 else:
-                    zip_file = ZipFile(filename, "xz")
+                    zip_file = GameFile(filename, "xz")
 
                 extractOK = False
                 if zip_file.TestFileName("gzdoom"):
@@ -234,7 +248,7 @@ class GameFile:
                     self.value += 1
                     self.DownloadFile(url)
                     self.message = "Extracting wine..."
-                    zip_file = ZipFile('wine.tar.xz', 'xz')
+                    zip_file = GameFile('wine.tar.xz', 'xz')
                     zip_file.ExtractTo(functions.gzDoomPath)
                     tmp_params = ""
                     for i in range(1, 20):
@@ -287,21 +301,21 @@ class GameFile:
         delete_game_table()
         dbGames.create_game_table()
 
-        zipFiles = []
+        game_files = []
         games = []
 
         wads = os.listdir(functions.wadPath)
         for w in wads:
-            zipFiles.append(
-                ZipFile(w, functions.wadPath))  # store path in format string since I don't need to use Extract
+            game_files.append(
+                GameFile(w, functions.wadPath))  # store path in format string since I don't need to use Extract
 
         maps = os.listdir(functions.mapPath)
         for a in maps:
-            zipFiles.append(ZipFile(a, functions.mapPath))
+            game_files.append(GameFile(a, functions.mapPath))
 
         mods = os.listdir(functions.modPath)
         for m in mods:
-            zipFiles.append(ZipFile(m, functions.modPath))
+            game_files.append(GameFile(m, functions.modPath))
 
         blasphemWad = ""
         blasphemTexture = ""
@@ -309,7 +323,7 @@ class GameFile:
         gameExec = functions.gzDoomExec
 
         i = 0
-        for z in zipFiles:
+        for z in game_files:
             try:
                 fullPath = z.GetFormat() + z.GetName()
 
@@ -351,6 +365,12 @@ class GameFile:
                     elif z.TestFileName("evp") and z.TestFileName("pk3"):
                         games.append(GameDef(i, "Enhanced Vanilla Project", -1, gameExec, 1, 0,
                                              "", [functions.modPath + "150skins.zip", fullPath]))
+                    elif z.TestFileName("cats"):
+                        games.append(GameDef(i, "Space Cats Saga", 0, gameExec, 1, 0,
+                                             functions.wadPath + "freedoom2.wad", [fullPath]))
+                        i += 1
+                        games.append(GameDef(i, "Space Cats Saga", -1, gameExec, 1, 0,
+                                             "", [fullPath]))
 
                 if blasphemWad.strip() and blasphemTexture.strip():  # insert game only if both files are ok
                     games.append(GameDef(i, "Blasphem", 0, gameExec, 2, 0, blasphemWad, [blasphemTexture]))
@@ -366,7 +386,7 @@ class GameFile:
             insert_game(g)
 
 
-class ZipFile:
+class GameFile:
     _format = ""
     _name = ""
 
@@ -381,11 +401,15 @@ class ZipFile:
         if os.path.isfile(fromFile):
             try:
                 if self.GetFormat() == "zip":
-                    z = zipfile.ZipFile(fromFile)
+                    z = ZipFile(fromFile)
                     z.extractall(path)
 
                 if self.GetFormat() == "xz":
-                    z = tarfile.open(fromFile, 'r:xz')
+                    z = TarFile(fromFile, 'r:xz')
+                    z.extractall(path)
+
+                if self.GetFormat() == "7z":
+                    z = SevenZipFile(fromFile, 'r')
                     z.extractall(path)
 
                 # if self.GetFormat() == "deb":
@@ -416,7 +440,7 @@ class ZipFile:
             fromFile = functions.downloadPath + self._name
 
             if self.GetFormat() == "zip" or self.GetFormat() == "pk3":
-                z = zipfile.ZipFile(fromFile)
+                z = ZipFile(fromFile)
                 z.testzip()
 
             if not os.path.exists(path):
@@ -442,7 +466,7 @@ class ZipFile:
 
     def GetMapName(self):
         fromFile = functions.downloadPath + self.GetName()
-        z = zipfile.ZipFile(fromFile)
+        z = ZipFile(fromFile)
 
         # Mps with non-standard txt
         if self.GetName() == "mm2.zip":

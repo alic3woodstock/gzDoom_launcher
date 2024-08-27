@@ -41,7 +41,7 @@ from myButton import TopMenuButton, MyButtonBorder
 from createDB import CreateDB
 from myPopup import MyPopup, Dialog, Progress, EmptyDialog
 from menu import Menu
-from gameFile import GameFile
+from gameFileFunctions import GameFileFunctions
 from frmReplaceWad import FrmReplaceWad
 
 
@@ -212,7 +212,7 @@ class FrmGzdlauncher(BoxLayout):
     def btnYes1_onPress(self, _widget):
         progress = Progress(self.popup, text='Starting')
         self.popup.content = progress
-        gameFile = GameFile()
+        gameFile = GameFileFunctions()
         progressClock = Clock.schedule_interval(partial(self.progress_update, progress, gameFile), 0.1)
         gameFile.clock = progressClock
         thread = Thread(target=gameFile.extractAll)
@@ -223,7 +223,7 @@ class FrmGzdlauncher(BoxLayout):
         self.popup.content = progress
         self.popup.width = 600
         self.popup.height = 200
-        gameFile = GameFile()
+        gameFile = GameFileFunctions()
         progressClock = Clock.schedule_interval(partial(self.progress_update, progress, gameFile), 0.1)
         gameFile.clock = progressClock
         thread = Thread(target=gameFile.verifyUpdate)
