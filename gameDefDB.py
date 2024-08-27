@@ -25,7 +25,6 @@ def insert_game(game):
 
     game_ids = data_con.ExecSQL("""SELECT LAST_INSERT_ROWID();""")
     game_id = game_ids.fetchone()[0]
-    print(game_id)
 
     sql = """INSERT INTO files(gameid,file) VALUES(?,?)"""
     for f in game.files:

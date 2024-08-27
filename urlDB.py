@@ -12,10 +12,10 @@ def insert_default_urls(data_con=None):
     sql = """REPLACE INTO downloadlist (url, filename) VALUES (?, ?) """
 
     # Blasphemer
-    params = ["https://github.com/Blasphemer/blasphemer/releases/download/v0.1.7/blasphem-0.1.7.zip",
+    params = ["https://github.com/Blasphemer/blasphemer/releases/download/v0.1.8/blasphem-0.1.8.zip",
               "blasphem.zip"]
     data_con.ExecSQL(sql, params)
-    params = ["https://github.com/Blasphemer/blasphemer/releases/download/v0.1.7/blasphemer-texture-pack.zip",
+    params = ["https://github.com/Blasphemer/blasphemer/releases/download/v0.1.8/blasphemer-texture-pack.zip",
               "blasphemer-texture-pack.zip"]
     data_con.ExecSQL(sql, params)
 
