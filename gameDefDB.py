@@ -55,10 +55,10 @@ def select_all_games():
     return games
 
 
-def update_last_run_mod(game, mod):
+def update_last_run_mod(game, mod_id):
     data_con = ConnectDb()
     data_con.StartTransaction()
-    data_con.ExecSQL("""UPDATE gamedef SET lastrunmod=? WHERE id=?""", [mod.id, game.id])
+    data_con.ExecSQL("""UPDATE gamedef SET lastrunmod=? WHERE id=?""", [mod_id, game.id])
     data_con.Commit()
 
 

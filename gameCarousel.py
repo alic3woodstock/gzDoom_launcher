@@ -139,6 +139,10 @@ class GameCarousel(BoxLayout):
     def get_run_params(self):
         return [self.carousel.current_slide.gameGrid.grid.get_game(), self.mainBtnDrop.game]
 
+    def update_current_game(self, game):
+        game_btn = self.carousel.current_slide.gameGrid.grid.get_game_btn()
+        game_btn.game = game
+
 
 class CarouselButton(ToggleButtonBehavior, MyButtonBorder):
 

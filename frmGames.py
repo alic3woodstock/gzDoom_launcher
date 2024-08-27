@@ -3,7 +3,7 @@ from os.path import isfile
 from kivy.core.window import Window
 from gameDef import GameDef
 from createDB import CreateDB
-from gameDefDB import insert_game, update_game
+from gameDefDB import insert_game, update_game, update_last_run_mod
 from gameTabDB import select_all_game_tab_configs
 from genericForm import GenericForm
 from groupDB import select_all_groups
@@ -89,6 +89,8 @@ class FrmGames(ModalWindow):
         else:
             frmManageGames.refresh_database = True
             if gameId > 0:
+                if gameDef.groupId != self.game.groupId:
+                    update_last_run_mod(self.game, 0)
                 update_game(gameDef, True)
             else:
                 insert_game(gameDef)

@@ -254,22 +254,22 @@ class FrmGzdlauncher(BoxLayout):
             self.popup.open()
 
     def ReadDB(self):
-        gameTabs = self.ids.gameTabs
-        gameTabs.clear_tabs()
-        gameData = CreateDB()
-        dbTabs = select_all_game_tab_configs()
-        games = select_all_games()
-        for tab in dbTabs:
-            if tab.IsEnabled():
-                gameTabs.add_tab(tab.name, tab.index)
+        if not self.is_game_running:
+            gameTabs = self.ids.gameTabs
+            gameTabs.clear_tabs()
+            dbTabs = select_all_game_tab_configs()
+            games = select_all_games()
+            for tab in dbTabs:
+                if tab.is_enabled:
+                    gameTabs.add_tab(tab.name, tab.index)
 
-        for game in games:
-            gameTabs.insert_game(game)
+            for game in games:
+                gameTabs.insert_game(game)
 
-        for slide in gameTabs.carousel.slides:
-            slide.children[0].select_index(0)
+            for slide in gameTabs.carousel.slides:
+                slide.children[0].select_index(0)
 
-        gameTabs.select_tab(0)
+            gameTabs.select_tab(0)
 
     def mouse_pos(self, *args):
         if not self.get_root_window():
@@ -346,11 +346,12 @@ class FrmGzdlauncher(BoxLayout):
                 if len(command) > 0:
                     functions.log(command, False)
                     result = subprocess.run(command)
-                    self.popup.dismiss()
                     if result.returncode == 0:
-                        update_last_run_mod(game[0], game[1])
+                        update_last_run_mod(game[0], game[1].id)
                         game[0].lastMod = game[1].id
+                        self.ids.gameTabs.update_current_game(game[0])
 
+        self.popup.dismiss()
         self.is_game_running = False
 
 
