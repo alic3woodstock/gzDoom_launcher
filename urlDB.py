@@ -37,11 +37,6 @@ def insert_default_urls(data_con=None):
               "Beautiful_Doom.pk3"]
     data_con.ExecSQL(sql, params)
 
-    params = ["https://www.moddb.com/downloads/mirror/269216/136/7c254ff450a668123ca8c2decac122d4"
-              "/?referer=https%3A%2F%2Fwww.moddb.com%2Fmods%2Fspace-cats-saga-chapter-2-macrocosm%2Fdownloads",
-              "space_cats.7z"]
-    data_con.ExecSQL(sql, params)
-
     # Brutal Doom
     params = ["https://github.com/BLOODWOLF333/Brutal-Doom-Community-Expansion/releases/"
               "download/V21.11.2/brutalv21.11.2.pk3", "brutal.pk3"]
