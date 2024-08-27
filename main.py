@@ -309,7 +309,7 @@ class FrmGzdlauncher(BoxLayout):
             i += c.width
         self.main_menu.width = i + self.main_menu.padding[2] * 2
 
-    def run_game(self, _clock = None):
+    def run_game(self, _clock=None):
         self.is_game_running = True
         game = self.ids.gameTabs.get_run_params()
         if game[0]:

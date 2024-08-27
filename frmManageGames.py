@@ -1,8 +1,8 @@
 from kivy.core.window import Window
 
+from createDB import CreateDB
 from dbGrid import DBGrid
 from frmGames import FrmGames
-from createDB import CreateDB
 from gameDefDB import delete_game_by_id, select_game_by_id
 from gridContainer import GridContainer
 from myPopup import ModalWindow, MyPopup, Dialog
@@ -24,7 +24,6 @@ class FrmManageGames(ModalWindow):
         self.popup.open()
 
     def btnEdit_on_press(self, _widget):
-        gameDefDb = CreateDB()
         game = select_game_by_id(self.grid.get_selected_id())
         self.popup.content = FrmGames(self.popup, game)
         self.popup.open()
