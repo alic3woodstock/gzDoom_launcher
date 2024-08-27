@@ -1,10 +1,10 @@
-from functions import ConnectDb
+from dataFunctions import connect_db
 from gameTab import GameTabConfig
 
 
-def update_game_tab_config(game_tab):
+def update_game_tab(game_tab):
     if not (game_tab is None):
-        data_con = ConnectDb()
+        data_con = connect_db()
         sql = """REPLACE INTO tabs(tabindex, label, enabled) 
          VALUES(?, ?, ?)"""
         data_con.StartTransaction()
@@ -24,8 +24,8 @@ def update_game_tab_config(game_tab):
         data_con.CloseConnection()
 
 
-def select_all_game_tab_configs():
-    data_con = ConnectDb()
+def select_all_game_tabs():
+    data_con = connect_db()
     tab_configs = []
     sql = """SELECT tabindex, label, enabled FROM tabs WHERE tabindex >= 0 ORDER BY tabindex"""
     result = data_con.ExecSQL(sql)
@@ -35,10 +35,10 @@ def select_all_game_tab_configs():
     return tab_configs
 
 
-def select_game_tab_by_id(id):
-    data_con = ConnectDb()
+def select_game_tab_by_id(tab_id):
+    data_con = connect_db()
     sql = """SELECT tabindex, label, enabled FROM tabs WHERE tabindex = ?"""
-    params = [id]
+    params = [tab_id]
     result = data_con.ExecSQL(sql, params)
     r = result.fetchone()
     tab = GameTabConfig(r[0], r[1], r[2])

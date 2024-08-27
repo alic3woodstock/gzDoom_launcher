@@ -6,7 +6,7 @@ from threading import Thread
 import kivy
 
 from gameDefDB import select_all_games, update_last_run_mod
-from gameTabDB import select_all_game_tab_configs
+from gameTabDB import select_all_game_tabs
 
 kivy.require('2.1.0')
 from kivy.config import Config
@@ -257,7 +257,7 @@ class FrmGzdlauncher(BoxLayout):
         if not self.is_game_running:
             gameTabs = self.ids.gameTabs
             gameTabs.clear_tabs()
-            dbTabs = select_all_game_tab_configs()
+            dbTabs = select_all_game_tabs()
             games = select_all_games()
             for tab in dbTabs:
                 if tab.is_enabled:

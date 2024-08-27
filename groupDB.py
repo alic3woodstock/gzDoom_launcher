@@ -1,9 +1,9 @@
-from functions import ConnectDb
+from dataFunctions import connect_db
 
 
 def select_group_by_id(group_id):
     from modGroup import ModGroup
-    data_con = ConnectDb()
+    data_con = connect_db()
     sql = """SELECT id, groupname FROM groups WHERE id=?"""
     params = [group_id]
     group_data = data_con.ExecSQL(sql, params)
@@ -14,7 +14,7 @@ def select_group_by_id(group_id):
 
 def select_all_groups():
     from modGroup import ModGroup
-    data_con = ConnectDb()
+    data_con = connect_db()
 
     sql = "SELECT * FROM groups ORDER BY id"
     group_data = data_con.ExecSQL(sql)

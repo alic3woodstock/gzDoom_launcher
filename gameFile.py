@@ -9,10 +9,11 @@ import requests
 from kivy.clock import Clock
 
 import functions
-from gameDef import GameDef
 from createDB import CreateDB
+from gameDef import GameDef
 from gameDefDB import delete_game_table, insert_game
 from url import Url
+from urlDB import insert_default_urls, select_default_urls
 
 
 class GameFile:
@@ -29,13 +30,11 @@ class GameFile:
         self.done = False
         self.message = 'Downloading files...'
 
-        dataCon = CreateDB()
-
         if not os.path.exists(functions.downloadPath):
             os.mkdir(functions.downloadPath)
 
-        dataCon.InsertDefaultUrls()
-        urls = dataCon.SelectDefaultUrls()
+        insert_default_urls()
+        urls = select_default_urls()
 
         self.max_range = len(urls) * 2 + 1
         self.totalDownloads = len(urls) + 1
@@ -238,7 +237,7 @@ class GameFile:
                     zip_file = ZipFile('wine.tar.xz', 'xz')
                     zip_file.ExtractTo(functions.gzDoomPath)
                     tmp_params = ""
-                    for i in range (1, 20):
+                    for i in range(1, 20):
                         tmp_params += ' "$' + str(i) + '" '
                     wine_cmd = ('WINEPREFIX=' + functions.dataPath + '/.wine '
                                 + functions.gzDoomPath + 'lutris-GE-Proton8-26-x86_64/bin/wine64 '

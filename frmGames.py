@@ -5,7 +5,7 @@ from kivy.core.window import Window
 import frmManageGames
 from gameDef import GameDef
 from gameDefDB import insert_game, update_game, update_last_run_mod
-from gameTabDB import select_all_game_tab_configs
+from gameTabDB import select_all_game_tabs
 from genericForm import GenericForm
 from groupDB import select_all_groups
 from myButton import DropDownItem
@@ -34,7 +34,7 @@ class FrmGames(ModalWindow):
         self.formLayout.link_file_list('filelist', 'files')
         self.add_widget(self.formLayout)
 
-        tabs = select_all_game_tab_configs()
+        tabs = select_all_game_tabs()
         dropdown = self.formLayout.ids.tab
         for t in tabs:
             btnTab = DropDownItem(game=t, text=t.name)

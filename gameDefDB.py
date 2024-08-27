@@ -1,9 +1,9 @@
-from functions import ConnectDb
+from dataFunctions import connect_db
 from gameDef import GameDef
 
 
 def delete_game_table():
-    data_con = ConnectDb()
+    data_con = connect_db()
     data_con.StartTransaction()
     data_con.ExecSQL("""DROP TABLE IF EXISTS files;""")
     data_con.ExecSQL("""DROP TABLE IF EXISTS gamedef;""")
@@ -13,7 +13,7 @@ def delete_game_table():
 
 
 def insert_game(game):
-    data_con = ConnectDb()
+    data_con = connect_db()
     data_con.StartTransaction()
     sql = """INSERT INTO gamedef(name,tabindex,gamexec,modgroup,lastrunmod,iwad,cmdparams)
         VALUES (?,?,?,?,?,?,?);"""
@@ -38,7 +38,7 @@ def insert_game(game):
 
 def select_all_games():
     games = []
-    data_con = ConnectDb()
+    data_con = connect_db()
     sql = """SELECT id, name, tabindex, gamexec, modgroup, lastrunmod, iwad, cmdparams 
         FROM gamedef
         ORDER BY tabindex,name"""
@@ -56,14 +56,14 @@ def select_all_games():
 
 
 def update_last_run_mod(game, mod_id):
-    data_con = ConnectDb()
+    data_con = connect_db()
     data_con.StartTransaction()
     data_con.ExecSQL("""UPDATE gamedef SET lastrunmod=? WHERE id=?""", [mod_id, game.id])
     data_con.Commit()
 
 
 def delete_game_by_id(game_id):
-    data_con = ConnectDb()
+    data_con = connect_db()
     data_con.StartTransaction()
     data_con.ExecSQL("""DELETE FROM gamedef WHERE id=?""", [game_id])
     data_con.Commit()
@@ -71,7 +71,7 @@ def delete_game_by_id(game_id):
 
 
 def select_game_by_id(game_id):
-    data_con = ConnectDb()
+    data_con = connect_db()
     sql = """SELECT id, name, tabindex, gamexec, modgroup, 
         lastrunmod, iwad, cmdparams 
         FROM gamedef 
@@ -89,7 +89,7 @@ def select_game_by_id(game_id):
 
 
 def update_game(game, update_files=False):
-    data_con = ConnectDb()
+    data_con = connect_db()
     data_con.StartTransaction()
 
     sql = """UPDATE gamedef SET name=?, tabindex=?, gamexec=?, modgroup=?, iwad=?, cmdparams=?
@@ -111,7 +111,7 @@ def update_game(game, update_files=False):
 
 
 def update_wad(wad, mod_group):
-    data_con = ConnectDb()
+    data_con = connect_db()
     data_con.StartTransaction()
 
     sql = """UPDATE gamedef SET iwad=? WHERE tabindex=1 AND modgroup=?"""
