@@ -20,7 +20,7 @@ def insert_default_urls(data_con=None):
     data_con.ExecSQL(sql, params)
 
     # Freedoom
-    params = ["https://github.com/freedoom/freedoom/releases/download/v0.12.1/freedoom-0.12.1.zip", "freedoom.zip"]
+    params = ["https://github.com/freedoom/freedoom/releases/download/v0.13.0/freedoom-0.13.0.zip", "freedoom.zip"]
     data_con.ExecSQL(sql, params)
 
     # Harmony

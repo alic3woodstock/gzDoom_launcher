@@ -8,6 +8,7 @@ FORMAT = '%(levelname)s: %(asctime)s - %(message)s'
 APPVERSION = "2.00.00"
 AUTHOR = "Copyright 2022-2024 © Alice Woodstock"
 WINE_GZDOOM = True  # linux gzdoom works only on ubuntu for now.
+RE_DOWNLOAD = False
 
 dbPath = "games.sqlite3"
 gzDoomPath = "gzdoom/"

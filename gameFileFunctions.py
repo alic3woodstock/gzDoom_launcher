@@ -31,6 +31,9 @@ class GameFileFunctions:
         self.done = False
         self.message = 'Downloading files...'
 
+        if functions.RE_DOWNLOAD:
+            shutil.rmtree(functions.downloadPath)
+
         if not os.path.exists(functions.downloadPath):
             os.mkdir(functions.downloadPath)
 
@@ -343,7 +346,7 @@ class GameFileFunctions:
                 elif z.GetFormat().find("maps") >= 0:
                     if z.TestFileName("htchest") or z.TestFileName("unbeliev"):
                         games.append(GameDef(i, z.GetMapName(), 1, gameExec, 2, 0,
-                                             functions.wadPath + "blasphem-0.1.7.wad",
+                                             functions.wadPath + "blasphem.wad",
                                              [functions.wadPath + "BLSMPTXT.WAD", fullPath]))
                     else:
                         games.append(GameDef(i, z.GetMapName(), 1, gameExec, 1, 0,
