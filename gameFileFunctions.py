@@ -14,7 +14,7 @@ from createDB import CreateDB
 from gameDef import GameDef
 from gameDefDB import delete_game_table, insert_game
 from url import Url
-from urlDB import insert_default_urls, select_default_urls
+from urlDB import insert_default_urls, select_default_urls, get_moddb_url
 
 
 class GameFileFunctions:
@@ -91,18 +91,18 @@ class GameFileFunctions:
                     if f.lower().find("extra") >= 0:
                         shutil.copy(functions.tempDir + f + '/Harm-WS.wad', functions.wadPath)
                 z.ExtractTo(functions.wadPath)
-            # elif z.TestFileName("cats"):  # space cats saga is a total conversion, can run as a game and as a mod
-            #     z.ExtractTo(functions.tempDir)
-            #     tempNames = os.listdir(functions.tempDir)
-            #     for f in tempNames:
-            #         if f.lower().find("cats") >= 0:
-            #             tempNames2 = os.listdir(functions.tempDir + f)
-            #             for g in tempNames2:
-            #                 if g.lower().find("wad") >= 0:
-            #                     h = functions.tempDir + f + "/" + g
-            #                     if not os.path.exists(functions.modPath):
-            #                         os.makedirs(functions.modPath)
-            #                     shutil.copy(h, functions.modPath)
+            elif z.TestFileName("cats"):  # space cats saga is a total conversion, can run as a game and as a mod
+                z.ExtractTo(functions.tempDir)
+                tempNames = os.listdir(functions.tempDir)
+                for f in tempNames:
+                    if f.lower().find("cats") >= 0:
+                        tempNames2 = os.listdir(functions.tempDir + f)
+                        for g in tempNames2:
+                            if g.lower().find("wad") >= 0:
+                                h = functions.tempDir + f + "/" + g
+                                if not os.path.exists(functions.modPath):
+                                    os.makedirs(functions.modPath)
+                                shutil.copy(h, functions.modPath)
 
             elif not z.TestFileName("gzdoom") and not z.TestFileName("wine"):
                 z.CopyTo(functions.mapPath)
@@ -127,6 +127,8 @@ class GameFileFunctions:
     def DownloadFile(self, url):
         # updates dialog based on a fixed max range since I don't know the total size of all files before download
         # each file.
+        if url.url.find("moddb") >= 0:
+            url.url = get_moddb_url(url.url)
         if not os.path.isfile(url.GetFilePath()):
             r = requests.get(url.url, stream=True)
             with open(url.GetFilePath(), "wb") as downloadF:
@@ -368,12 +370,12 @@ class GameFileFunctions:
                     elif z.TestFileName("evp") and z.TestFileName("pk3"):
                         games.append(GameDef(i, "Enhanced Vanilla Project", -1, gameExec, 1, 0,
                                              "", [functions.modPath + "150skins.zip", fullPath]))
-                    # elif z.TestFileName("cats"):
-                    #     games.append(GameDef(i, "Space Cats Saga", 0, gameExec, 5, 0,
-                    #                          functions.wadPath + "freedoom2.wad", [fullPath]))
-                    #     i += 1
-                    #     games.append(GameDef(i, "Space Cats Saga", -1, gameExec, 1, 0,
-                    #                          "", [fullPath]))
+                    elif z.TestFileName("cats"):
+                        games.append(GameDef(i, "Space Cats Saga", 0, gameExec, 5, 0,
+                                             functions.wadPath + "freedoom2.wad", [fullPath]))
+                        i += 1
+                        games.append(GameDef(i, "Space Cats Saga", -1, gameExec, 1, 0,
+                                             "", [fullPath]))
 
                 if blasphemWad.strip() and blasphemTexture.strip():  # insert game only if both files are ok
                     games.append(GameDef(i, "Blasphem", 0, gameExec, 2, 0, blasphemWad, [blasphemTexture]))
