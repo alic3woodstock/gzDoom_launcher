@@ -35,205 +35,213 @@ CREATE_DOWNLOADLIST = """CREATE TABLE IF NOT EXISTS downloadlist(
             """
 
 
-class CreateDB:
+def check_db_version():
+    data_con = connect_db()
+    sql = """SELECT sql FROM sqlite_master WHERE tbl_name = ?"""
+    params = ["config"]
+    text = data_con.exec_sql(sql, params)
+    str_table = ""
+    for t in text:
+        if t[0]:
+            str_table = t[0]
+    if str_table.lower().find("config") < 0:
+        return 0
+    else:
+        version = 0
+        sql = """SELECT numvalue FROM config WHERE param = 'dbversion'"""
+        version_data = data_con.exec_sql(sql)
+        for v in version_data:
+            version = v[0]
 
-    def create_game_table(self):
-        data_con = connect_db()
+        return int(version)
 
-        data_con.StartTransaction()
-        data_con.ExecSQL("""CREATE TABLE IF NOT EXISTS groups(
-                id integer PRIMARY KEY AUTOINCREMENT,
-                groupname text);
-            """)
 
-        data_con.ExecSQL("""INSERT INTO groups(groupname) VALUES ('doom'),('heretic'),('hexen'),
-                ('strife'),('other');
-            """)
+def update_database():
+    data_con = connect_db()
+    db_version = check_db_version()
 
-        sql = CREATE_TABS
-        data_con.ExecSQL(sql)
+    data_con.start_transaction()
+    sql = """SELECT sql FROM sqlite_master WHERE tbl_name = ?"""
+    params = ["config"]
+    text = data_con.exec_sql(sql, params)
+    str_table = ""
+    for t in text:
+        if t[0]:
+            str_table = t[0]
 
-        sql = """INSERT or IGNORE INTO tabs(tabindex, label, enabled)
+    if str_table.lower().find("config") < 0:
+        sql = """SELECT sql FROM sqlite_master WHERE tbl_name = ?"""
+        params = ["gamedef"]
+        text = data_con.exec_sql(sql, params)
+        for t in text:
+            sql = t[0]
+
+        if sql.lower().find("cmdparams") < 0:
+            sql2 = """ALTER TABLE gamedef ADD COLUMN cmdparams text NOT NULL DEFAULT ''"""
+            data_con.exec_sql(sql2)
+
+        if sql.lower().find("ismod") < 0:
+            sql2 = """ALTER TABLE gamedef ADD COLUMN ismod BOOLEAN NOT NULL DEFAULT false"""
+            data_con.exec_sql(sql2)
+            sql2 = """UPDATE gamedef SET ismod = true WHERE tabindex = 2"""
+            data_con.exec_sql(sql2)
+            sql2 = """UPDATE gamedef SET tabindex = -1 WHERE ismod = true"""
+            data_con.exec_sql(sql2)
+            sql2 = """ALTER TABLE gamedef DROP COLUMN ismod"""
+            data_con.exec_sql(sql2)
+
+        sql = """CREATE TABLE IF NOT EXISTS gzdoom_version(
+            id INTEGER PRIMARY KEY,
+            version text,
+            sha256 text)"""
+        data_con.exec_sql(sql)
+
+        data_con.exec_sql(CREATE_CONFIG)
+
+    if db_version < 10100:
+        data_con.exec_sql(CREATE_TABS)
+
+        sql = """REPLACE INTO tabs(tabindex, label, enabled)
             VALUES (?,?,?)"""
         params = [-1, "Mods", True]
-        data_con.ExecSQL(sql, params)
+        data_con.exec_sql(sql, params)
         params = [0, "Games", True]
-        data_con.ExecSQL(sql, params)
+        data_con.exec_sql(sql, params)
         params = [1, "Maps", True]
-        data_con.ExecSQL(sql, params)
+        data_con.exec_sql(sql, params)
 
-        data_con.ExecSQL(CREATE_GAMEDEF)
+        sql = """UPDATE gamedef SET tabindex=0 WHERE id IN (
+            SELECT DISTINCT g.id FROM gamedef g LEFT JOIN tabs t on t.tabindex = g.tabindex WHERE 
+            t.tabindex IS NULL)"""
+        data_con.exec_sql(sql)
 
-        data_con.ExecSQL("""CREATE TABLE IF NOT EXISTS files(
-                id integer PRIMARY KEY AUTOINCREMENT,
-                gameid integer,                        
-                file text,
-                FOREIGN KEY (gameid) REFERENCES gamedef(id) ON DELETE CASCADE);
-            """)
+        data_con.exec_sql("""ALTER TABLE gamedef RENAME TO gamedef_old""")
+        data_con.exec_sql(CREATE_GAMEDEF)
+        data_con.exec_sql("""INSERT INTO gamedef SELECT * FROM gamedef_old""")
+        data_con.exec_sql("""DROP TABLE gamedef_old""")
 
-        data_con.ExecSQL(CREATE_CONFIG)
+    if db_version < 20001:
+        data_con.exec_sql("""DROP TABLE IF EXISTS downloadlist""")
+        data_con.exec_sql(CREATE_DOWNLOADLIST)
+        insert_default_urls()
 
-        sql = """REPLACE INTO config (param, numvalue)
-            VALUES ('dbversion', ?)"""
-        params = [20001]
-        data_con.ExecSQL(sql, params)
+    sql = """REPLACE INTO config (param, numvalue)
+        VALUES (?, ?)"""
+    params = ['dbversion', functions.version_number()]
+    data_con.exec_sql(sql, params)
+    data_con.commit()
 
-        data_con.ExecSQL(CREATE_DOWNLOADLIST)
-        insert_default_urls(data_con)
+    data_con.close_connection()
 
-        data_con.Commit()
-        data_con.CloseConnection()
 
-        self.WriteConfig("checkupdate", True, "bool")
+def read_config(param="", valuetype="text"):
+    data_con = connect_db()
+    if valuetype == "num":
+        sql = """SELECT numvalue"""
+        default_value = 0
+    elif valuetype == "bool":
+        sql = """SELECT boolvalue"""
+        default_value = False
+    else:
+        sql = """SELECT txtvalue"""
+        default_value = ""
 
-    def UpdateDatabase(self):
-        dataCon = connect_db()
-        dbVersion = self.CheckDbVersion()
+    sql += """ FROM config WHERE param = ?"""
+    params = [param]
+    result = data_con.exec_sql(sql, params)
+    return_value = default_value
+    for r in result:
+        return_value = r[0]
+        break
+    data_con.close_connection()
+    return return_value
 
-        dataCon.StartTransaction()
-        sql = """SELECT sql FROM sqlite_master WHERE tbl_name = ?"""
-        params = ["config"]
-        text = dataCon.ExecSQL(sql, params)
-        strTable = ""
-        for t in text:
-            if t[0]:
-                strTable = t[0]
 
-        if strTable.lower().find("config") < 0:
-            sql = """SELECT sql FROM sqlite_master WHERE tbl_name = ?"""
-            params = ["gamedef"]
-            text = dataCon.ExecSQL(sql, params)
-            for t in text:
-                sql = t[0]
+def check_gz_doom_version(version, filehash):
+    data_version = read_config('gzdversion', 'text')
+    data_hash = read_config('gzdhash', 'text')
+    if data_version == version and data_hash == filehash:
+        return True
+    else:
+        return False
 
-            if sql.lower().find("cmdparams") < 0:
-                sql2 = """ALTER TABLE gamedef ADD COLUMN cmdparams text NOT NULL DEFAULT ''"""
-                dataCon.ExecSQL(sql2)
 
-            if sql.lower().find("ismod") < 0:
-                sql2 = """ALTER TABLE gamedef ADD COLUMN ismod BOOLEAN NOT NULL DEFAULT false"""
-                dataCon.ExecSQL(sql2)
-                sql2 = """UPDATE gamedef SET ismod = true WHERE tabindex = 2"""
-                dataCon.ExecSQL(sql2)
-                sql2 = """UPDATE gamedef SET tabindex = -1 WHERE ismod = true"""
-                dataCon.ExecSQL(sql2)
-                sql2 = """ALTER TABLE gamedef DROP COLUMN ismod"""
-                dataCon.ExecSQL(sql2)
+def write_config(param="", value=None, value_type="text"):
+    data_con = connect_db()
+    sql = """REPLACE INTO config (param,"""
+    if value_type == "num":
+        sql += """numvalue)"""
+        if value == "":
+            value = 0
+    elif value_type == "bool":
+        sql += """boolvalue)"""
+        if value == "":
+            value = False
+    else:
+        sql += """txtvalue)"""
 
-            sql = """CREATE TABLE IF NOT EXISTS gzdoom_version(
-                id INTEGER PRIMARY KEY,
-                version text,
-                sha256 text)"""
-            dataCon.ExecSQL(sql)
+    sql += """ VALUES(?,?)"""
+    params = [param, value]
+    data_con.start_transaction()
+    data_con.exec_sql(sql, params)
+    data_con.commit()
+    data_con.close_connection()
 
-            dataCon.ExecSQL(CREATE_CONFIG)
 
-        if dbVersion < 10100:
-            dataCon.ExecSQL(CREATE_TABS)
+def create_game_table():
+    data_con = connect_db()
 
-            sql = """REPLACE INTO tabs(tabindex, label, enabled)
-                VALUES (?,?,?)"""
-            params = [-1, "Mods", True]
-            dataCon.ExecSQL(sql, params)
-            params = [0, "Games", True]
-            dataCon.ExecSQL(sql, params)
-            params = [1, "Maps", True]
-            dataCon.ExecSQL(sql, params)
+    data_con.start_transaction()
+    data_con.exec_sql("""CREATE TABLE IF NOT EXISTS groups(
+            id integer PRIMARY KEY AUTOINCREMENT,
+            groupname text);
+        """)
 
-            sql = """UPDATE gamedef SET tabindex=0 WHERE id IN (
-                SELECT DISTINCT g.id FROM gamedef g LEFT JOIN tabs t on t.tabindex = g.tabindex WHERE 
-                t.tabindex IS NULL)"""
-            dataCon.ExecSQL(sql)
+    data_con.exec_sql("""INSERT INTO groups(groupname) VALUES ('doom'),('heretic'),('hexen'),
+            ('strife'),('other');
+        """)
 
-            dataCon.ExecSQL("""ALTER TABLE gamedef RENAME TO gamedef_old""")
-            dataCon.ExecSQL(CREATE_GAMEDEF)
-            dataCon.ExecSQL("""INSERT INTO gamedef SELECT * FROM gamedef_old""")
-            dataCon.ExecSQL("""DROP TABLE gamedef_old""")
+    sql = CREATE_TABS
+    data_con.exec_sql(sql)
 
-        if dbVersion < 20001:
-            dataCon.ExecSQL("""DROP TABLE IF EXISTS downloadlist""")
-            dataCon.ExecSQL(CREATE_DOWNLOADLIST)
-            insert_default_urls()
+    sql = """INSERT or IGNORE INTO tabs(tabindex, label, enabled)
+        VALUES (?,?,?)"""
+    params = [-1, "Mods", True]
+    data_con.exec_sql(sql, params)
+    params = [0, "Games", True]
+    data_con.exec_sql(sql, params)
+    params = [1, "Maps", True]
+    data_con.exec_sql(sql, params)
 
-        sql = """REPLACE INTO config (param, numvalue)
-            VALUES (?, ?)"""
-        params = ['dbversion', functions.versionNumber()]
-        dataCon.ExecSQL(sql, params)
-        dataCon.Commit()
+    data_con.exec_sql(CREATE_GAMEDEF)
 
-        dataCon.CloseConnection()
+    data_con.exec_sql("""CREATE TABLE IF NOT EXISTS files(
+            id integer PRIMARY KEY AUTOINCREMENT,
+            gameid integer,                        
+            file text,
+            FOREIGN KEY (gameid) REFERENCES gamedef(id) ON DELETE CASCADE);
+        """)
 
-    def UpdateGzdoomVersion(self, version, filehash):
-        self.WriteConfig('gzdversion', version, 'text')
-        self.WriteConfig('gzdhash', filehash, 'text')
+    data_con.exec_sql(CREATE_CONFIG)
 
-    def CheckGzDoomVersion(self, version, filehash):
-        dataVersion = self.ReadConfig('gzdversion', 'text')
-        dataHash = self.ReadConfig('gzdhash', 'text')
-        if dataVersion == version and dataHash == filehash:
-            return True
-        else:
-            return False
+    sql = """REPLACE INTO config (param, numvalue)
+        VALUES ('dbversion', ?)"""
+    params = [20001]
+    data_con.exec_sql(sql, params)
 
-    def CheckDbVersion(self):
-        dataCon = connect_db()
-        sql = """SELECT sql FROM sqlite_master WHERE tbl_name = ?"""
-        params = ["config"]
-        text = dataCon.ExecSQL(sql, params)
-        strTable = ""
-        for t in text:
-            if t[0]:
-                strTable = t[0]
-        if strTable.lower().find("config") < 0:
-            return 0
-        else:
-            version = 0
-            sql = """SELECT numvalue FROM config WHERE param = 'dbversion'"""
-            versionData = dataCon.ExecSQL(sql)
-            for v in versionData:
-                version = v[0]
+    data_con.exec_sql(CREATE_DOWNLOADLIST)
+    insert_default_urls(data_con)
 
-            return int(version)
+    data_con.commit()
+    data_con.close_connection()
 
-    def ReadConfig(self, param="", valuetype="text"):
-        dataCon = connect_db()
-        if valuetype == "num":
-            sql = """SELECT numvalue"""
-            defaultValue = 0
-        elif valuetype == "bool":
-            sql = """SELECT boolvalue"""
-            defaultValue = False
-        else:
-            sql = """SELECT txtvalue"""
-            defaultValue = ""
+    write_config("checkupdate", True, "bool")
 
-        sql += """ FROM config WHERE param = ?"""
-        params = [param]
-        result = dataCon.ExecSQL(sql, params)
-        returnValue = defaultValue
-        for r in result:
-            returnValue = r[0]
-            break
-        dataCon.CloseConnection()
-        return returnValue
 
-    def WriteConfig(self, param="", value=None, value_type="text"):
-        dataCon = connect_db()
-        sql = """REPLACE INTO config (param,"""
-        if value_type == "num":
-            sql += """numvalue)"""
-            if value == "":
-                value = 0
-        elif value_type == "bool":
-            sql += """boolvalue)"""
-            if value == "":
-                value = False
-        else:
-            sql += """txtvalue)"""
+def update_gzdoom_version(version, filehash):
+    write_config('gzdversion', version, 'text')
+    write_config('gzdhash', filehash, 'text')
 
-        sql += """ VALUES(?,?)"""
-        params = [param, value]
-        dataCon.StartTransaction()
-        dataCon.ExecSQL(sql, params)
-        dataCon.Commit()
-        dataCon.CloseConnection()
+
+class CreateDB:
+    pass

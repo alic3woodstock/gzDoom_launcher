@@ -27,19 +27,19 @@ class MyLayout(Layout):
 
     def draw_border(self):
         self.canvas.after.clear()
-        borderPos = GetBorders(self)
+        border_pos = GetBorders(self)
         if self.width > 2:
             for b in self.borders:
                 with self.canvas.after:
                     Color(text_color)
                     if b == 'left':
-                        points = [borderPos.top_left, borderPos.bottom_left]
+                        points = [border_pos.top_left, border_pos.bottom_left]
                     elif b == 'right':
-                        points = [borderPos.top_right, borderPos.bottom_right]
+                        points = [border_pos.top_right, border_pos.bottom_right]
                     elif b == 'bottom':
-                        points = [borderPos.top_left, borderPos.top_right]
+                        points = [border_pos.top_left, border_pos.top_right]
                     else:
-                        points = [borderPos.bottom_left, borderPos.bottom_right]
+                        points = [border_pos.bottom_left, border_pos.bottom_right]
                     Line(points=points, width=self.lineWidth)
 
     def update_layout(self, instr):
@@ -75,6 +75,19 @@ class TitleIcon(BoxLayout):
         self.icon.width = self.height - self.padding[1] * 2
 
 
+def close_event(_widget):
+    Window.close()
+
+
+def minimize_event(_widget):
+    Window.minimize()
+
+
+def restore_size_schedule(size):
+    Window.size = size
+    Window.canvas.ask_update()
+
+
 class SystemIcons(BoxLayout):
 
     def __init__(self, **kwargs):
@@ -88,7 +101,7 @@ class SystemIcons(BoxLayout):
         icon.buttonMargin = 13
         self.minButton = MyButton(icon=icon)
         self.minButton.size_hint = (None, None)
-        self.minButton.bind(on_release=self.minimize_event)
+        self.minButton.bind(on_release=minimize_event)
 
         icon = Icon('restore')
         icon.buttonMargin = 13
@@ -104,7 +117,7 @@ class SystemIcons(BoxLayout):
         icon.buttonMargin = 13
         self.closeButton = MyButton(icon=icon)
         self.closeButton.size_hint = (None, None)
-        self.closeButton.bind(on_release=self.close_event)
+        self.closeButton.bind(on_release=close_event)
 
         if Window.borderless:
             self.add_widget(self.btnMove)
@@ -124,17 +137,10 @@ class SystemIcons(BoxLayout):
         self.maxButton.size = (self.height, self.height)
         self.minButton.size = (self.height, self.height)
         self.closeButton.size = (self.height, self.height)
-        # self.width = self.height * 3
         if not self.maximized:
             self.old_pos = (Window.left, Window.top)
         self.canvas.ask_update()
-        # Window.bind(on_mouse_move=self.mouse_move)
-        # Window.bind(on_mouse_down=self.mouse_down)
-        # Window.bind(on_mouse_up=self.mouse_up)
         self.monitor = screeninfo.get_monitors()
-
-    def close_event(self, _widget):
-        Window.close()
 
     def maximize_event(self, widget):
         if self.maximized:
@@ -160,9 +166,6 @@ class SystemIcons(BoxLayout):
             widget.icon_type = self.restoreIcon
         widget.canvas.ask_update()
 
-    def minimize_event(self, _widget):
-        Window.minimize()
-
     def mouse_down(self, _widget, x, y, _button, _modifiers):
         self.window_origin = (x, y)
         x = x * Metrics.dpi / 96
@@ -178,7 +181,7 @@ class SystemIcons(BoxLayout):
         if self.is_moving:
             Window.size = (799, 599)
             wsize = Window.system_size
-            Clock.schedule_once(lambda resize: self.restore_size_schedule(wsize), 0)
+            Clock.schedule_once(lambda resize: restore_size_schedule(wsize), 0)
         self.is_moving = False
 
     def move_schedule(self, x, y, *_args):
@@ -186,7 +189,3 @@ class SystemIcons(BoxLayout):
         y = self.window_origin[1] - y
         Window.left = Window.left - x
         Window.top = Window.top - y
-
-    def restore_size_schedule(self, size):
-        Window.size = size
-        Window.canvas.ask_update()

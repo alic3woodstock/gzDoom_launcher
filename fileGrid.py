@@ -46,8 +46,8 @@ class FileGrid(BoxLayout):
                                  """SELECT id,file FROM FILES WHERE gameid=?""", params)
 
     def add_value(self, value):
-        tmpId = len(self.grid.children) // 2
-        self.grid.add_row([str(tmpId), value])
+        tmp_id = len(self.grid.children) // 2
+        self.grid.add_row([str(tmp_id), value])
         self.input_widget.text = ''
 
     def btn_add_onrelease(self, _widget):

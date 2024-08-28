@@ -1,6 +1,4 @@
 from kivy.core.window import Window
-
-from createDB import CreateDB
 from dbGrid import DBGrid
 from frmGames import FrmGames
 from gameDefDB import delete_game_by_id, select_game_by_id
@@ -17,27 +15,30 @@ class FrmManageGames(ModalWindow):
         self.dialog.size = Window.size
         self.popup = MyPopup()
         self.popup.bind(on_dismiss=self.popup_dismiss)
+        self.grid = None
+        self.topGrid = None
+        self.btnEdit = None
+        self.btnAdd = None
         self.create_grid()
 
-    def btnAdd_on_press(self, _widget):
+    def btn_add_on_press(self, _widget):
         self.popup.content = FrmGames(self.popup)
         self.popup.open()
 
-    def btnEdit_on_press(self, _widget):
+    def btn_edit_on_press(self, _widget):
         game = select_game_by_id(self.grid.get_selected_id())
         self.popup.content = FrmGames(self.popup, game)
         self.popup.open()
 
-    def btnDelete_on_press(self, _widget):
+    def btn_delete_on_press(self, _widget):
         game = self.grid.get_selected_field(1)
         dialog = Dialog(self.popup, "Delete game " + str(game) + "?", txtOk="Yes",
                         txtCancel="No", icon="question")
         self.popup.content = dialog
-        dialog.btnOk.bind(on_release=self.btnDelete_on_click)
+        dialog.btnOk.bind(on_release=self.btn_delete_on_click)
         self.popup.open()
 
-    def btnDelete_on_click(self, _widget):
-        gameDefDb = CreateDB()
+    def btn_delete_on_click(self, _widget):
         delete_game_by_id(self.grid.get_selected_id())
         global refresh_database
         refresh_database = True
@@ -67,6 +68,6 @@ class FrmManageGames(ModalWindow):
         self.btnAdd = self.AddButon('Add')
         if len(self.grid.children) and self.grid.children[0].row_index > 0:
             self.topGrid.select_index(0)
-        self.btnAdd.bind(on_release=self.btnAdd_on_press)
-        self.btnOk.bind(on_release=self.btnDelete_on_press)
-        self.btnEdit.bind(on_release=self.btnEdit_on_press)
+        self.btnAdd.bind(on_release=self.btn_add_on_press)
+        self.btnOk.bind(on_release=self.btn_delete_on_press)
+        self.btnEdit.bind(on_release=self.btn_edit_on_press)

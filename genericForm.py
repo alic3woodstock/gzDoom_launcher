@@ -64,10 +64,10 @@ class GenericForm(GridLayout):
         self.ids[field_name] = value_input
 
     def add_checkbox(self, text='', field_name=''):
-        checkBox = MyCheckBox()
-        checkBox.size_hint = (None, 1)
-        checkBox.width = self.children_height - 16
-        checkBox.id = field_name
+        check_box = MyCheckBox()
+        check_box.size_hint = (None, 1)
+        check_box.width = self.children_height - 16
+        check_box.id = field_name
         label = self.add_label(text)
 
         container = GridLayout()
@@ -76,12 +76,12 @@ class GenericForm(GridLayout):
         container.spacing = 12
         container.size_hint = (1, None)
         container.height = self.children_height
-        container.add_widget(checkBox)
+        container.add_widget(check_box)
         container.add_widget(label)
 
         self.add_widget(BoxLayout(size_hint=(None, None), height=self.children_height))
         self.add_widget(container)
-        self.ids[field_name] = checkBox
+        self.ids[field_name] = check_box
 
     def add_file_field(self, text='', field_name=''):
         label = self.add_label(text)
@@ -113,18 +113,18 @@ class GenericForm(GridLayout):
     def add_dropdown(self, text='', field_name=''):
         label = self.add_label(text)
 
-        mainButton = DropdownMainButton()
-        mainButton.size_hint = (1, 1)
-        dropdown = MyDropdown(mainButton)
+        main_button = DropdownMainButton()
+        main_button.size_hint = (1, 1)
+        dropdown = MyDropdown(main_button)
 
-        dropBox = BoxLayout()
-        dropBox.size_hint = (1, None)
-        dropBox.padding = 2
-        dropBox.height = self.children_height
-        dropBox.add_widget(mainButton)
+        drop_box = BoxLayout()
+        drop_box.size_hint = (1, None)
+        drop_box.padding = 2
+        drop_box.height = self.children_height
+        drop_box.add_widget(main_button)
 
         self.add_widget(label)
-        self.add_widget(dropBox)
+        self.add_widget(drop_box)
         self.ids[field_name] = dropdown
 
     def get_value(self, field_name):

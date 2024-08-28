@@ -38,11 +38,12 @@ from kivy.uix.stacklayout import StackLayout
 from kivy.core.window import Window
 from kivy.clock import Clock
 from myButton import TopMenuButton, MyButtonBorder
-from createDB import CreateDB
+from createDB import create_game_table, update_database
 from myPopup import MyPopup, Dialog, Progress, EmptyDialog
 from menu import Menu
 from gameFileFunctions import GameFileFunctions
 from frmReplaceWad import FrmReplaceWad
+from dataPath import DataPath, data_path
 
 
 class FrmGzdlauncher(BoxLayout):
@@ -94,7 +95,7 @@ class FrmGzdlauncher(BoxLayout):
         run_button.size_hint = (None, 1)
         run_button.width = 128
         run_button.text = 'Run Game'
-        run_button.bind(on_release=self.btnRun_on_press)
+        run_button.bind(on_release=self.btn_run_on_press)
 
         box_buttons.add_widget(run_button)
         self.add_widget(box_buttons)
@@ -104,30 +105,30 @@ class FrmGzdlauncher(BoxLayout):
             self._keyboard_closed, self, 'text')
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
 
-        menuApp = Menu()
-        menuApp.bind(on_select=self.menuApp_on_select)
-        btnMenuApp = TopMenuButton(menuApp, text='Application')
-        self.main_menu.add_widget(btnMenuApp)
+        menu_app = Menu()
+        menu_app.bind(on_select=self.menu_app_on_select)
+        btn_menu_app = TopMenuButton(menu_app, text='Application')
+        self.main_menu.add_widget(btn_menu_app)
 
-        menuGames = Menu()
-        menuGames.bind(on_select=self.menuGames_on_select)
-        btnMenuGames = TopMenuButton(menuGames, text='Games')
-        self.main_menu.add_widget(btnMenuGames)
+        menu_games = Menu()
+        menu_games.bind(on_select=self.menu_games_on_select)
+        btn_menu_games = TopMenuButton(menu_games, text='Games')
+        self.main_menu.add_widget(btn_menu_games)
 
-        menuGames.add_item('Manage Games')
-        menuGames.add_item('Reset to Default')
-        menuGames.add_item('Replace freedoom2.wad')
-        menuGames.add_item('Replace blasphemer.wad')
+        menu_games.add_item('Manage Games')
+        menu_games.add_item('Reset to Default')
+        menu_games.add_item('Replace freedoom2.wad')
+        menu_games.add_item('Replace blasphemer.wad')
 
-        menuApp.add_item('Update GZDoom')
-        menuApp.add_item('Settings')
-        menuApp.add_item('About')
-        menuApp.add_item('Exit')
+        menu_app.add_item('Update GZDoom')
+        menu_app.add_item('Settings')
+        menu_app.add_item('About')
+        menu_app.add_item('Exit')
 
-        self.menuApp = menuApp
-        self.menuGames = menuGames
+        self.menuApp = menu_app
+        self.menuGames = menu_games
         self.popup = MyPopup()
-        self.popup.bind(on_dismiss=lambda r: self.ReadDB())
+        self.popup.bind(on_dismiss=lambda r: self.read_db())
         self.height = Window.height - 32
         self.main_menu.canvas.add(Callback(self.main_menu_cupdate))
         Window.bind(mouse_pos=self.mouse_pos)
@@ -136,24 +137,24 @@ class FrmGzdlauncher(BoxLayout):
         pass
 
     def _on_keyboard_down(self, _keyboard, keycode, _text, _modifiers):
-        gameTabs = self.ids.gameTabs
+        game_tabs = self.ids.gameTabs
         if not self.popup.is_open and not self.is_game_running:
             if keycode[1] == 'left':
-                gameTabs.carousel.load_previous()
+                game_tabs.carousel.load_previous()
             elif keycode[1] == 'right':
-                gameTabs.carousel.load_next()
+                game_tabs.carousel.load_next()
             elif keycode[1] == 'down':
-                gameTabs.carousel.current_slide.children[0].load_next()
+                game_tabs.carousel.current_slide.children[0].load_next()
             elif keycode[1] == 'up':
-                gameTabs.carousel.current_slide.children[0].load_previous()
+                game_tabs.carousel.current_slide.children[0].load_previous()
             elif keycode[1] == 'pagedown':
-                gameTabs.carousel.current_slide.children[0].page_down()
+                game_tabs.carousel.current_slide.children[0].page_down()
             elif keycode[1] == 'pageup':
-                gameTabs.carousel.current_slide.children[0].page_up()
+                game_tabs.carousel.current_slide.children[0].page_up()
             elif keycode[1] == 'spacebar':
-                gameTabs.spacebar()
+                game_tabs.spacebar()
             elif keycode[1] == 'enter':
-                self.btnRun_on_press(None)
+                self.btn_run_on_press(None)
         elif isinstance(self.popup.content, FrmManageGames):
             if keycode[1] == 'down':
                 self.popup.content.topGrid.load_next()
@@ -180,13 +181,13 @@ class FrmGzdlauncher(BoxLayout):
         # the system.
         return True
 
-    def btnRun_on_press(self, _widget):
+    def btn_run_on_press(self, _widget):
         self.popup.content = EmptyDialog(self.popup, 'Loading...')
         self.popup.title = ''
         self.popup.open()
         Clock.schedule_once(self.run_game, 1)
 
-    def menuGames_on_select(self, _widget, data):
+    def menu_games_on_select(self, _widget, data):
         self.popup.title = data.text
         if data.index == 0:
             dialog = FrmManageGames(self.popup)
@@ -196,7 +197,7 @@ class FrmGzdlauncher(BoxLayout):
                             text="This will reset game database to the default values.\n"
                                  + "Do you want to continue?",
                             txtCancel='No', txtOk='Yes', icon='exclamation')
-            dialog.btnOk.bind(on_release=self.btnYes1_onPress)
+            dialog.btnOk.bind(on_release=self.btn_yes1_on_press)
             self.popup.content = dialog
         elif data.index == 2:
             dialog = FrmReplaceWad(self.popup, mod_group=1)
@@ -209,40 +210,40 @@ class FrmGzdlauncher(BoxLayout):
                                         icon='information')
         self.popup.open()
 
-    def btnYes1_onPress(self, _widget):
+    def btn_yes1_on_press(self, _widget):
         progress = Progress(self.popup, text='Starting')
         self.popup.content = progress
-        gameFile = GameFileFunctions()
-        progressClock = Clock.schedule_interval(partial(self.progress_update, progress, gameFile), 0.1)
-        gameFile.clock = progressClock
-        thread = Thread(target=gameFile.extract_all)
+        game_file = GameFileFunctions()
+        progress_clock = Clock.schedule_interval(partial(self.progress_update, progress, game_file), 0.1)
+        game_file.clock = progress_clock
+        thread = Thread(target=game_file.extract_all)
         thread.start()
 
-    def btnUpdate_onPress(self, _widget):
+    def btn_update_on_press(self, _widget):
         progress = Progress(self.popup, text='Updating GZDoom...')
         self.popup.content = progress
         self.popup.width = 600
         self.popup.height = 200
-        gameFile = GameFileFunctions()
-        progressClock = Clock.schedule_interval(partial(self.progress_update, progress, gameFile), 0.1)
-        gameFile.clock = progressClock
-        thread = Thread(target=gameFile.verify_update)
+        game_file = GameFileFunctions()
+        progress_clock = Clock.schedule_interval(partial(self.progress_update, progress, game_file), 0.1)
+        game_file.clock = progress_clock
+        thread = Thread(target=game_file.verify_update)
         thread.start()
 
-    def progress_update(self, progress, gameFile, *_args):
-        progress.max = gameFile.max_range
-        progress.update_progress(gameFile.value, gameFile.message)
-        if gameFile.done:
-            self.popup.content = Dialog(self.popup, text=gameFile.message, txtCancel='OK', txtOk='',
+    def progress_update(self, progress, game_file, *_args):
+        progress.max = game_file.max_range
+        progress.update_progress(game_file.value, game_file.message)
+        if game_file.done:
+            self.popup.content = Dialog(self.popup, text=game_file.message, txtCancel='OK', txtOk='',
                                         icon='information')
 
-    def menuApp_on_select(self, _widget, data):
+    def menu_app_on_select(self, _widget, data):
         if data.index == 3:
             Clock.schedule_once(lambda close: Window.close(), 0)
         else:
             self.popup.title = data.text
             if data.index == 0:
-                self.btnUpdate_onPress(data)
+                self.btn_update_on_press(data)
             elif data.index == 2:
                 self.popup.content = Dialog(self.popup, text="GZDoom launcher " + functions.APPVERSION
                                                              + "\nBy Alice Woodstock 2022-2024",
@@ -253,23 +254,23 @@ class FrmGzdlauncher(BoxLayout):
 
             self.popup.open()
 
-    def ReadDB(self):
+    def read_db(self):
         if not self.is_game_running:
-            gameTabs = self.ids.gameTabs
-            gameTabs.clear_tabs()
-            dbTabs = select_all_game_tabs()
+            game_tabs = self.ids.gameTabs
+            game_tabs.clear_tabs()
+            db_tabs = select_all_game_tabs()
             games = select_all_games()
-            for tab in dbTabs:
+            for tab in db_tabs:
                 if tab.is_enabled:
-                    gameTabs.add_tab(tab.name, tab.index)
+                    game_tabs.add_tab(tab.name, tab.index)
 
             for game in games:
-                gameTabs.insert_game(game)
+                game_tabs.insert_game(game)
 
-            for slide in gameTabs.carousel.slides:
+            for slide in game_tabs.carousel.slides:
                 slide.children[0].select_index(0)
 
-            gameTabs.select_tab(0)
+            game_tabs.select_tab(0)
 
     def mouse_pos(self, *args):
         if not self.get_root_window():
@@ -277,25 +278,25 @@ class FrmGzdlauncher(BoxLayout):
         pos = args[1]
         x = pos[0] * Metrics.dpi / 96
         y = pos[1] * Metrics.dpi / 96
-        topPanel = self.main_menu
+        top_panel = self.main_menu
         pressed = False
-        btnPressed = None
-        for btn in topPanel.children:
+        btn_pressed = None
+        for btn in top_panel.children:
             if btn.state == 'down':
                 pressed = True
-                btnPressed = btn
-        if pressed and topPanel.collide_point(x, y):
-            for btn in topPanel.children:
+                btn_pressed = btn
+        if pressed and top_panel.collide_point(x, y):
+            for btn in top_panel.children:
                 if btn.x <= x <= (btn.x + btn.width):
                     if btn.state == 'normal':
                         btn.state = 'down'
-                        btnPressed.dropdown.dismiss()
+                        btn_pressed.dropdown.dismiss()
                         Clock.schedule_once(btn.on_release, 0)
 
-        for btn in topPanel.children:
+        for btn in top_panel.children:
             if btn.isDropOpen:
-                dropItens = btn.dropdown.container.children[0].children
-                for dropItem in dropItens:
+                drop_itens = btn.dropdown.container.children[0].children
+                for dropItem in drop_itens:
                     pos = dropItem.to_widget(x, y)
                     dropItem.hover = dropItem.collide_point(*pos)
                     dropItem.update_button(pos)
@@ -339,9 +340,9 @@ class FrmGzdlauncher(BoxLayout):
                 if ' '.join(command).strip().lower().find('-savedir') < 0:
                     command.append('-savedir')
                     if os.name == 'nt':
-                        command.append(functions.dataPath + '\\saves\\' + str(game[0].id))
+                        command.append(data_path().data + '\\saves\\' + str(game[0].id))
                     else:
-                        command.append(functions.dataPath + '/saves/' + str(game[0].id))
+                        command.append(data_path().data + '/saves/' + str(game[0].id))
 
                 if len(command) > 0:
                     functions.log(command, False)
@@ -365,25 +366,23 @@ class GzdLauncher(App):
         return self.frmGzLauncher
 
     def on_start(self):
-        functions.setDataPath()
-        os.chdir(functions.dataPath)
+        DataPath()
+        os.chdir(data_path().data)
         self.title = "GZDoom Launcher"
-        self.icon = functions.pentagram
+        self.icon = data_path().pentagram
 
-        gameDefDb = CreateDB()
-
-        if not os.path.isfile(functions.dbPath):
-            gameDefDb.create_game_table()
+        if not os.path.isfile(data_path().db):
+            create_game_table()
             dialog = Dialog(self.frmGzLauncher.popup,
                             text="Download default games now? (games -> reset to default)",
                             txtCancel='No', txtOk='Yes', icon='exclamation')
-            dialog.btnOk.bind(on_release=self.frmGzLauncher.btnYes1_onPress)
+            dialog.btnOk.bind(on_release=self.frmGzLauncher.btn_yes1_on_press)
             self.frmGzLauncher.popup.content = dialog
             self.frmGzLauncher.popup.open()
         else:
-            gameDefDb.UpdateDatabase()
+            update_database()
 
-        self.frmGzLauncher.ReadDB()
+        self.frmGzLauncher.read_db()
 
 
 if __name__ == '__main__':

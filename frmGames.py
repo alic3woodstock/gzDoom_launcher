@@ -37,15 +37,15 @@ class FrmGames(ModalWindow):
         tabs = select_all_game_tabs()
         dropdown = self.formLayout.ids.tab
         for t in tabs:
-            btnTab = DropDownItem(game=t, text=t.name)
-            dropdown.add_widget(btnTab)
+            btn_tab = DropDownItem(game=t, text=t.name)
+            dropdown.add_widget(btn_tab)
         dropdown.select(tabs[0])
 
         groups = select_all_groups()
         dropdown = self.formLayout.ids.modgroup
         for g in groups:
-            btnGroup = DropDownItem(game=g, text=g.name)
-            dropdown.add_widget(btnGroup)
+            btn_group = DropDownItem(game=g, text=g.name)
+            dropdown.add_widget(btn_group)
         dropdown.select(groups[0])
 
         self.CreateBoxButtons(
@@ -64,11 +64,11 @@ class FrmGames(ModalWindow):
             tab = self.formLayout.ids.tab.main_button.game.index
 
         if self.game:
-            gameId = self.game.id
+            game_id = self.game.id
         else:
-            gameId = 0
+            game_id = 0
 
-        gameDef = GameDef(gameId,
+        game_def = GameDef(game_id,
                           self.formLayout.ids.name.text.strip(),
                           tab,
                           self.formLayout.ids.gamexec.text.strip(),
@@ -80,20 +80,20 @@ class FrmGames(ModalWindow):
 
         msg = MessageBox()
 
-        if not gameDef.name:
+        if not game_def.name:
             msg.alert('Invalid name!')
-        elif not isfile(gameDef.exec):
+        elif not isfile(game_def.exec):
             msg.alert('Invalid game executable!')
-        elif gameDef.iWad and not isfile(gameDef.iWad):
+        elif game_def.iWad and not isfile(game_def.iWad):
             msg.alert('Invalid game wad!')
         else:
             frmManageGames.refresh_database = True
-            if gameId > 0:
-                if gameDef.groupId != self.game.groupId:
+            if game_id > 0:
+                if game_def.groupId != self.game.groupId:
                     update_last_run_mod(self.game, 0)
-                update_game(gameDef, True)
+                update_game(game_def, True)
             else:
-                insert_game(gameDef)
+                insert_game(game_def)
             self.popup.content = Dialog(self.popup, text="New game/mod successfully added!",
                                         txtCancel="OK")
             self.dialog.dismiss()

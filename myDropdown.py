@@ -15,4 +15,3 @@ class MyDropdown(DropDown):
 
     def on_dismiss(self):
         self.main_button.state = 'normal'
-

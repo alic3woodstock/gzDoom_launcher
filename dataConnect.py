@@ -7,33 +7,33 @@ import functions
 class SqliteDB:
     _connection = None
 
-    def __init__(self, dbName):
-        self.CreateConnection(dbName)
+    def __init__(self, db_name):
+        self.create_connection(db_name)
 
-    def CreateConnection(self, dbName):
+    def create_connection(self, db_name):
         try:
-            self._connection = sqlite3.connect(dbName)
+            self._connection = sqlite3.connect(db_name)
             return True
         except Error as e:
             functions.log(e)
             return False
 
-    def GetConnection(self):
+    def get_connection(self):
         return self._connection
 
-    def CloseConnection(self):
+    def close_connection(self):
         if self._connection:
             self._connection.close()
 
-    def ExecSQL(self, sql, params=""):
+    def exec_sql(self, sql, params=""):
         try:
             return self._connection.execute(sql, params)
         except Error as e:
             functions.log(e)
             return ""
 
-    def StartTransaction(self):
+    def start_transaction(self):
         self._connection.execute("""BEGIN TRANSACTION;""")
 
-    def Commit(self):
+    def commit(self):
         self._connection.execute("""COMMIT;""")

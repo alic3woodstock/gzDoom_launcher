@@ -24,10 +24,10 @@ class Menu(DropDown):
 
     def add_item(self, text):
         index = len(self.layout.children)
-        menuItem = MenuItem(index=index, text=text)
-        menuItem.bind(on_press=lambda btn: self.select(menuItem))
+        menu_item = MenuItem(index=index, text=text)
+        menu_item.bind(on_press=lambda btn: self.select(menu_item))
         self.layout.height = button_height * (index + 1)
-        self.layout.add_widget(menuItem)
+        self.layout.add_widget(menu_item)
 
     def on_dismiss(self):
         if self.topButton:

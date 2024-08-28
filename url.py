@@ -1,4 +1,4 @@
-import functions
+from dataPath import data_path
 
 
 class Url:
@@ -10,5 +10,5 @@ class Url:
         self.fileName = file_name
         self.sha_hash = sha_hash
 
-    def GetFilePath(self):
-        return functions.downloadPath + self.fileName
+    def get_file_path(self):
+        return data_path().download + self.fileName

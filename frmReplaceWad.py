@@ -28,12 +28,12 @@ class FrmReplaceWad(ModalWindow):
 
         self.CreateBoxButtons(
             'OK', 'Cancel')
-        self.btnOk.bind(on_release=self.btnOk_on_press)
+        self.btnOk.bind(on_release=self.btn_ok_on_press)
         self.dialog.width = Window.width
         self.dialog.height = (button_height * 2  # box buttons height + tithe height
                               + self.formLayout.get_height())
 
-    def btnOk_on_press(self, _widget):
+    def btn_ok_on_press(self, _widget):
         msg = MessageBox()
         file = self.formLayout.ids.file.text
         if not isfile(file):

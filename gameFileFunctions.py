@@ -5,12 +5,13 @@ import stat
 from tarfile import open as TarFile
 from zipfile import ZipFile
 
-import requests
 from kivy.clock import Clock
 from py7zr import SevenZipFile
+from requests import get
 
-import functions
-from createDB import CreateDB
+from createDB import create_game_table, read_config, check_gz_doom_version, update_gzdoom_version
+from functions import (log as write_log, filehash, WINE_GZDOOM, RE_DOWNLOAD)
+from dataPath import data_path
 from gameDef import GameDef
 from gameDefDB import delete_game_table, insert_game
 from url import Url
@@ -18,7 +19,7 @@ from urlDB import insert_default_urls, select_default_urls, get_moddb_url
 
 
 def get_gz_doom_url(gzdoom_windows):
-    r = requests.get("https://github.com/coelckers/gzdoom/releases/latest", stream=False)
+    r = get("https://github.com/coelckers/gzdoom/releases/latest", stream=False)
 
     tmp_str = r.text
     start = tmp_str.find("https://github.com/ZDoom/gzdoom/releases/expanded_assets")
@@ -28,7 +29,7 @@ def get_gz_doom_url(gzdoom_windows):
     version = tmp_str[start:].strip()
     version = version[version.find('g') + 1:]
 
-    r = requests.get(tmp_str)
+    r = get(tmp_str)
     tmp_str = r.text
 
     start = tmp_str.find("/ZDoom/gzdoom/releases/download")
@@ -42,35 +43,34 @@ def get_gz_doom_url(gzdoom_windows):
     end = tmp_str.lower().find('" rel=')
 
     tmp_str = "https://github.com" + tmp_str[:end].strip()
-    functions.log(tmp_str, False)
+    write_log(tmp_str, False)
     return [tmp_str, version]
 
 
 def create_db():
-    db_games = CreateDB()
     delete_game_table()
-    db_games.create_game_table()
+    create_game_table()
 
     game_files = []
     games = []
 
-    wads = os.listdir(functions.wadPath)
+    wads = os.listdir(data_path().wad)
     for w in wads:
         game_files.append(
-            GameFile(w, functions.wadPath))  # store path in format string since I don't need to use Extract
+            GameFile(w, data_path().wad))  # store path in format string since I don't need to use Extract
 
-    maps = os.listdir(functions.mapPath)
+    maps = os.listdir(data_path().map)
     for a in maps:
-        game_files.append(GameFile(a, functions.mapPath))
+        game_files.append(GameFile(a, data_path().map))
 
-    mods = os.listdir(functions.modPath)
+    mods = os.listdir(data_path().mod)
     for m in mods:
-        game_files.append(GameFile(m, functions.modPath))
+        game_files.append(GameFile(m, data_path().mod))
 
     blasphem_wad = ""
     blasphem_texture = ""
 
-    game_exec = functions.gzDoomExec
+    game_exec = data_path().gzDoomExec
 
     i = 0
     for z in game_files:
@@ -93,11 +93,11 @@ def create_db():
             elif z.get_format().find("maps") >= 0:
                 if z.test_file_name("htchest") or z.test_file_name("unbeliev"):
                     games.append(GameDef(i, z.get_map_name(), 1, game_exec, 2, 0,
-                                         functions.wadPath + "blasphem.wad",
-                                         [functions.wadPath + "BLSMPTXT.WAD", full_path]))
+                                         data_path().wad + "blasphem.wad",
+                                         [data_path().wad + "BLSMPTXT.WAD", full_path]))
                 else:
                     games.append(GameDef(i, z.get_map_name(), 1, game_exec, 1, 0,
-                                         functions.wadPath + "freedoom2.wad", [full_path]))
+                                         data_path().wad + "freedoom2.wad", [full_path]))
             elif z.get_format().find("mods") >= 0:
                 if z.test_file_name("150skins"):
                     games.append(
@@ -108,16 +108,16 @@ def create_db():
                                 "", [full_path]))
                 elif z.test_file_name("beautiful"):
                     games.append(GameDef(i, "Beautiful Doom", -1, game_exec, 1, 0,
-                                         "", [functions.modPath + "150skins.zip", full_path]))
+                                         "", [data_path().mod + "150skins.zip", full_path]))
                 elif z.test_file_name("brutal"):
                     games.append(GameDef(i, "Brutal Doom", -1, game_exec, 1, 0,
                                          "", [full_path]))
                 elif z.test_file_name("evp") and z.test_file_name("pk3"):
                     games.append(GameDef(i, "Enhanced Vanilla Project", -1, game_exec, 1, 0,
-                                         "", [functions.modPath + "150skins.zip", full_path]))
+                                         "", [data_path().mod + "150skins.zip", full_path]))
                 elif z.test_file_name("cats"):
                     games.append(GameDef(i, "Space Cats Saga", 0, game_exec, 5, 0,
-                                         functions.wadPath + "freedoom2.wad", [full_path]))
+                                         data_path().wad + "freedoom2.wad", [full_path]))
                     i += 1
                     games.append(GameDef(i, "Space Cats Saga", -1, game_exec, 1, 0,
                                          "", [full_path]))
@@ -128,7 +128,7 @@ def create_db():
                 blasphem_texture = ""
 
         except Exception as e:
-            functions.log("CreateDB - " + str(e))
+            write_log("CreateDB - " + str(e))
 
         i += 1
 
@@ -150,26 +150,26 @@ class GameFileFunctions:
         self.done = False
         self.message = 'Downloading files...'
 
-        if functions.RE_DOWNLOAD:
-            shutil.rmtree(functions.downloadPath)
+        if RE_DOWNLOAD:
+            shutil.rmtree(data_path().download)
 
-        if not os.path.exists(functions.downloadPath):
-            os.mkdir(functions.downloadPath)
+        if not os.path.exists(data_path().download):
+            os.mkdir(data_path().download)
 
         insert_default_urls()
         urls = select_default_urls()
-        files = os.listdir(functions.downloadPath)
+        files = os.listdir(data_path().download)
 
         # test file integrity
         for f in files:
-            local_hash = functions.filehash(functions.downloadPath + f)
+            local_hash = filehash(data_path().download + f)
             found = False
             for u in urls:
                 if u.fileName.strip() == f.strip() and u.sha_hash.strip() == local_hash.strip():
                     found = True
                     break
             if not found:
-                os.remove(functions.downloadPath + f)
+                os.remove(data_path().download + f)
 
         self.max_range = len(urls) * 2 + 1
         self.totalDownloads = len(urls) + 1
@@ -183,9 +183,9 @@ class GameFileFunctions:
         update = self.update_gz_doom()
         self.value += 1
         if not update:
-            functions.log('Update gzdoom failed', True)
+            write_log('Update gzdoom failed', True)
 
-        file_names = os.listdir(functions.downloadPath)
+        file_names = os.listdir(data_path().download)
         self.message = "Extracting/Copying files..."
 
         game_files = []
@@ -198,49 +198,49 @@ class GameFileFunctions:
 
         for z in game_files:
             if z.test_file_name("blasphem"):
-                z.extract_to(functions.wadPath)
+                z.extract_to(data_path().wad)
             elif z.test_file_name("freedoom"):
-                z.extract_to(functions.tempDir)
-                temp_names = os.listdir(functions.tempDir)
+                z.extract_to(data_path().temp)
+                temp_names = os.listdir(data_path().temp)
                 for f in temp_names:
                     if f.lower().find("freedoom") >= 0:
-                        temp_names2 = os.listdir(functions.tempDir + f)
+                        temp_names2 = os.listdir(data_path().temp + f)
                         for g in temp_names2:
                             if g.lower().find("wad") >= 0:
-                                h = functions.tempDir + f + "/" + g
-                                if not os.path.exists(functions.wadPath):
-                                    os.makedirs(functions.wadPath)
-                                shutil.copy(h, functions.wadPath)
+                                h = data_path().temp + f + "/" + g
+                                if not os.path.exists(data_path().wad):
+                                    os.makedirs(data_path().wad)
+                                shutil.copy(h, data_path().wad)
             elif z.test_file_name("pk3") or z.test_file_name("150skins"):
-                z.copy_to(functions.modPath)
+                z.copy_to(data_path().mod)
             elif z.test_file_name("harmonyc"):
-                z.extract_to(functions.tempDir)
-                temp_names = os.listdir(functions.tempDir)
+                z.extract_to(data_path().temp)
+                temp_names = os.listdir(data_path().temp)
                 for f in temp_names:
                     if f.lower().find("harmonyc") >= 0:
-                        shutil.copy(functions.tempDir + f, functions.wadPath)
+                        shutil.copy(data_path().temp + f, data_path().wad)
                     if f.lower().find("extra") >= 0:
-                        shutil.copy(functions.tempDir + f + '/Harm-WS.wad', functions.wadPath)
-                z.extract_to(functions.wadPath)
+                        shutil.copy(data_path().temp + f + '/Harm-WS.wad', data_path().wad)
+                z.extract_to(data_path().wad)
             elif z.test_file_name("cats"):  # space cats saga is a total conversion, can run as a game and as a mod
-                z.extract_to(functions.tempDir)
-                temp_names = os.listdir(functions.tempDir)
+                z.extract_to(data_path().temp)
+                temp_names = os.listdir(data_path().temp)
                 for f in temp_names:
                     if f.lower().find("cats") >= 0:
-                        temp_names2 = os.listdir(functions.tempDir + f)
+                        temp_names2 = os.listdir(data_path().temp + f)
                         for g in temp_names2:
                             if g.lower().find("wad") >= 0:
-                                h = functions.tempDir + f + "/" + g
-                                if not os.path.exists(functions.modPath):
-                                    os.makedirs(functions.modPath)
-                                shutil.copy(h, functions.modPath)
+                                h = data_path().temp + f + "/" + g
+                                if not os.path.exists(data_path().mod):
+                                    os.makedirs(data_path().mod)
+                                shutil.copy(h, data_path().mod)
 
             elif not z.test_file_name("gzdoom") and not z.test_file_name("wine"):
-                z.copy_to(functions.mapPath)
+                z.copy_to(data_path().map)
             self.value += 1
 
-        if os.path.exists(functions.tempDir):
-            shutil.rmtree(functions.tempDir)
+        if os.path.exists(data_path().temp):
+            shutil.rmtree(data_path().temp)
 
         create_db()
         self.value += 1
@@ -260,9 +260,9 @@ class GameFileFunctions:
         # each file.
         if url.url.find("moddb") >= 0:
             url.url = get_moddb_url(url.url)
-        if not os.path.isfile(url.GetFilePath()):
-            r = requests.get(url.url, stream=True)
-            with open(url.GetFilePath(), "wb") as downloadF:
+        if not os.path.isfile(url.get_file_path()):
+            r = get(url.url, stream=True)
+            with open(url.get_file_path(), "wb") as downloadF:
                 total_length = r.headers.get('content-length')
                 if total_length is None:
                     total_length = 0
@@ -291,7 +291,7 @@ class GameFileFunctions:
 
     def verify_update(self):
         self.done = False
-        if os.name != "nt" and functions.WINE_GZDOOM:
+        if os.name != "nt" and WINE_GZDOOM:
             self.max_range = 2
             self.totalDownloads = 2
         else:
@@ -303,19 +303,18 @@ class GameFileFunctions:
         if result == 2:
             self.message = 'GZDoom already at latest version.'
         elif result:
-            data_con = CreateDB()
-            self.message = 'GZDoom updated to version: ' + data_con.ReadConfig('gzdversion', 'text')
+            self.message = 'GZDoom updated to version: ' + read_config('gzdversion', 'text')
         else:
-            self.message = 'Update failed!\nRead ' + functions.logFile + ' for more details!'
+            self.message = 'Update failed!\nRead ' + data_path().logFile + ' for more details!'
         self.value = self.max_range
         self.finish_task()
 
     def update_gz_doom(self):
-        if not os.path.exists(functions.downloadPath):
-            os.mkdir(functions.downloadPath)
+        if not os.path.exists(data_path().download):
+            os.mkdir(data_path().download)
 
-        gzdoom_windows = (os.name == "nt") or functions.WINE_GZDOOM
-        wine_gzdoom = not (os.name == "nt") and functions.WINE_GZDOOM
+        gzdoom_windows = (os.name == "nt") or WINE_GZDOOM
+        wine_gzdoom = not (os.name == "nt") and WINE_GZDOOM
 
         if gzdoom_windows:
             filename = "gzdoom.zip"
@@ -323,15 +322,15 @@ class GameFileFunctions:
             filename = "gzdoom.tar.xz"
 
         if wine_gzdoom:
-            local_file_name = functions.gzDoomExec + ".exe"
+            local_file_name = data_path().gzDoomExec + ".exe"
         else:
-            local_file_name = functions.gzDoomExec
+            local_file_name = data_path().gzDoomExec
 
-        if os.path.exists(functions.downloadPath + filename):
-            os.remove(functions.downloadPath + filename)
+        if os.path.exists(data_path().download + filename):
+            os.remove(data_path().download + filename)
 
-        if os.path.exists(functions.downloadPath + 'wine.tar.xz'):
-            os.remove(functions.downloadPath + 'wine.tar.xz')
+        if os.path.exists(data_path().download + 'wine.tar.xz'):
+            os.remove(data_path().download + 'wine.tar.xz')
 
         result = False
         try:
@@ -339,10 +338,9 @@ class GameFileFunctions:
             url = gzdoom_url[0]
             version = gzdoom_url[1]
             file = Url(url, filename)
-            game_data = CreateDB()
-            local_hash = functions.filehash(local_file_name)
+            local_hash = filehash(local_file_name)
 
-            if (not os.path.isfile(local_file_name)) or (not game_data.CheckGzDoomVersion(version, local_hash)):
+            if (not os.path.isfile(local_file_name)) or (not check_gz_doom_version(version, local_hash)):
                 self.download_file(file)
 
                 if gzdoom_windows:
@@ -354,24 +352,24 @@ class GameFileFunctions:
                 if zip_file.test_file_name("gzdoom"):
                     try:
                         if gzdoom_windows:
-                            if zip_file.extract_to(functions.gzDoomPath):
+                            if zip_file.extract_to(data_path().gzDoom):
                                 extract_ok = True
                         else:
-                            if zip_file.extract_to(functions.tempDir):
+                            if zip_file.extract_to(data_path().temp):
                                 extract_ok = True
-                            dirs = os.listdir(functions.tempDir)
+                            dirs = os.listdir(data_path().temp)
                             for d in dirs:
                                 if d.lower().find("gzdoom") >= 0:
-                                    if os.path.exists(functions.gzDoomPath):
-                                        shutil.rmtree(functions.gzDoomPath)
-                                    shutil.copytree(functions.tempDir + d, functions.gzDoomPath)
-                        local_hash = functions.filehash(local_file_name)
+                                    if os.path.exists(data_path().gzDoom):
+                                        shutil.rmtree(data_path().gzDoom)
+                                    shutil.copytree(data_path().temp + d, data_path().gzDoom)
+                        local_hash = filehash(local_file_name)
                     except Exception as e:
-                        functions.log(e)
+                        write_log(e)
 
-                    game_data.UpdateGzdoomVersion(version, local_hash)
-                    if os.path.exists(functions.tempDir):
-                        shutil.rmtree(functions.tempDir)
+                    update_gzdoom_version(version, local_hash)
+                    if os.path.exists(data_path().temp):
+                        shutil.rmtree(data_path().temp)
 
                 result = extract_ok and (os.path.isfile(local_file_name))
 
@@ -384,22 +382,22 @@ class GameFileFunctions:
                     self.download_file(url)
                     self.message = "Extracting wine..."
                     zip_file = GameFile('wine.tar.xz', 'xz')
-                    zip_file.extract_to(functions.gzDoomPath)
+                    zip_file.extract_to(data_path().gzDoom)
                     tmp_params = ""
                     for i in range(1, 20):
                         tmp_params += ' "$' + str(i) + '" '
-                    wine_cmd = ('WINEPREFIX=' + functions.dataPath + '/.wine '
-                                + functions.gzDoomPath + 'lutris-GE-Proton8-26-x86_64/bin/wine64 '
+                    wine_cmd = ('WINEPREFIX=' + data_path() + '/.wine '
+                                + data_path().gzDoom + 'lutris-GE-Proton8-26-x86_64/bin/wine64 '
                                 + local_file_name + tmp_params)
-                    file = open(functions.gzDoomExec, 'wt')
+                    file = open(data_path().gzDoomExec, 'wt')
                     file.writelines(['#!/bin/bash\n',
                                      wine_cmd])
                     file.close()
-                    os.chmod(functions.gzDoomExec, stat.S_IREAD | stat.S_IWRITE | stat.S_IEXEC)
+                    os.chmod(data_path().gzDoomExec, stat.S_IREAD | stat.S_IWRITE | stat.S_IEXEC)
             else:
                 result = 2
         except Exception as e:
-            functions.log(e)
+            write_log(e)
 
         return result
 
@@ -413,7 +411,7 @@ class GameFile:
         self._name = name
 
     def extract_to(self, path):
-        from_file = functions.downloadPath + self._name
+        from_file = data_path().download + self._name
         if not os.path.exists(path):
             os.mkdir(path)
         if os.path.isfile(from_file):
@@ -431,14 +429,14 @@ class GameFile:
                     z.extractall(path)
                 return True
             except Exception as e:
-                functions.log("ExtractTo - " + str(e))
+                write_log("ExtractTo - " + str(e))
         else:
-            functions.log("File: " + from_file + " not found!")
+            write_log("File: " + from_file + " not found!")
         return False
 
     def copy_to(self, path):
         try:
-            from_file = functions.downloadPath + self._name
+            from_file = data_path().download + self._name
 
             if self.get_format() == "zip" or self.get_format() == "pk3":
                 z = ZipFile(from_file)
@@ -450,8 +448,8 @@ class GameFile:
             if os.path.isfile(from_file):
                 shutil.copy(from_file, path)
         except Exception as e:
-            functions.log("CopyTo - " + str(e))
-            functions.log("Copying " + self.get_name() + " failed")
+            write_log("CopyTo - " + str(e))
+            write_log("Copying " + self.get_name() + " failed")
 
     def get_name(self):
         return self._name
@@ -466,7 +464,7 @@ class GameFile:
         return self._format
 
     def get_map_name(self):
-        from_file = functions.downloadPath + self.get_name()
+        from_file = data_path().download + self.get_name()
         z = ZipFile(from_file)
 
         # Mps with non-standard txt
@@ -493,6 +491,6 @@ class GameFile:
                                 s = s.replace(".wad", "")
                                 return s[start:].strip()
         except Exception as e:
-            functions.log("GetMapName - " + str(e))
+            write_log("GetMapName - " + str(e))
             return self.get_name()
         return self.get_name()

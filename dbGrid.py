@@ -4,7 +4,6 @@ from kivy.uix.gridlayout import GridLayout
 
 from dataFunctions import select_grid_values
 from functions import text_color, background_color
-from createDB import CreateDB
 from myButton import MyButtonBorder
 
 
@@ -23,7 +22,6 @@ class DBGrid(GridLayout):
 
     def get_values(self, fields, sql, params=""):
         self.clear_widgets()
-        gameDefDb = CreateDB()
         values = select_grid_values(sql, params)
         self.title = fields
         self.cols = len(fields)
@@ -107,7 +105,7 @@ class DBGrid(GridLayout):
     def get_selected_id(self):
         return self.get_selected_field(0)
 
-    def get_selected_field(self, col_index = 0):
+    def get_selected_field(self, col_index=0):
         for btn in self.children:
             if isinstance(btn, GridButton) and btn.state == 'down' and btn.col_index == col_index:
                 return btn.text

@@ -111,8 +111,8 @@ class TopMenuButton(MyToggleButton):
     def on_release(self, value=0):
         self.dropdown.open(self)
         self.isDropOpen = True
-        topPanel = self.dropdown.parent
-        for btn in topPanel.children:
+        top_panel = self.dropdown.parent
+        for btn in top_panel.children:
             if not (btn == self):
                 btn.state = 'normal'
 
@@ -145,6 +145,7 @@ class MyCheckBox(MyToggleButton):
         self.draw_button()
         self.canvas.ask_update()
 
+
 class DropDownItem(MyButtonBorder):
     def __init__(self, game, **kwargs):
         super().__init__(**kwargs)
@@ -155,5 +156,5 @@ class DropDownItem(MyButtonBorder):
 
     def on_press(self):
         if self.parent and self.parent.parent:
-            dropDown = self.parent.parent
-            dropDown.select(self.game)
+            drop_down = self.parent.parent
+            drop_down.select(self.game)

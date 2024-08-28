@@ -16,7 +16,7 @@ class GameGrid(GridLayout):
         self.height = 0
 
         self.games = []
-        self.empty_game = GameDef(id=0, name='Empty Tab', tabId=-2)
+        self.empty_game = GameDef(game_id=0, name='Empty Tab', tab_id=-2)
         self.empty_game.exec = ''
         self.insert_game(self.empty_game)
         self.container = None
@@ -26,10 +26,10 @@ class GameGrid(GridLayout):
             self.remove_game(self.empty_game)
             self.empty_game = None
 
-        gameButton = GameButton(row_index=len(self.children), game=game, text=game.name)
-        self.add_widget(gameButton)
-        gameButton.height = self.row_height
-        self.height += gameButton.height
+        game_button = GameButton(row_index=len(self.children), game=game, text=game.name)
+        self.add_widget(game_button)
+        game_button.height = self.row_height
+        self.height += game_button.height
 
     def on_change_selection(self, widget):
         pass  # Used in game carousel to populate mods

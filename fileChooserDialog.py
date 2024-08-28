@@ -10,6 +10,7 @@ from gridContainer import GridContainer
 from localDriveGrid import LocalDriveGrid
 from myFileChooser import MyFileChooser
 from myPopup import ModalWindow, FileProgress
+from dataPath import data_path
 
 
 class FileChooserDialog(ModalWindow):
@@ -29,12 +30,12 @@ class FileChooserDialog(ModalWindow):
         path_container.container.size_hint = (1, 1)
         file_grid.add_widget(path_container)
 
-        file_chooser.path = functions.dataPath
+        file_chooser.path = data_path().data
         if os.name == 'nt':
-            self.path_grid.set_value(functions.dataPath[:2])
+            self.path_grid.set_value(data_path().data[:2])
         else:
             home = os.environ['HOME']
-            if functions.dataPath.find(home) >= 0:
+            if data_path().data.find(home) >= 0:
                 self.path_grid.set_value('HOME')
             else:
                 self.path_grid.set_value('/')
