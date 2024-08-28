@@ -215,7 +215,7 @@ class FrmGzdlauncher(BoxLayout):
         gameFile = GameFileFunctions()
         progressClock = Clock.schedule_interval(partial(self.progress_update, progress, gameFile), 0.1)
         gameFile.clock = progressClock
-        thread = Thread(target=gameFile.extractAll)
+        thread = Thread(target=gameFile.extract_all)
         thread.start()
 
     def btnUpdate_onPress(self, _widget):
@@ -226,7 +226,7 @@ class FrmGzdlauncher(BoxLayout):
         gameFile = GameFileFunctions()
         progressClock = Clock.schedule_interval(partial(self.progress_update, progress, gameFile), 0.1)
         gameFile.clock = progressClock
-        thread = Thread(target=gameFile.verifyUpdate)
+        thread = Thread(target=gameFile.verify_update)
         thread.start()
 
     def progress_update(self, progress, gameFile, *_args):

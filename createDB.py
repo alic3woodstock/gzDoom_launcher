@@ -30,7 +30,8 @@ CREATE_GAMEDEF = """CREATE TABLE IF NOT EXISTS gamedef(
 CREATE_DOWNLOADLIST = """CREATE TABLE IF NOT EXISTS downloadlist(
                 id integer PRIMARY KEY AUTOINCREMENT,
                 url text ,
-                filename text UNIQUE)
+                filename text UNIQUE ,
+                sha_hash text UNIQUE)
             """
 
 
@@ -74,7 +75,7 @@ class CreateDB:
 
         sql = """REPLACE INTO config (param, numvalue)
             VALUES ('dbversion', ?)"""
-        params = [20000]
+        params = [20001]
         data_con.ExecSQL(sql, params)
 
         data_con.ExecSQL(CREATE_DOWNLOADLIST)
@@ -149,7 +150,8 @@ class CreateDB:
             dataCon.ExecSQL("""INSERT INTO gamedef SELECT * FROM gamedef_old""")
             dataCon.ExecSQL("""DROP TABLE gamedef_old""")
 
-        if dbVersion < 20000:
+        if dbVersion < 20001:
+            dataCon.ExecSQL("""DROP TABLE IF EXISTS downloadlist""")
             dataCon.ExecSQL(CREATE_DOWNLOADLIST)
             insert_default_urls()
 
