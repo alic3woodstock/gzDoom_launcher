@@ -32,8 +32,8 @@ class FrmManageGames(ModalWindow):
 
     def btn_delete_on_press(self, _widget):
         game = self.grid.get_selected_field(1)
-        dialog = Dialog(self.popup, "Delete game " + str(game) + "?", txtOk="Yes",
-                        txtCancel="No", icon="question")
+        dialog = Dialog(self.popup, "Delete game " + str(game) + "?", txt_ok="Yes",
+                        txt_cancel="No", icon="question")
         self.popup.content = dialog
         dialog.btnOk.bind(on_release=self.btn_delete_on_click)
         self.popup.open()
@@ -63,9 +63,9 @@ class FrmManageGames(ModalWindow):
                                     order by (CASE WHEN g.tabindex == -1 
                                     THEN 99999 ELSE g.tabindex END), g.name""")
         self.topGrid.scroll.scroll_y = 0
-        self.CreateBoxButtons('Delete', 'Close')
-        self.btnEdit = self.AddButon('Edit')
-        self.btnAdd = self.AddButon('Add')
+        self.create_box_buttons('Delete', 'Close')
+        self.btnEdit = self.add_buton('Edit')
+        self.btnAdd = self.add_buton('Add')
         if len(self.grid.children) and self.grid.children[0].row_index > 0:
             self.topGrid.select_index(0)
         self.btnAdd.bind(on_release=self.btn_add_on_press)

@@ -27,17 +27,17 @@ class LocalDriveGrid(DBGrid):
             i = 0
             for letter in drives:
                 if os.path.exists(letter + ':\\'):
-                    btnLetter = GridButton(i, 0, text=letter + ':')
-                    btnLetter.bind(on_release=self.btn_on_release)
-                    self.add_widget(btnLetter)
+                    btn_letter = GridButton(i, 0, text=letter + ':')
+                    btn_letter.bind(on_release=self.btn_on_release)
+                    self.add_widget(btn_letter)
                     i += 1
         else:
-            btnLetter = GridButton(0, 0, text='HOME')
-            btnLetter.bind(on_release=self.btn_on_release)
-            self.add_widget(btnLetter)
-            btnLetter = GridButton(1, 0, text='/')
-            btnLetter.bind(on_release=self.btn_on_release)
-            self.add_widget(btnLetter)
+            btn_letter = GridButton(0, 0, text='HOME')
+            btn_letter.bind(on_release=self.btn_on_release)
+            self.add_widget(btn_letter)
+            btn_letter = GridButton(1, 0, text='/')
+            btn_letter.bind(on_release=self.btn_on_release)
+            self.add_widget(btn_letter)
 
     def update_grid(self, _instr=None):
         for btn in self.children:

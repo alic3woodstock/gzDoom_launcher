@@ -48,7 +48,7 @@ class FrmGames(ModalWindow):
             dropdown.add_widget(btn_group)
         dropdown.select(groups[0])
 
-        self.CreateBoxButtons(
+        self.create_box_buttons(
             'OK', 'Cancel')
         self.game = game
         self.dialog.size = Window.size
@@ -69,14 +69,14 @@ class FrmGames(ModalWindow):
             game_id = 0
 
         game_def = GameDef(game_id,
-                          self.formLayout.ids.name.text.strip(),
-                          tab,
-                          self.formLayout.ids.gamexec.text.strip(),
-                          self.formLayout.ids.modgroup.main_button.game.id,
-                          0,
-                          self.formLayout.ids.wad.text.strip(),
-                          self.formLayout.ids.filelist.get_all_files(),
-                          self.formLayout.ids.params.text.strip())
+                           self.formLayout.ids.name.text.strip(),
+                           tab,
+                           self.formLayout.ids.gamexec.text.strip(),
+                           self.formLayout.ids.modgroup.main_button.game.id,
+                           0,
+                           self.formLayout.ids.wad.text.strip(),
+                           self.formLayout.ids.filelist.get_all_files(),
+                           self.formLayout.ids.params.text.strip())
 
         msg = MessageBox()
 
@@ -95,7 +95,7 @@ class FrmGames(ModalWindow):
             else:
                 insert_game(game_def)
             self.popup.content = Dialog(self.popup, text="New game/mod successfully added!",
-                                        txtCancel="OK")
+                                        txt_cancel="OK")
             self.dialog.dismiss()
 
     def load_game(self):

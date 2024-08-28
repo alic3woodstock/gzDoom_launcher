@@ -12,21 +12,7 @@ def data_path():
 class DataPath:
     def __init__(self):
         global dataPath
-        self.db = "games.sqlite3"
-        self.gzDoom = "gzdoom/"
-        self.temp = "temp/"
-        self.download = "downloads/"
-        self.wad = "wads/"
-        self.map = "maps/"
-        self.mod = "mods/"
-        self.gzDoomExec = "gzdoom/gzdoom"
-        self.logFile = "gzdlauncher.log"
-        self.pentagram = "pentagram.png"
-        self.data = 'data'
-        self.set_data_path()
-        dataPath = self
-
-    def set_data_path(self):
+        
         self.data = path.realpath(__file__)
         self.pentagram = self.data.replace("dataPath.py", "pentagram.png")
         if len(argv) > 1 and argv[1].strip() == '-datapath' and argv[2].strip():
@@ -62,3 +48,5 @@ class DataPath:
             self.logFile = self.logFile.replace('/', '\\')
             self.gzDoomExec = self.gzDoom + "gzdoom.exe"
             self.pentagram = self.pentagram.replace('/', '\\')
+
+        dataPath = self

@@ -196,7 +196,7 @@ class FrmGzdlauncher(BoxLayout):
             dialog = Dialog(self.popup,
                             text="This will reset game database to the default values.\n"
                                  + "Do you want to continue?",
-                            txtCancel='No', txtOk='Yes', icon='exclamation')
+                            txt_cancel='No', txt_ok='Yes', icon='exclamation')
             dialog.btnOk.bind(on_release=self.btn_yes1_on_press)
             self.popup.content = dialog
         elif data.index == 2:
@@ -206,7 +206,7 @@ class FrmGzdlauncher(BoxLayout):
             dialog = FrmReplaceWad(self.popup, mod_group=2)
             self.popup.content = dialog
         else:
-            self.popup.content = Dialog(self.popup, text='Under construction', txtCancel='OK', txtOk='',
+            self.popup.content = Dialog(self.popup, text='Under construction', txt_cancel='OK', txt_ok='',
                                         icon='information')
         self.popup.open()
 
@@ -234,7 +234,7 @@ class FrmGzdlauncher(BoxLayout):
         progress.max = game_file.max_range
         progress.update_progress(game_file.value, game_file.message)
         if game_file.done:
-            self.popup.content = Dialog(self.popup, text=game_file.message, txtCancel='OK', txtOk='',
+            self.popup.content = Dialog(self.popup, text=game_file.message, txt_cancel='OK', txt_ok='',
                                         icon='information')
 
     def menu_app_on_select(self, _widget, data):
@@ -247,9 +247,9 @@ class FrmGzdlauncher(BoxLayout):
             elif data.index == 2:
                 self.popup.content = Dialog(self.popup, text="GZDoom launcher " + functions.APPVERSION
                                                              + "\nBy Alice Woodstock 2022-2024",
-                                            txtCancel='OK', txtOk='', icon='pentagram')
+                                            txt_cancel='OK', txt_ok='', icon='pentagram')
             else:
-                self.popup.content = Dialog(self.popup, text='Under contruction', txtCancel='OK', txtOk='',
+                self.popup.content = Dialog(self.popup, text='Under contruction', txt_cancel='OK', txt_ok='',
                                             icon='information')
 
             self.popup.open()
@@ -375,7 +375,7 @@ class GzdLauncher(App):
             create_game_table()
             dialog = Dialog(self.frmGzLauncher.popup,
                             text="Download default games now? (games -> reset to default)",
-                            txtCancel='No', txtOk='Yes', icon='exclamation')
+                            txt_cancel='No', txt_ok='Yes', icon='exclamation')
             dialog.btnOk.bind(on_release=self.frmGzLauncher.btn_yes1_on_press)
             self.frmGzLauncher.popup.content = dialog
             self.frmGzLauncher.popup.open()

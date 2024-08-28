@@ -23,33 +23,33 @@ class VertScrollBar(MyBoxLayout):
         self.scroll.bar_width = 0
         self.lineWidth = 1
 
-        topButton = MyButtonBorder(icon=Icon('uparrow'))
-        topButton.size_hint = (1, None)
-        topButton.height = self.width
-        topButton.bind(on_press=self.btn_move_scroll)
-        self.topButton = topButton
-        self.add_widget(topButton)
+        top_button = MyButtonBorder(icon=Icon('uparrow'))
+        top_button.size_hint = (1, None)
+        top_button.height = self.width
+        top_button.bind(on_press=self.btn_move_scroll)
+        self.topButton = top_button
+        self.add_widget(top_button)
 
         trail = RelativeLayout()
         self.add_widget(trail)
 
-        trailButton = MyButtonBorder()
-        trailButton.background_color = text_color
-        trailButton.highlight_color = text_color
-        trailButton.size_hint = (1, None)
+        trail_button = MyButtonBorder()
+        trail_button.background_color = text_color
+        trail_button.highlight_color = text_color
+        trail_button.size_hint = (1, None)
         trail.pos = (0, 0)
-        trail.add_widget(trailButton)
-        trailButton.pos_hint = {'y': 0}
-        trailButton.center = trail.center
+        trail.add_widget(trail_button)
+        trail_button.pos_hint = {'y': 0}
+        trail_button.center = trail.center
         self.trail = trail
-        self.trailButton = trailButton
+        self.trailButton = trail_button
 
-        bottomButton = MyButtonBorder(icon=Icon('downarrow'))
-        bottomButton.size_hint = (1, None)
-        bottomButton.height = self.width
-        bottomButton.bind(on_press=self.btn_move_scroll)
-        self.bottomButton = bottomButton
-        self.add_widget(bottomButton)
+        bottom_button = MyButtonBorder(icon=Icon('downarrow'))
+        bottom_button.size_hint = (1, None)
+        bottom_button.height = self.width
+        bottom_button.bind(on_press=self.btn_move_scroll)
+        self.bottomButton = bottom_button
+        self.add_widget(bottom_button)
         self.const = 0
         self.initPos = 0
         self.cb = Callback(self.scroll_update)

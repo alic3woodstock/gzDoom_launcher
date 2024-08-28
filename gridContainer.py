@@ -34,10 +34,10 @@ class GridContainer(AnchorLayout):
             self.titleBar.lineWidth = 1
             self.titleBar.size_hint = (1, None)
             self.titleBar.height = grid.row_height
-            titleGrid = GridLayout()
-            grid.titleGrid = titleGrid
+            title_grid = GridLayout()
+            grid.titleGrid = title_grid
             self.titleBar.height = grid.row_height
-            self.titleBar.add_widget(titleGrid)
+            self.titleBar.add_widget(title_grid)
             self.outsideBox.add_widget(self.titleBar)
             self.outsideBox.add_widget(self.container)
             self.add_widget(self.outsideBox)
@@ -96,36 +96,36 @@ class GridContainer(AnchorLayout):
             self.select_index(index - 1)
 
     def page_down(self):
-        lastItem = len(self.grid.children) // self.grid.cols - 1
-        sBottom = self.scroll.viewport_size[1] / self.grid.row_height
-        sBottom = round(self.scroll.vbar[0] * sBottom)
-        qtdByView = round(self.scroll.height / self.grid.row_height)
-        if sBottom <= 0:
-            self.select_index(lastItem)
+        last_item = len(self.grid.children) // self.grid.cols - 1
+        s_bottom = self.scroll.viewport_size[1] / self.grid.row_height
+        s_bottom = round(self.scroll.vbar[0] * s_bottom)
+        qtd_by_view = round(self.scroll.height / self.grid.row_height)
+        if s_bottom <= 0:
+            self.select_index(last_item)
         else:
             index = self.get_index()
-            index2 = lastItem - sBottom
+            index2 = last_item - s_bottom
             if index == index2:
-                if sBottom < qtdByView:
-                    self.select_index(lastItem)
+                if s_bottom < qtd_by_view:
+                    self.select_index(last_item)
                 else:
-                    self.select_index(index + qtdByView)
+                    self.select_index(index + qtd_by_view)
             else:
                 self.select_index(index2)
 
     def page_up(self):
-        sBottom = self.scroll.viewport_size[1] / self.grid.row_height
-        sBottom = round(self.scroll.vbar[0] * sBottom)
-        qtdByView = round(self.scroll.height / self.grid.row_height)
-        sTop = len(self.grid.children) // self.grid.cols - sBottom - qtdByView
-        if sTop <= 0:
+        s_bottom = self.scroll.viewport_size[1] / self.grid.row_height
+        s_bottom = round(self.scroll.vbar[0] * s_bottom)
+        qtd_by_view = round(self.scroll.height / self.grid.row_height)
+        s_top = len(self.grid.children) // self.grid.cols - s_bottom - qtd_by_view
+        if s_top <= 0:
             self.select_index(0)
         else:
             index = self.get_index()
-            if index == sTop:
-                if sTop >= qtdByView:
-                    self.select_index(sTop - qtdByView)
+            if index == s_top:
+                if s_top >= qtd_by_view:
+                    self.select_index(s_top - qtd_by_view)
                 else:
                     self.select_index(0)
             else:
-                self.select_index(sTop)
+                self.select_index(s_top)

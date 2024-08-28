@@ -4,13 +4,12 @@ from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.filechooser import FileChooser
 
-import functions
+from dataPath import data_path
 from fileGrid import FileGrid
 from gridContainer import GridContainer
 from localDriveGrid import LocalDriveGrid
 from myFileChooser import MyFileChooser
 from myPopup import ModalWindow, FileProgress
-from dataPath import data_path
 
 
 class FileChooserDialog(ModalWindow):
@@ -46,7 +45,7 @@ class FileChooserDialog(ModalWindow):
         file_grid.add_widget(file_chooser)
 
         self.add_widget(file_grid)
-        self.CreateBoxButtons(txtOk='OK', txtCancel='Cancel')
+        self.create_box_buttons(txt_ok='OK', txt_cancel='Cancel')
         self.btnOk.bind(on_release=self.on_ok_click)
         self.dialog.size = Window.size
         self.txt_input = txt_input

@@ -26,7 +26,7 @@ class FrmReplaceWad(ModalWindow):
         self.formLayout.add_file_field(text, 'file')
         self.add_widget(self.formLayout)
 
-        self.CreateBoxButtons(
+        self.create_box_buttons(
             'OK', 'Cancel')
         self.btnOk.bind(on_release=self.btn_ok_on_press)
         self.dialog.width = Window.width
