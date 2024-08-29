@@ -309,19 +309,20 @@ class Progress(ModalWindow):
 
     def draw_bar(self):
         self.progress.canvas.after.clear()
-        with self.progress.canvas.after:
-            Color(rgba=text_color)
+        if self.max > 0:
+            with self.progress.canvas.after:
+                Color(rgba=text_color)
 
-            pos = self.progress.to_window(self.progress.x, self.progress.center_y - 6)
-            width = self.progress.width * self._value / self.max
-            Rectangle(pos=pos, size=(width, 12))
+                pos = self.progress.to_window(self.progress.x, self.progress.center_y - 6)
+                width = self.progress.width * self._value / self.max
+                Rectangle(pos=pos, size=(width, 12))
 
-            pos = self.progress.to_window(self.progress.x, self.progress.center_y)
-            point1 = (pos[0], pos[1] + 6)
-            point2 = (pos[0] + self.progress.width, pos[1] + 6)
-            point3 = (pos[0] + self.progress.width, pos[1] - 6)
-            point4 = (pos[0], pos[1] - 6)
-            Line(points=[point1, point2, point3, point4, point1], width=1)
+                pos = self.progress.to_window(self.progress.x, self.progress.center_y)
+                point1 = (pos[0], pos[1] + 6)
+                point2 = (pos[0] + self.progress.width, pos[1] + 6)
+                point3 = (pos[0] + self.progress.width, pos[1] - 6)
+                point4 = (pos[0], pos[1] - 6)
+                Line(points=[point1, point2, point3, point4, point1], width=1)
 
 
 class FileProgress(FileChooserProgress):
@@ -329,15 +330,26 @@ class FileProgress(FileChooserProgress):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.clear_widgets()
-        self.progress = Progress(max_value=self.total)
-        self.progress.pos = (0, 0)
-        self.progress.size = self.size
+        self.progress = Progress(max_value=0)
+        self.progress.borders = []
+        self.progress.size_hint = (None, 1)
+        self.label_progres = Label(text=str(self.index))
+        self.add_widget(self.label_progres)
         self.add_widget(self.progress)
+
+
         self.canvas.add(Callback(self.update_layout))
 
     def update_layout(self, _instr):
-        self.progress.max = self.total
-        self.progress.update_progress(self.index, str(self.index) + ' / ' + str(self.total))
+        Clock.schedule_once(callback=self.do_update)
+
+    def do_update(self, _clock=None):
+        if self.progress.max <= 0:
+            self.progress.pos = ((- (self.width // 4) + 16), 0)
+            self.progress.width = self.width - 16
+            self.progress.max = self.total
+        self.progress.update_progress(self.index, '')
+        self.label_progres.text = str(self.index) + '/' + str(self.total)
 
 
 class MessageBox:
