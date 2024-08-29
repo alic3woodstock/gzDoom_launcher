@@ -1,7 +1,10 @@
 from kivy.graphics import Color, Line, Callback, Rectangle
+from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.behaviors.togglebutton import ToggleButtonBehavior
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
-from kivy.uix.label import CoreLabel
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import CoreLabel, Label
 
 from functions import text_color, highlight_color, background_color, button_height
 from icon import Icon
@@ -124,12 +127,11 @@ class TopMenuButton(MyToggleButton):
         super().update_button(instr)
 
 
-class MyCheckBox(MyToggleButton):
+class MyCheckBoxButton(MyToggleButton):
 
     def __init__(self, **kwargs):
         super().__init__(icon=Icon('maximize'), **kwargs)
         self.highlight_color = self.background_color
-        self.active = False
 
     def choose_icon(self):
         if self.state == 'down':
@@ -143,6 +145,47 @@ class MyCheckBox(MyToggleButton):
         self.canvas.after.clear()
         self.choose_icon()
         self.draw_button()
+        self.canvas.ask_update()
+
+
+class MyCheckBox(GridLayout):
+    @property
+    def active(self):
+        return self.button.state == 'down'
+
+    @active.setter
+    def active(self, value):
+        if value:
+            self.button.state = 'down'
+        else:
+            self.button.state = 'normal'
+
+    def __init__(self, text="", **kwargs):
+        super().__init__(**kwargs)
+        self.size_hint = (None, None)
+        self.button = MyCheckBoxButton()
+        self.button.size_hint = (None, None)
+        self.box1 = AnchorLayout(anchor_x='left', anchor_y='center', size_hint=(None, 1))
+        self.box1.add_widget(self.button)
+        self.cols = 2
+        self.rows = 1
+        self.spacing = [2, 2]
+        self.padding = [2, 0, 0, 0]
+        self.label = Label(text=text)
+        self.label.halign = 'left'
+        self.label.valign = 'center'
+        self.box2 = AnchorLayout(anchor_x='left', anchor_y='center', size_hint=(None, 1))
+        self.box2.add_widget(self.label)
+        self.add_widget(self.box1)
+        self.add_widget(self.box2)
+        self.canvas.add(Callback(self.update_checkbox))
+
+    def update_checkbox(self, _instr):
+        self.button.width = self.height - 16
+        self.button.height = self.button.width
+        self.box1.width = self.box1.height
+        self.box2.width = self.label.texture_size[1] + self.box1.width + self.spacing[0]
+        self.width = self.box2.width + self.spacing[0]
         self.canvas.ask_update()
 
 

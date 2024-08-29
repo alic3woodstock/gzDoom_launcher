@@ -1,12 +1,4 @@
-import os
-import subprocess
-from functools import partial
-from threading import Thread
-
 import kivy
-
-from gameDefDB import select_all_games, update_last_run_mod
-from gameTabDB import select_all_game_tabs
 
 kivy.require('2.1.0')
 from kivy.config import Config
@@ -27,6 +19,13 @@ Config.set('graphics', 'height', '768')
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
 import functions
+import os
+import subprocess
+from functools import partial
+from threading import Thread
+from gameDefDB import select_all_games, update_last_run_mod
+from gameTabDB import select_all_game_tabs
+from frmSettings import FrmSettings
 from kivy.graphics import Callback
 from kivy.metrics import Metrics
 from gameCarousel import GameCarousel
@@ -244,6 +243,8 @@ class FrmGzdlauncher(BoxLayout):
             self.popup.title = data.text
             if data.index == 0:
                 self.btn_update_on_press(data)
+            elif data.index == 1:
+                self.popup.content = FrmSettings(self.popup)
             elif data.index == 2:
                 self.popup.content = Dialog(self.popup, text="GZDoom launcher " + functions.APPVERSION
                                                              + "\nBy Alice Woodstock 2022-2024",

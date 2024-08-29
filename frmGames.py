@@ -102,7 +102,7 @@ class FrmGames(ModalWindow):
         self.formLayout.ids.name.text = self.game.name
 
         if self.game.tabId < 0:
-            self.formLayout.ids.ismod.state = 'down'
+            self.formLayout.ids.ismod.active = True
         else:
             self.formLayout.ids.tab.select(self.game.tab)
 

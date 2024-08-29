@@ -9,7 +9,7 @@ from fileChooserDialog import FileChooserDialog
 from fileGrid import FileGrid
 from functions import text_color, background_color, button_height
 from icon import Icon
-from myButton import MyCheckBox, DropdownMainButton, MyButtonBorder
+from myButton import DropdownMainButton, MyButtonBorder, MyCheckBox
 from myDropdown import MyDropdown
 from myPopup import MyPopup
 
@@ -64,23 +64,23 @@ class GenericForm(GridLayout):
         self.ids[field_name] = value_input
 
     def add_checkbox(self, text='', field_name=''):
-        check_box = MyCheckBox()
-        check_box.size_hint = (None, 1)
-        check_box.width = self.children_height - 16
+        check_box = MyCheckBox(text=text)
+        check_box.height = self.children_height
+        # check_box.width = self.children_height - 16
         check_box.id = field_name
-        label = self.add_label(text)
+        # label = self.add_label(text)
 
-        container = GridLayout()
-        container.cols = 2
-        container.padding = 1
-        container.spacing = 12
-        container.size_hint = (1, None)
-        container.height = self.children_height
-        container.add_widget(check_box)
-        container.add_widget(label)
+        # container = GridLayout()
+        # container.cols = 2
+        # container.padding = 1
+        # container.spacing = 12
+        # container.size_hint = (1, None)
+        # container.height = self.children_height
+        # container.add_widget(check_box)
+        # container.add_widget(label)
 
         self.add_widget(BoxLayout(size_hint=(None, None), height=self.children_height))
-        self.add_widget(container)
+        self.add_widget(check_box)
         self.ids[field_name] = check_box
 
     def add_file_field(self, text='', field_name=''):
