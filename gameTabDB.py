@@ -1,8 +1,8 @@
 from dataFunctions import connect_db
-from gameTab import GameTabConfig
+from gameTab import GameTab
 
 
-def update_game_tab(game_tab):
+def update_all_game_tabs(game_tab):
     if not (game_tab is None):
         data_con = connect_db()
         sql = """REPLACE INTO tabs(tabindex, label, enabled) 
@@ -26,13 +26,13 @@ def update_game_tab(game_tab):
 
 def select_all_game_tabs():
     data_con = connect_db()
-    tab_configs = []
+    game_tabs = []
     sql = """SELECT tabindex, label, enabled FROM tabs WHERE tabindex >= 0 ORDER BY tabindex"""
     result = data_con.exec_sql(sql)
     for r in result:
-        tab_configs.append(GameTabConfig(r[0], r[1], r[2]))
+        game_tabs.append(GameTab(r[0], r[1], r[2]))
     data_con.close_connection()
-    return tab_configs
+    return game_tabs
 
 
 def select_game_tab_by_id(tab_id):
@@ -41,6 +41,6 @@ def select_game_tab_by_id(tab_id):
     params = [tab_id]
     result = data_con.exec_sql(sql, params)
     r = result.fetchone()
-    tab = GameTabConfig(r[0], r[1], r[2])
+    tab = GameTab(r[0], r[1], r[2])
     data_con.close_connection()
     return tab

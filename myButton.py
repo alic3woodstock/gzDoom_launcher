@@ -184,8 +184,7 @@ class MyCheckBox(GridLayout):
         self.button.width = self.height - 16
         self.button.height = self.button.width
         self.box1.width = self.box1.height
-        self.box2.width = self.label.texture_size[1] + self.box1.width + self.spacing[0]
-        self.width = self.box2.width + self.spacing[0]
+        self.box2.width = self.width - self.box1.width
         self.canvas.ask_update()
 
 

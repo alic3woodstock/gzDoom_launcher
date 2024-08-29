@@ -21,7 +21,7 @@ class FrmGames(ModalWindow):
 
         self.formLayout = GenericForm()
         self.formLayout.add_text_field(text='Name:', field_name='name')
-        self.formLayout.add_checkbox(text='Is a Mod', field_name='ismod')
+        self.formLayout.add_checkbox_field(text='Is a Mod', field_name='ismod')
         self.formLayout.add_dropdown(text='Tab.:', field_name='tab')
         self.formLayout.add_file_field(text='Game Exec.:', field_name='gamexec')
         self.formLayout.add_dropdown(text='Mod Group:', field_name='modgroup')

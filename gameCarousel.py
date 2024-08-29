@@ -72,7 +72,7 @@ class GameCarousel(BoxLayout):
         game_grid.container.size_hint = (1, 1)
         game_grid.grid.on_change_selection = self.grid_on_change_selection
 
-        game_tab = GameTab(tab_id, tab_id, btn_title, game_grid)
+        game_tab = GameCarouselTab(tab_id, tab_id, btn_title, game_grid)
         self.carousel.add_widget(game_tab)
 
     def select_tab(self, tab_id):
@@ -163,7 +163,7 @@ class CarouselButton(ToggleButtonBehavior, MyButtonBorder):
         self.canvas.ask_update()
 
 
-class GameTab(BoxLayout):
+class GameCarouselTab(BoxLayout):
     def __init__(self, tab_id, tab_index=0, btn_title=None, grid=None, **kwargs):
         super().__init__(**kwargs)
         self.lineWidth = 1

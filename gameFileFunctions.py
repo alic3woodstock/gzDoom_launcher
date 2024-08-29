@@ -9,42 +9,15 @@ from kivy.clock import Clock
 from py7zr import SevenZipFile
 from requests import get
 
-from createDB import create_game_table, read_config, check_gz_doom_version, update_gzdoom_version
+from createDB import create_game_table
+from configDB import update_gzdoom_version, read_config
 from functions import (log as write_log, filehash, WINE_GZDOOM, RE_DOWNLOAD)
 from dataPath import data_path
 from gameDef import GameDef
 from gameDefDB import delete_game_table, insert_game
+from gzdoomUpdate import GZDoomUpdate
 from url import Url
 from urlDB import insert_default_urls, select_default_urls, get_moddb_url
-
-
-def get_gz_doom_url(gzdoom_windows):
-    r = get("https://github.com/coelckers/gzdoom/releases/latest", stream=False)
-
-    tmp_str = r.text
-    start = tmp_str.find("https://github.com/ZDoom/gzdoom/releases/expanded_assets")
-    end = tmp_str.find('"', start)
-    tmp_str = tmp_str[start:end].strip()
-    start = tmp_str.find("expanded_assets/g")
-    version = tmp_str[start:].strip()
-    version = version[version.find('g') + 1:]
-
-    r = get(tmp_str)
-    tmp_str = r.text
-
-    start = tmp_str.find("/ZDoom/gzdoom/releases/download")
-    tmp_str = tmp_str[start:]
-    if gzdoom_windows:
-        start = tmp_str.lower().find('windows.zip')
-    else:
-        start = tmp_str.lower().find('linux')
-    start = tmp_str.find("/ZDoom/gzdoom/releases/download", start - 200, )
-    tmp_str = tmp_str[start:]
-    end = tmp_str.lower().find('" rel=')
-
-    tmp_str = "https://github.com" + tmp_str[:end].strip()
-    write_log(tmp_str, False)
-    return [tmp_str, version]
 
 
 def create_db():
@@ -291,12 +264,8 @@ class GameFileFunctions:
 
     def verify_update(self):
         self.done = False
-        if os.name != "nt" and WINE_GZDOOM:
-            self.max_range = 2
-            self.totalDownloads = 2
-        else:
-            self.max_range = 1
-            self.totalDownloads = 1
+        self.max_range = 1
+        self.totalDownloads = 1
         self.message = 'Verifying GZDoom Version...'
         self.currentDownload = 1
         result = self.update_gz_doom()
@@ -309,49 +278,39 @@ class GameFileFunctions:
         self.value = self.max_range
         self.finish_task()
 
-    def update_gz_doom(self):
-        if not os.path.exists(data_path().download):
-            os.mkdir(data_path().download)
-
-        gzdoom_windows = (os.name == "nt") or WINE_GZDOOM
-        wine_gzdoom = not (os.name == "nt") and WINE_GZDOOM
-
-        if gzdoom_windows:
-            filename = "gzdoom.zip"
-        else:
-            filename = "gzdoom.tar.xz"
-
-        if wine_gzdoom:
-            local_file_name = data_path().gzDoomExec + ".exe"
-        else:
-            local_file_name = data_path().gzDoomExec
-
-        if os.path.exists(data_path().download + filename):
-            os.remove(data_path().download + filename)
-
-        if os.path.exists(data_path().download + 'wine.tar.xz'):
-            os.remove(data_path().download + 'wine.tar.xz')
-
+    def update_gz_doom(self, gzdoom_update=None):
         result = False
         try:
-            gzdoom_url = get_gz_doom_url(gzdoom_windows)
-            url = gzdoom_url[0]
-            version = gzdoom_url[1]
-            file = Url(url, filename)
-            local_hash = filehash(local_file_name)
+            update_wine = False
+            if os.name != "nt" and WINE_GZDOOM:
+                wine_hash = filehash(data_path().gzDoom + 'lutris-GE-Proton8-26-x86_64/bin/wine64')
+                update_wine = (wine_hash !=
+                               'a59afda035da121819589338507d1370a146052d7361bea074fc86dab86bce13')
 
-            if (not os.path.isfile(local_file_name)) or (not check_gz_doom_version(version, local_hash)):
-                self.download_file(file)
+            if gzdoom_update:
+                finish = True
+                self.max_range = 1
+                self.totalDownloads = 1
+            else:
+                finish = False
+                gzdoom_update = GZDoomUpdate()
 
-                if gzdoom_windows:
-                    zip_file = GameFile(filename, "zip")
+            if update_wine:
+                self.max_range += 1
+                self.totalDownloads += 1
+
+            if gzdoom_update.check_gzdoom_update():
+                self.download_file(gzdoom_update.file)
+
+                if gzdoom_update.gzdoom_windows:
+                    zip_file = GameFile(gzdoom_update.filename, "zip")
                 else:
-                    zip_file = GameFile(filename, "xz")
+                    zip_file = GameFile(gzdoom_update.filename, "xz")
 
                 extract_ok = False
                 if zip_file.test_file_name("gzdoom"):
                     try:
-                        if gzdoom_windows:
+                        if gzdoom_update.gzdoom_windows:
                             if zip_file.extract_to(data_path().gzDoom):
                                 extract_ok = True
                         else:
@@ -363,17 +322,17 @@ class GameFileFunctions:
                                     if os.path.exists(data_path().gzDoom):
                                         shutil.rmtree(data_path().gzDoom)
                                     shutil.copytree(data_path().temp + d, data_path().gzDoom)
-                        local_hash = filehash(local_file_name)
+                        gzdoom_update.local_hash = filehash(gzdoom_update.local_file_name)
                     except Exception as e:
                         write_log(e)
 
-                    update_gzdoom_version(version, local_hash)
+                    update_gzdoom_version(gzdoom_update.version, gzdoom_update.local_hash)
                     if os.path.exists(data_path().temp):
                         shutil.rmtree(data_path().temp)
 
-                result = extract_ok and (os.path.isfile(local_file_name))
+                result = extract_ok and (os.path.isfile(gzdoom_update.local_file_name))
 
-                if wine_gzdoom:
+                if update_wine:
                     url = Url("https://github.com/GloriousEggroll/wine-ge-custom/releases"
                               "/download/GE-Proton8-26/wine-lutris-GE-Proton8-26-x86_64.tar.xz",
                               "wine.tar.xz")
@@ -386,16 +345,21 @@ class GameFileFunctions:
                     tmp_params = ""
                     for i in range(1, 20):
                         tmp_params += ' "$' + str(i) + '" '
-                    wine_cmd = ('WINEPREFIX=' + data_path() + '/.wine '
+                    wine_cmd = ('WINEPREFIX=' + data_path().data + '/.wine '
                                 + data_path().gzDoom + 'lutris-GE-Proton8-26-x86_64/bin/wine64 '
-                                + local_file_name + tmp_params)
-                    file = open(data_path().gzDoomExec, 'wt')
+                                + gzdoom_update.local_file_name + tmp_params)
+                    os.remove(data_path().gzDoomExec)
+                    file = open(str(data_path().gzDoomExec), 'wt')
                     file.writelines(['#!/bin/bash\n',
                                      wine_cmd])
                     file.close()
                     os.chmod(data_path().gzDoomExec, stat.S_IREAD | stat.S_IWRITE | stat.S_IEXEC)
             else:
                 result = 2
+
+            if finish:
+                self.message = self.message = 'GZDoom updated to version: ' + read_config('gzdversion', 'text')
+                self.finish_task()
         except Exception as e:
             write_log(e)
 

@@ -1,4 +1,4 @@
-class GameTabConfig:
+class GameTab:
     def __init__(self, index=0, name="", is_enabled=False):
         self.index = index
         self.name = name

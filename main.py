@@ -1,6 +1,9 @@
 import kivy
 
-kivy.require('2.1.0')
+from configDB import read_config
+from gzdoomUpdate import GZDoomUpdate
+
+kivy.require('2.3.0')
 from kivy.config import Config
 
 Config.set('kivy', 'default_font', '["RobotoMono", '
@@ -218,7 +221,7 @@ class FrmGzdlauncher(BoxLayout):
         thread = Thread(target=game_file.extract_all)
         thread.start()
 
-    def btn_update_on_press(self, _widget):
+    def btn_update_on_press(self, gzdoom_update):
         progress = Progress(self.popup, text='Updating GZDoom...')
         self.popup.content = progress
         self.popup.width = 600
@@ -226,8 +229,12 @@ class FrmGzdlauncher(BoxLayout):
         game_file = GameFileFunctions()
         progress_clock = Clock.schedule_interval(partial(self.progress_update, progress, game_file), 0.1)
         game_file.clock = progress_clock
-        thread = Thread(target=game_file.verify_update)
-        thread.start()
+        if isinstance(gzdoom_update, GZDoomUpdate):
+            thread = Thread(target=lambda: game_file.update_gz_doom(gzdoom_update))
+            thread.start()
+        else:
+            thread = Thread(target=game_file.verify_update)
+            thread.start()
 
     def progress_update(self, progress, game_file, *_args):
         progress.max = game_file.max_range
@@ -356,6 +363,17 @@ class FrmGzdlauncher(BoxLayout):
         self.popup.dismiss()
         self.is_game_running = False
 
+    def check_gzdoom_update(self, _clock=None):
+        gzdoom_update = GZDoomUpdate()
+        if gzdoom_update.check_gzdoom_update():
+            dialog = Dialog(self.popup, "A new version of GZDoom was found, update now?",
+                                        txt_ok='Yes', txt_cancel='No', icon='question')
+            self.popup.content = dialog
+            dialog.btnOk.bind(on_release=lambda f: self.btn_update_on_press(gzdoom_update))
+        else:
+            self.popup.dismiss()
+
+
 
 class GzdLauncher(App):
     def __init__(self, **kwargs):
@@ -383,6 +401,12 @@ class GzdLauncher(App):
         else:
             update_database()
 
+        if read_config('checkupdate', 'bool'):
+            popup = self.frmGzLauncher.popup
+            popup.content = EmptyDialog(popup,
+                                        'Checking GZDoom version...')
+            popup.open()
+            Clock.schedule_once(callback=self.frmGzLauncher.check_gzdoom_update, timeout=1)
         self.frmGzLauncher.read_db()
 
 

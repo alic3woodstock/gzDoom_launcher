@@ -63,25 +63,27 @@ class GenericForm(GridLayout):
         self.add_widget(value_input)
         self.ids[field_name] = value_input
 
-    def add_checkbox(self, text='', field_name=''):
+    def add_checkbox_field(self, text='', field_name=''):
         check_box = MyCheckBox(text=text)
         check_box.height = self.children_height
-        # check_box.width = self.children_height - 16
+        check_box.width += self.padding[0]
         check_box.id = field_name
-        # label = self.add_label(text)
-
-        # container = GridLayout()
-        # container.cols = 2
-        # container.padding = 1
-        # container.spacing = 12
-        # container.size_hint = (1, None)
-        # container.height = self.children_height
-        # container.add_widget(check_box)
-        # container.add_widget(label)
-
         self.add_widget(BoxLayout(size_hint=(None, None), height=self.children_height))
         self.add_widget(check_box)
         self.ids[field_name] = check_box
+
+    def add_checkbox_input(self, text='', field_name1='', field_name2=''):
+        check_box = MyCheckBox(text=text)
+        check_box.height = self.children_height
+        check_box.id = field_name1
+        value_input = TextInput()
+        value_input.size_hint = (1, None)
+        value_input.height = self.children_height
+        value_input.id = field_name2
+        self.ids[field_name1] = check_box
+        self.ids[field_name2] = value_input
+        self.add_widget(check_box)
+        self.add_widget(value_input)
 
     def add_file_field(self, text='', field_name=''):
         label = self.add_label(text)

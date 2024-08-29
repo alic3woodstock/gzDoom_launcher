@@ -5,6 +5,7 @@ from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.graphics import Color, Line, Callback
 from kivy.metrics import Metrics
+from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.layout import Layout
@@ -52,6 +53,10 @@ class MyStackLayout(MyLayout, StackLayout):
 
 
 class MyBoxLayout(MyLayout, BoxLayout):
+    pass
+
+
+class MyAnchorLayout(MyLayout, AnchorLayout):
     pass
 
 
