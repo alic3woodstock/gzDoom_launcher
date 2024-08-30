@@ -10,7 +10,7 @@ from py7zr import SevenZipFile
 from requests import get
 
 from createDB import create_game_table
-from configDB import update_gzdoom_version, read_config
+from configDB import update_gzdoom_version, read_config, write_config
 from functions import (log as write_log, filehash, WINE_GZDOOM, RE_DOWNLOAD)
 from dataPath import data_path
 from gameDef import GameDef
@@ -21,8 +21,16 @@ from urlDB import insert_default_urls, select_default_urls, get_moddb_url
 
 
 def create_db():
+    check_update = True
+    try:
+        if os.path.isfile(data_path().db):
+            check_update = read_config('checkupdate','bool')
+    except Exception as e:
+        write_log(e)
+
     delete_game_table()
     create_game_table()
+    write_config('checkupdate', check_update, 'bool')
 
     game_files = []
     games = []
@@ -231,9 +239,10 @@ class GameFileFunctions:
     def download_file(self, url):
         # updates dialog based on a fixed max range since I don't know the total size of all files before download
         # each file.
-        if url.url.find("moddb") >= 0:
-            url.url = get_moddb_url(url.url)
         if not os.path.isfile(url.get_file_path()):
+            if url.url.find("moddb") >= 0:
+                url.url = get_moddb_url(url.url)
+
             r = get(url.url, stream=True)
             with open(url.get_file_path(), "wb") as downloadF:
                 total_length = r.headers.get('content-length')

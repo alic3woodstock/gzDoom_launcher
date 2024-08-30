@@ -62,9 +62,9 @@ def insert_default_urls(data_con=None):
     data_con.exec_sql(sql, params)
 
     # Brutal Doom
-    params = ["https://github.com/BLOODWOLF333/Brutal-Doom-Community-Expansion/releases/"
-              "download/V21.11.2/brutalv21.11.2.pk3",
-              "brutal.pk3", "d98e2e5ec9190d047df6c990d65adbee77dc6a57ca21ee6eaae5810fff29e8ce"]
+    params = ["https://github.com/BLOODWOLF333/Brutal-Doom-Community-Expansion/releases/download/"
+              "v21.15.0/brutalv21.15.0.pk3",
+              "brutal.pk3", "50c8f4dd27a5c2284b1c6458591b1b20fa3701169ccda45f0ab6db3e8f9d8fcf"]
     data_con.exec_sql(sql, params)
 
     # maps

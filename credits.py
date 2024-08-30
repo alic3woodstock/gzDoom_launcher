@@ -77,3 +77,12 @@ class Credits:
             case "zof":
                 self.name = 'Zones of Fear'
                 self.author = 'Damned, Des_arthes, enkeli/Matthias, Jaeden and Klofkac pipicz'
+            case "150skins":
+                self.name = '150 Doomguy Skins'
+                self.author = 'Doomkid'
+            case "beaultiful":
+                self.name = 'Beaultiful Doom'
+                self.author = 'Jekyll Grim Payne'
+            case "brutal":
+                self.name = 'Brutal Doom Community Expansion'
+                self.author = 'Bloodwolf'
