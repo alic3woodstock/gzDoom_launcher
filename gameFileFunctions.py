@@ -348,7 +348,8 @@ class GameFileFunctions:
                     wine_cmd = ('WINEPREFIX=' + data_path().data + '/.wine '
                                 + data_path().gzDoom + 'lutris-GE-Proton8-26-x86_64/bin/wine64 '
                                 + gzdoom_update.local_file_name + tmp_params)
-                    os.remove(data_path().gzDoomExec)
+                    if os.path.isfile(data_path().gzDoomExec):
+                        os.remove(data_path().gzDoomExec)
                     file = open(str(data_path().gzDoomExec), 'wt')
                     file.writelines(['#!/bin/bash\n',
                                      wine_cmd])

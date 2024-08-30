@@ -5,7 +5,7 @@ from dataPath import data_path
 
 LOGLEVEL = logging.ERROR
 FORMAT = '%(levelname)s: %(asctime)s - %(message)s'
-APPVERSION = "2.00.01"
+APPVERSION = "2.01.00"
 AUTHOR = "Copyright 2022-2024 © Alice Woodstock"
 WINE_GZDOOM = True  # linux gzdoom works only on ubuntu for now.
 RE_DOWNLOAD = False

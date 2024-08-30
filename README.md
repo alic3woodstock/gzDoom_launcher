@@ -9,3 +9,14 @@ After first setup (Files -> Reset to default or clicking yes on first launch) yo
 <p>
 I don't fallow any strict programing rules, I make this for hobby. It's fun to code in python and that's why I made this, I don't want to make a lot of code comments, documents, etc... I just want to relax and take my mind away from work while doing this. I was a Delphi developer, python is powerful and easy giving me the same feeling as before. I was missing that feeling.
 </p>
+<p>
+<b>To-do list:</b>
+<ul>
+<li>Bring all features from wx_window version (done)</li>
+<li>Tests on windows</li>
+<li>Menu item to import Doom + Doom II 2014 re-release</li>
+<li>Menu item help with credits (for wads and mods), controls and about</li>
+<li>Desktop behavior: Tab / Shift + tab to change input focus</li>
+<li>Desktop behavior: Double click to run/edit games</li>
+</ul>
+
