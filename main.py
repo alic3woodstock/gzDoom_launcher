@@ -1,10 +1,15 @@
+import os
+
 import kivy
 
 from configDB import read_config
 from gzdoomUpdate import GZDoomUpdate
 
+os.environ['KIVY_DPI'] = '96'
+
 kivy.require('2.3.0')
 from kivy.config import Config
+
 Config.set('kivy', 'default_font', '["RobotoMono", '
                                    '"fonts/RobotoMono-Regular.ttf", '
                                    '"fonts/RobotoMono-Italic.ttf", '
@@ -22,7 +27,7 @@ Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
 import functions
 import subprocess
-import os
+from screeninfo import get_monitors
 from kivy.metrics import Metrics
 from functools import partial
 from threading import Thread
@@ -388,14 +393,14 @@ class GzdLauncher(App):
         self.title = "GZDoom Launcher"
         self.icon = data_path().pentagram
 
-        if Metrics.dpi > 96 and os.name == 'nt':  # fix for 1080p and 150% zoom on windows
-            size_hor = 1024 / (Metrics.dpi / 96)
-            size_vert = 768 / (Metrics.dpi / 96)
-            print(size_vert)
-            Window.minimum_width = size_hor
-            Window.minimum_height = size_vert
-            Window.size = (size_hor, size_vert)
-            Window.maximize()
+        monitors = get_monitors()
+        m_height = 4096
+        for m in monitors:
+            if m_height > m.height:
+                m_height = m.height
+
+        if Metrics.density > 1.25 and m_height <= 1080:  # fix for 1080p and 150% zoom on windows
+            Window.fullscreen = 'auto'
 
         if not os.path.isfile(data_path().db):
             create_game_table()
