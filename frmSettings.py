@@ -28,10 +28,9 @@ class FrmSettings(ModalWindow):
 
         self.genericForm.padding = [16, 0, 16, 16]
         for i in range(1, 10):
-            field_name1 = 'tab' + str(i) + '_check'
-            field_name2 = 'tab' + str(i) + '_name'
+            field_name = 'tab' + str(i)
             text = 'Tab ' + str(i) + ':'
-            self.genericForm.add_checkbox_input(text, field_name1, field_name2)
+            self.genericForm.add_checkbox_input(text, field_name)
 
         game_tabs = select_all_game_tabs()
         for g in game_tabs:

@@ -82,25 +82,25 @@ def create_db():
             elif z.get_format().find("mods") >= 0:
                 if z.test_file_name("150skins"):
                     games.append(
-                        GameDef(i, "150 Skins", -1, game_exec, 2, 0,  # 150 Skins also works with heretic
+                        GameDef(i, "150 Skins", -1, '', 2, 0,  # 150 Skins also works with heretic
                                 "", [full_path]))
                     games.append(
-                        GameDef(i, "150 Skins", -1, game_exec, 1, 0,  # 150 Skins also works with heretic
+                        GameDef(i, "150 Skins", -1, '', 1, 0,  # 150 Skins also works with heretic
                                 "", [full_path]))
                 elif z.test_file_name("beautiful"):
-                    games.append(GameDef(i, "Beautiful Doom", -1, game_exec, 1, 0,
+                    games.append(GameDef(i, "Beautiful Doom", -1, '', 1, 0,
                                          "", [data_path().mod + "150skins.zip", full_path]))
                 elif z.test_file_name("brutal"):
-                    games.append(GameDef(i, "Brutal Doom", -1, game_exec, 1, 0,
+                    games.append(GameDef(i, "Brutal Doom", -1, '', 1, 0,
                                          "", [full_path]))
                 elif z.test_file_name("evp") and z.test_file_name("pk3"):
-                    games.append(GameDef(i, "Enhanced Vanilla Project", -1, game_exec, 1, 0,
+                    games.append(GameDef(i, "Enhanced Vanilla Project", -1, '', 1, 0,
                                          "", [data_path().mod + "150skins.zip", full_path]))
                 elif z.test_file_name("cats"):
                     games.append(GameDef(i, "Space Cats Saga", 0, game_exec, 5, 0,
                                          data_path().wad + "freedoom2.wad", [full_path]))
                     i += 1
-                    games.append(GameDef(i, "Space Cats Saga", -1, game_exec, 1, 0,
+                    games.append(GameDef(i, "Space Cats Saga", -1, '', 1, 0,
                                          "", [full_path]))
 
             if blasphem_wad.strip() and blasphem_texture.strip():  # insert game only if both files are ok

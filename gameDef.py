@@ -14,7 +14,8 @@ class GameDef:
 
     def __init__(self, game_id, name, tab_id, game_exec="", group_id=1, last_mod=0, wad='freedoom1.wad',
                  files=None, cmd_params=""):
-        if not game_exec.strip() and data_path():
+
+        if not game_exec.strip() and data_path() and tab_id >= 0:
             game_exec = data_path().gzDoomExec
 
         if files is None:

@@ -62,19 +62,26 @@ class GenericForm(GridLayout):
         self.add_widget(label)
         self.add_widget(value_input)
         self.ids[field_name] = value_input
+        self.ids[field_name + '_l'] = label
+        self.ids[field_name + '_b'] = value_input
 
     def add_checkbox_field(self, text='', field_name=''):
         check_box = MyCheckBox(text=text)
         check_box.height = self.children_height
         check_box.width += self.padding[0]
         check_box.id = field_name
-        self.add_widget(BoxLayout(size_hint=(None, None), height=self.children_height))
+        box = BoxLayout(size_hint=(None, None), height=self.children_height)
+        self.add_widget(box)
         self.add_widget(check_box)
         self.ids[field_name] = check_box
+        self.ids[field_name + '_l'] = box
+        self.ids[field_name + '_b'] = check_box
 
-    def add_checkbox_input(self, text='', field_name1='', field_name2=''):
+    def add_checkbox_input(self, text='', field_name=''):
         check_box = MyCheckBox(text=text)
         check_box.height = self.children_height
+        field_name1 = field_name + '_check'
+        field_name2 = field_name + '_name'
         check_box.id = field_name1
         value_input = TextInput()
         value_input.size_hint = (1, None)
@@ -84,6 +91,8 @@ class GenericForm(GridLayout):
         self.ids[field_name2] = value_input
         self.add_widget(check_box)
         self.add_widget(value_input)
+        self.ids[field_name2 + '_l'] = check_box
+        self.ids[field_name2 + '_b'] = value_input
 
     def add_file_field(self, text='', field_name=''):
         label = self.add_label(text)
@@ -103,7 +112,6 @@ class GenericForm(GridLayout):
         button_file = MyButtonBorder(icon=Icon('folder'))
         button_file.size_hint = (1, 1)
         button_file.fbind('on_release', open_file_event, value_input)
-        # button_file.bind(on_release=lambda f: open_file_dialog(txt_input=value_input))
         aux_box.add_widget(button_file)
 
         self.add_widget(label)
@@ -111,6 +119,8 @@ class GenericForm(GridLayout):
         box_file.add_widget(aux_box)
         self.add_widget(box_file)
         self.ids[field_name] = value_input
+        self.ids[field_name + '_l'] = label
+        self.ids[field_name + '_b'] = box_file
 
     def add_dropdown(self, text='', field_name=''):
         label = self.add_label(text)
@@ -128,6 +138,8 @@ class GenericForm(GridLayout):
         self.add_widget(label)
         self.add_widget(drop_box)
         self.ids[field_name] = dropdown
+        self.ids[field_name + '_l'] = label
+        self.ids[field_name + '_b'] = drop_box
 
     def get_value(self, field_name):
         for c in self.children:
@@ -169,3 +181,11 @@ class GenericForm(GridLayout):
             uid = uid[0][4]
             button.unbind_uid('on_release', uid)
         button.fbind('on_release', open_file_event, self.ids[file_list_id])
+
+    def hide_field(self, field_name, hide=True, start_index=0):
+        if hide:
+            self.remove_widget(self.ids[field_name + '_l'])
+            self.remove_widget(self.ids[field_name + '_b'])
+        else:
+            self.add_widget(self.ids[field_name + '_l'], index=start_index)
+            self.add_widget(self.ids[field_name + '_b'], index=start_index)
