@@ -5,7 +5,7 @@ import kivy
 from configDB import read_config
 from gzdoomUpdate import GZDoomUpdate
 
-os.environ['KIVY_DPI'] = '96'
+os.environ['KIVY_METRICS_DENSITY'] = '1'
 
 kivy.require('2.3.0')
 from kivy.config import Config
@@ -399,7 +399,7 @@ class GzdLauncher(App):
             if m_height > m.height:
                 m_height = m.height
 
-        if Metrics.density > 1.25 and m_height <= 1080:  # fix for 1080p and 150% zoom on windows
+        if Metrics.dpi > 120 and m_height <= 1080:  # fix for 1080p and 150% zoom on windows
             Window.fullscreen = 'auto'
 
         if not os.path.isfile(data_path().db):
