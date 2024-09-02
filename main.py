@@ -389,8 +389,9 @@ class GzdLauncher(App):
         self.icon = data_path().pentagram
 
         if Metrics.dpi > 96 and os.name == 'nt':  # fix for 1080p and 150% zoom on windows
-            size_hor = 1024 * Metrics.dpi / 96
-            size_vert = 768 * Metrics.dpi / 96
+            size_hor = 1024 / (Metrics.dpi / 96)
+            size_vert = 768 / (Metrics.dpi / 96)
+            print(size_vert)
             Window.minimum_width = size_hor
             Window.minimum_height = size_vert
             Window.size = (size_hor, size_vert)
