@@ -5,7 +5,6 @@ from gzdoomUpdate import GZDoomUpdate
 
 kivy.require('2.3.0')
 from kivy.config import Config
-
 Config.set('kivy', 'default_font', '["RobotoMono", '
                                    '"fonts/RobotoMono-Regular.ttf", '
                                    '"fonts/RobotoMono-Italic.ttf", '
@@ -13,7 +12,7 @@ Config.set('kivy', 'default_font', '["RobotoMono", '
                                    '"fonts/RobotoMono-BoldItalic.ttf"]')
 
 Config.set('kivy', 'kivy_clock', 'free_all')
-Config.set('graphics', 'borderless', '0')
+Config.set('kivy', 'desktop', '1')
 Config.set('graphics', 'resizable', '1')
 Config.set('graphics', 'minimum_width', '800')
 Config.set('graphics', 'minimum_height', '600')
@@ -22,15 +21,15 @@ Config.set('graphics', 'height', '768')
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
 import functions
-import os
 import subprocess
+import os
+from kivy.metrics import Metrics
 from functools import partial
 from threading import Thread
 from gameDefDB import select_all_games, update_last_run_mod
 from gameTabDB import select_all_game_tabs
 from frmSettings import FrmSettings
 from kivy.graphics import Callback
-from kivy.metrics import Metrics
 from gameCarousel import GameCarousel
 from myLayout import MyStackLayout, MyBoxLayout
 from frmManageGames import FrmManageGames
@@ -367,12 +366,11 @@ class FrmGzdlauncher(BoxLayout):
         gzdoom_update = GZDoomUpdate()
         if gzdoom_update.check_gzdoom_update():
             dialog = Dialog(self.popup, "A new version of GZDoom was found, update now?",
-                                        txt_ok='Yes', txt_cancel='No', icon='question')
+                            txt_ok='Yes', txt_cancel='No', icon='question')
             self.popup.content = dialog
             dialog.btnOk.bind(on_release=lambda f: self.btn_update_on_press(gzdoom_update))
         else:
             self.popup.dismiss()
-
 
 
 class GzdLauncher(App):
@@ -389,6 +387,14 @@ class GzdLauncher(App):
         os.chdir(data_path().data)
         self.title = "GZDoom Launcher"
         self.icon = data_path().pentagram
+
+        if Metrics.dpi > 96 and os.name == 'nt':  # fix for 1080p and 150% zoom on windows
+            size_hor = 1024 * Metrics.dpi / 96
+            size_vert = 768 * Metrics.dpi / 96
+            Window.minimum_width = size_hor
+            Window.minimum_height = size_vert
+            Window.size = (size_hor, size_vert)
+            Window.maximize()
 
         if not os.path.isfile(data_path().db):
             create_game_table()
