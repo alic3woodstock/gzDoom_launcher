@@ -1,7 +1,7 @@
 from kivy.graphics import Color, Line, Callback, Rectangle
+from kivy.metrics import Metrics
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.behaviors.togglebutton import ToggleButtonBehavior
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import CoreLabel, Label
@@ -184,7 +184,7 @@ class MyCheckBox(GridLayout):
         self.button.width = self.height - 16
         self.button.height = self.button.width
         self.box1.width = self.box1.height
-        self.box2.width = self.width - self.box1.width
+        self.box2.width = (self.width * Metrics.density) - self.box1.width
         self.canvas.ask_update()
 
 
