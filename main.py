@@ -396,7 +396,7 @@ class GzdLauncher(App):
         monitors = get_monitors()
         m_height = 4096
         for m in monitors:
-            if m_height > m.height:
+            if m.is_primary:
                 m_height = m.height
 
         if Metrics.density > 1.25 and m_height <= 1080:  # fix for 1080p and 150% zoom on windows
