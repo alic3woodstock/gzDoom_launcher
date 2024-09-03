@@ -62,7 +62,7 @@ class MyPopup(ModalView):
         super().on_open()
         if self.titleWidget:
             self.titleWidget.text = self.title
-        if self.content:
+        if self.content and (not self.content.parent):
             self.boxContent.add_widget(self.content)
         self.topLayout.add_widget(self.boxTitle)
         self.topLayout.add_widget(self.boxContent)
