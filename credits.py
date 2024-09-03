@@ -86,3 +86,6 @@ class Credits:
             case "brutal":
                 self.name = 'Brutal Doom Community Expansion'
                 self.author = 'Bloodwolf'
+            case 'sndinfo':
+                self.name = "SNDINFOs for the DOOM + DOOM II rerelease's remix tracks v2"
+                self.author = 'Fishytza'

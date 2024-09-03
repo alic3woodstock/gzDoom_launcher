@@ -14,7 +14,7 @@ I don't fallow any strict programing rules, I make this for hobby. It's fun to c
 <ul>
 <li>Bring all features from wx_window version (done)</li>
 <li>Tests on windows (done, more tests on new features)</li>
-<li>Menu item to import Doom + Doom II 2024 re-release</li>
+<li>Menu item to import Doom + Doom II 2024 re-release (done)</li>
 <li>Menu item help with credits (for wads and mods), controls and about</li>
 <li>Desktop behavior: Tab / Shift + tab to change input focus</li>
 <li>Desktop behavior: Double click to run/edit games</li>
