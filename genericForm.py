@@ -14,14 +14,10 @@ from myDropdown import MyDropdown
 from myPopup import MyPopup
 
 
-def open_file_dialog(txt_input):
+def open_file_event(input_value, select_dir, _widget):
     popup = MyPopup()
-    popup.content = FileChooserDialog(popup, txt_input)
+    popup.content = FileChooserDialog(popup, input_value, select_dir)
     popup.open()
-
-
-def open_file_event(input_value, _widget):
-    open_file_dialog(input_value)
 
 
 class GenericForm(GridLayout):
@@ -94,7 +90,7 @@ class GenericForm(GridLayout):
         self.ids[field_name2 + '_l'] = check_box
         self.ids[field_name2 + '_b'] = value_input
 
-    def add_file_field(self, text='', field_name=''):
+    def add_file_field(self, text='', field_name='', select_dir=False):
         label = self.add_label(text)
         value_input = TextInput()
         value_input.id = field_name
@@ -111,7 +107,7 @@ class GenericForm(GridLayout):
         aux_box.width = self.children_height
         button_file = MyButtonBorder(icon=Icon('folder'))
         button_file.size_hint = (1, 1)
-        button_file.fbind('on_release', open_file_event, value_input)
+        button_file.fbind('on_release', open_file_event, value_input, select_dir)
         aux_box.add_widget(button_file)
 
         self.add_widget(label)
@@ -180,7 +176,7 @@ class GenericForm(GridLayout):
         if uid:
             uid = uid[0][4]
             button.unbind_uid('on_release', uid)
-        button.fbind('on_release', open_file_event, self.ids[file_list_id])
+        button.fbind('on_release', open_file_event, self.ids[file_list_id], False)
 
     def hide_field(self, field_name, hide=True, start_index=0):
         if hide:

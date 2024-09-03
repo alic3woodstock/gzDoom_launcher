@@ -9,10 +9,10 @@ from kivy.clock import Clock
 from py7zr import SevenZipFile
 from requests import get
 
-from createDB import create_game_table
 from configDB import update_gzdoom_version, read_config, write_config
-from functions import (log as write_log, filehash, WINE_GZDOOM, RE_DOWNLOAD)
+from createDB import create_game_table
 from dataPath import data_path
+from functions import (log as write_log, filehash, WINE_GZDOOM, RE_DOWNLOAD)
 from gameDef import GameDef
 from gameDefDB import delete_game_table, insert_game
 from gzdoomUpdate import GZDoomUpdate
@@ -24,7 +24,7 @@ def create_db():
     check_update = True
     try:
         if os.path.isfile(data_path().db):
-            check_update = read_config('checkupdate','bool')
+            check_update = read_config('checkupdate', 'bool')
     except Exception as e:
         write_log(e)
 

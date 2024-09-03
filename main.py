@@ -3,7 +3,6 @@ import os
 import kivy
 
 from configDB import read_config
-from gzdoomUpdate import GZDoomUpdate
 
 os.environ['KIVY_METRICS_DENSITY'] = '1'
 
@@ -27,6 +26,8 @@ Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
 import functions
 import subprocess
+from frmImportDoom import FrmImportDoom
+from gzdoomUpdate import GZDoomUpdate
 from screeninfo import get_monitors
 from kivy.metrics import Metrics
 from functools import partial
@@ -121,18 +122,26 @@ class FrmGzdlauncher(BoxLayout):
         btn_menu_games = TopMenuButton(menu_games, text='Games')
         self.main_menu.add_widget(btn_menu_games)
 
+        menu_help = Menu()
+        menu_help.bind(on_select=self.menu_help_on_select)
+        btm_menu_help = TopMenuButton(menu_help, text='Help')
+        self.main_menu.add_widget(btm_menu_help)
+
         menu_games.add_item('Manage Games')
         menu_games.add_item('Reset to Default')
+        menu_games.add_item('Import Doom + Domm II 2014')
         menu_games.add_item('Replace freedoom2.wad')
         menu_games.add_item('Replace blasphemer.wad')
 
         menu_app.add_item('Update GZDoom')
         menu_app.add_item('Settings')
-        menu_app.add_item('About')
         menu_app.add_item('Exit')
+
+        menu_help.add_item('About')
 
         self.menuApp = menu_app
         self.menuGames = menu_games
+        self.menuHelp = menu_help
         self.popup = MyPopup()
         self.popup.bind(on_dismiss=lambda r: self.read_db())
         self.height = Window.height - 32
@@ -171,8 +180,6 @@ class FrmGzdlauncher(BoxLayout):
             elif keycode[1] == 'pageup':
                 self.popup.content.topGrid.page_up()
 
-        # Keycode is composed of an integer + a string
-        # If we hit escape, release the keyboard
         if keycode[1] == 'escape':
             if (isinstance(self.popup.content, FrmManageGames)
                     and self.popup.content.popup
@@ -206,11 +213,22 @@ class FrmGzdlauncher(BoxLayout):
             dialog.btnOk.bind(on_release=self.btn_yes1_on_press)
             self.popup.content = dialog
         elif data.index == 2:
-            dialog = FrmReplaceWad(self.popup, mod_group=1)
-            self.popup.content = dialog
+            self.popup.content = FrmImportDoom(self.popup)
         elif data.index == 3:
-            dialog = FrmReplaceWad(self.popup, mod_group=2)
-            self.popup.content = dialog
+            self.popup.content = FrmReplaceWad(self.popup, mod_group=1)
+        elif data.index == 4:
+            self.popup.content = FrmReplaceWad(self.popup, mod_group=2)
+        else:
+            self.popup.content = Dialog(self.popup, text='Under construction', txt_cancel='OK', txt_ok='',
+                                        icon='information')
+        self.popup.open()
+
+    def menu_help_on_select(self, _widget, data):
+        self.popup.title = data.text
+        if data.index == 0:
+            self.popup.content = Dialog(self.popup, text="GZDoom launcher " + functions.APPVERSION
+                                                         + "\nBy Alice Woodstock 2022-2024",
+                                        txt_cancel='OK', txt_ok='', icon='pentagram')
         else:
             self.popup.content = Dialog(self.popup, text='Under construction', txt_cancel='OK', txt_ok='',
                                         icon='information')
@@ -256,10 +274,6 @@ class FrmGzdlauncher(BoxLayout):
                 self.btn_update_on_press(data)
             elif data.index == 1:
                 self.popup.content = FrmSettings(self.popup)
-            elif data.index == 2:
-                self.popup.content = Dialog(self.popup, text="GZDoom launcher " + functions.APPVERSION
-                                                             + "\nBy Alice Woodstock 2022-2024",
-                                            txt_cancel='OK', txt_ok='', icon='pentagram')
             else:
                 self.popup.content = Dialog(self.popup, text='Under contruction', txt_cancel='OK', txt_ok='',
                                             icon='information')

@@ -120,3 +120,16 @@ def update_wad(wad, mod_group):
         data_con.exec_sql("""DELETE FROM files WHERE file LIKE '%BLSMPTXT%' AND gameid IN 
         (SELECT id FROM gamedef g WHERE tabindex == 1)""")
     data_con.commit()
+
+
+def delete_games_from_tab(tab_id):
+    data_con = connect_db()
+    data_con.start_transaction()
+
+    sql = """DELETE FROM files WHERE gameid IN (SELECT id FROM gamedef WHERE tabindex=?)"""
+    params = [tab_id]
+    data_con.exec_sql(sql, params)
+
+    sql = """DELETE FROM gamedef WHERE tabindex=?"""
+    data_con.exec_sql(sql, params)
+    data_con.commit()

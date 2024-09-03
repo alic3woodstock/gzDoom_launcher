@@ -14,7 +14,7 @@ from myPopup import ModalWindow, FileProgress
 
 class FileChooserDialog(ModalWindow):
 
-    def __init__(self, dialog, txt_input, **kwargs):
+    def __init__(self, dialog, txt_input, select_dir=False, **kwargs):
         super().__init__(dialog, **kwargs)
         file_grid = BoxLayout()
 
@@ -49,9 +49,15 @@ class FileChooserDialog(ModalWindow):
         self.btnOk.bind(on_release=self.on_ok_click)
         self.dialog.size = Window.size
         self.txt_input = txt_input
+        self.select_dir = select_dir
 
     def on_ok_click(self, _widget):
-        if len(self.file_chooser.selection) > 0:
+        if self.select_dir:
+            if isinstance(self.txt_input, FileGrid):
+                self.txt_input.add_value(self.file_chooser.path.strip())
+            else:
+                self.txt_input.text = self.file_chooser.path.strip()
+        elif len(self.file_chooser.selection) > 0:
             if isinstance(self.txt_input, FileGrid):
                 self.txt_input.add_value(self.file_chooser.selection[0])
             else:

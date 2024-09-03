@@ -1,4 +1,4 @@
-from os.path import isfile
+from os.path import isfile, basename
 
 from kivy.core.window import Window
 
@@ -42,6 +42,6 @@ class FrmReplaceWad(ModalWindow):
             update_wad(file, self.mod_group)
             tab = select_game_tab_by_id(1)
             msg.message('Wad ' + self.old_wad + ' successfully replaced by '
-                        + self.suggested_wad + ' in tab '
+                        + basename(file) + ' in tab '
                         + tab.name + "!", icon='information')
             self.dialog.dismiss()
