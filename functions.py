@@ -2,8 +2,6 @@ import hashlib
 import logging
 import os
 
-from dataPath import data_path
-
 LOGLEVEL = logging.ERROR
 FORMAT = '%(levelname)s: %(asctime)s - %(message)s'
 APPVERSION = "2.02.00"
@@ -19,6 +17,7 @@ button_width = 128
 
 
 def log(text, error=True):
+    from dataPath import data_path
     log_file = logging.getLogger(__name__)
     logging.basicConfig(filename=data_path().logFile, encoding='utf-8', level=LOGLEVEL, format=FORMAT)
     if error:

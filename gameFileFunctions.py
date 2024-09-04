@@ -295,7 +295,7 @@ class GameFileFunctions:
         try:
             update_wine = False
             if os.name != "nt" and WINE_GZDOOM:
-                wine_hash = filehash(data_path().gzDoom + 'lutris-GE-Proton8-26-x86_64/bin/wine64')
+                wine_hash = filehash(data_path().wine)
                 update_wine = (wine_hash !=
                                'a59afda035da121819589338507d1370a146052d7361bea074fc86dab86bce13')
 
@@ -354,19 +354,6 @@ class GameFileFunctions:
                     self.message = "Extracting wine..."
                     zip_file = GameFile('wine.tar.xz', 'xz')
                     zip_file.extract_to(data_path().gzDoom)
-                    tmp_params = ""
-                    for i in range(1, 20):
-                        tmp_params += ' "$' + str(i) + '" '
-                    wine_cmd = ('WINEPREFIX=' + data_path().data + '/.wine '
-                                + data_path().gzDoom + 'lutris-GE-Proton8-26-x86_64/bin/wine64 '
-                                + gzdoom_update.local_file_name + tmp_params)
-                    if os.path.isfile(data_path().gzDoomExec):
-                        os.remove(data_path().gzDoomExec)
-                    file = open(str(data_path().gzDoomExec), 'wt')
-                    file.writelines(['#!/bin/bash\n',
-                                     wine_cmd])
-                    file.close()
-                    os.chmod(data_path().gzDoomExec, stat.S_IREAD | stat.S_IWRITE | stat.S_IEXEC)
             else:
                 result = 2
 

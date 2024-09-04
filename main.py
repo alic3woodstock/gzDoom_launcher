@@ -342,6 +342,9 @@ class FrmGzdlauncher(BoxLayout):
         if game[0]:
             command = []
             if game[0].exec.strip() != "":
+                if game[0].exec.lower().find('.exe') >= 0:
+                    os.environ['WINEPREFIX'] = data_path().data + '/.wine'
+                    command.append(data_path().wine)
                 command.append(game[0].exec)
 
                 if game[0].iWad.strip() != "":

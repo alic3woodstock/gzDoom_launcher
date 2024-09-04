@@ -22,10 +22,7 @@ class GZDoomUpdate:
         else:
             self.filename = "gzdoom.tar.xz"
 
-        if self.wine_gzdoom:
-            self.local_file_name = data_path().gzDoomExec + ".exe"
-        else:
-            self.local_file_name = data_path().gzDoomExec
+        self.local_file_name = data_path().gzDoomExec
 
     def check_gzdoom_update(self):
         if not path.exists(data_path().download):

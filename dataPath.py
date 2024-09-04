@@ -1,5 +1,6 @@
 from os import path, makedirs, name as os_name
 from sys import argv
+from functions import WINE_GZDOOM
 
 dataPath = None
 
@@ -31,7 +32,13 @@ class DataPath:
 
         # global files
         self.logFile = self.data + '/gzDoomLauncher.log'
-        self.gzDoomExec = self.gzDoom + "gzdoom"
+
+        if WINE_GZDOOM:
+            self.gzDoomExec = self.gzDoom + "gzdoom.exe"
+        else:
+            self.gzDoomExec = self.gzDoom + "gzdoom"
+
+        self.wine = self.gzDoom + 'lutris-GE-Proton8-26-x86_64/bin/wine64'
 
         if not path.exists(self.data):
             makedirs(self.data)
