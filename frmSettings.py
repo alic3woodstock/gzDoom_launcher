@@ -26,7 +26,7 @@ class FrmSettings(ModalWindow):
         self.label_tabs.height = self.genericForm.children_height
         layout1.add_widget(self.label_tabs)
 
-        self.genericForm.padding = [16, 0, 16, 16]
+        self.genericForm.topLayout.padding = [16, 0, 16, 16]
         for i in range(1, 10):
             field_name = 'tab' + str(i)
             text = 'Tab ' + str(i) + ':'
@@ -56,10 +56,14 @@ class FrmSettings(ModalWindow):
             'OK', 'Cancel')
         self.btnOk.bind(on_release=self.btn_ok_on_press)
 
-        self.dialog.size = Window.size
-        self.dialog.height = (button_height * 2  # box buttons height + tithe height
-                              + self.genericForm.get_height()
-                              + layout1.height + layout2.height)
+        form_height = (button_height * 2  # box buttons height + tithe height
+                       + self.genericForm.get_height()
+                       + layout1.height + layout2.height + 4)
+        if form_height > Window.height:
+            self.dialog.size = Window.size
+        else:
+            self.dialog.height = form_height
+            self.dialog.width = Window.width
         self.canvas.add(Callback(self.update_form))
 
     def update_form(self, _instr):
@@ -71,7 +75,7 @@ class FrmSettings(ModalWindow):
         layout = MyAnchorLayout()
         layout.size_hint = (1, None)
         layout.padding = 16
-        layout.spacing = self.genericForm.spacing[0]
+        layout.spacing = self.genericForm.topLayout.spacing[0]
         layout.height = self.genericForm.children_height
         layout.anchor_x = 'left'
         layout.anchor_y = 'center'

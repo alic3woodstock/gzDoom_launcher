@@ -3,6 +3,7 @@ from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
+from kivy.uix.scrollview import ScrollView
 from kivy.uix.textinput import TextInput
 
 from fileChooserDialog import FileChooserDialog
@@ -12,6 +13,7 @@ from icon import Icon
 from myButton import DropdownMainButton, MyButtonBorder, MyCheckBox
 from myDropdown import MyDropdown
 from myPopup import MyPopup
+from scrollBar import VertScrollBar
 
 
 def open_file_event(input_value, select_dir, _widget):
@@ -20,15 +22,28 @@ def open_file_event(input_value, select_dir, _widget):
     popup.open()
 
 
-class GenericForm(GridLayout):
-    def __init__(self, **kwargs):
+class GenericForm(BoxLayout):
+    def __init__(self, height=0, **kwargs):
         super().__init__(**kwargs)
-        self.cols = 2
-        self.padding = [16, 16]
+        self.scroll_bar = None
+
+        self.scroll = ScrollView()
+        self.scroll.scroll_type = ['bars']
+        self.scroll.always_overscroll = False
+        self.scroll.bar_width = 4
+
+        self.topLayout = GridLayout()
+        self.topLayout.cols = 2
+        self.topLayout.padding = [16, 16]
+        self.topLayout.spacing = [16, 16]
+        self.topLayout.size_hint = (1, None)
+        self.topLayout.height = height
+
         self.values = []
         self.labels = []
-        self.spacing = [16, 16]
         self.children_height = button_height
+        self.scroll.add_widget(self.topLayout)
+        self.add_widget(self.scroll)
         self.canvas.add(Callback(self.update_form))
 
     def add_label(self, text):
@@ -55,8 +70,8 @@ class GenericForm(GridLayout):
         value_input.size_hint = (1, None)
         value_input.height = self.children_height
         value_input.id = field_name
-        self.add_widget(label)
-        self.add_widget(value_input)
+        self.topLayout.add_widget(label)
+        self.topLayout.add_widget(value_input)
         self.ids[field_name] = value_input
         self.ids[field_name + '_l'] = label
         self.ids[field_name + '_b'] = value_input
@@ -64,11 +79,11 @@ class GenericForm(GridLayout):
     def add_checkbox_field(self, text='', field_name=''):
         check_box = MyCheckBox(text=text)
         check_box.height = self.children_height
-        check_box.width += self.padding[0]
+        check_box.width += self.topLayout.padding[0]
         check_box.id = field_name
         box = BoxLayout(size_hint=(None, None), height=self.children_height)
-        self.add_widget(box)
-        self.add_widget(check_box)
+        self.topLayout.add_widget(box)
+        self.topLayout.add_widget(check_box)
         self.ids[field_name] = check_box
         self.ids[field_name + '_l'] = box
         self.ids[field_name + '_b'] = check_box
@@ -85,8 +100,8 @@ class GenericForm(GridLayout):
         value_input.id = field_name2
         self.ids[field_name1] = check_box
         self.ids[field_name2] = value_input
-        self.add_widget(check_box)
-        self.add_widget(value_input)
+        self.topLayout.add_widget(check_box)
+        self.topLayout.add_widget(value_input)
         self.ids[field_name2 + '_l'] = check_box
         self.ids[field_name2 + '_b'] = value_input
 
@@ -110,10 +125,10 @@ class GenericForm(GridLayout):
         button_file.fbind('on_release', open_file_event, value_input, select_dir)
         aux_box.add_widget(button_file)
 
-        self.add_widget(label)
+        self.topLayout.add_widget(label)
         box_file.add_widget(value_input)
         box_file.add_widget(aux_box)
-        self.add_widget(box_file)
+        self.topLayout.add_widget(box_file)
         self.ids[field_name] = value_input
         self.ids[field_name + '_l'] = label
         self.ids[field_name + '_b'] = box_file
@@ -131,19 +146,19 @@ class GenericForm(GridLayout):
         drop_box.height = self.children_height
         drop_box.add_widget(main_button)
 
-        self.add_widget(label)
-        self.add_widget(drop_box)
+        self.topLayout.add_widget(label)
+        self.topLayout.add_widget(drop_box)
         self.ids[field_name] = dropdown
         self.ids[field_name + '_l'] = label
         self.ids[field_name + '_b'] = drop_box
 
     def get_value(self, field_name):
-        for c in self.children:
+        for c in self.topLayoutchildren:
             if isinstance(c, TextInput) and c.id == field_name:
                 return c.text
 
     def get_widget(self, field_name):
-        for c in self.children:
+        for c in self.topLayout.children:
             if c.id == field_name:
                 return c
 
@@ -158,17 +173,36 @@ class GenericForm(GridLayout):
         for lb in self.labels:
             lb.parent.width = max_size
 
+        if self.topLayout.height <= 0:
+            self.topLayout.height = (self.get_height() - self.topLayout.padding[1]
+                                     - self.topLayout.padding[3])
+
+        scroll = None
+        for widget in self.children:
+            if isinstance(widget, VertScrollBar):
+                scroll = widget
+                break
+
+        if self.scroll.viewport_size[1] > self.height:
+            if not scroll:
+                self.scroll_bar = VertScrollBar(self.scroll)
+                self.add_widget(self.scroll_bar)
+        elif scroll:
+            self.remove_widget(scroll)
+            self.scroll_bar = None
+
     def add_file_list(self, input_widget, field_name=''):
         label = self.add_label('')
         top_grid = FileGrid(input_widget)
 
-        self.add_widget(label)
-        self.add_widget(top_grid)
+        self.topLayout.add_widget(label)
+        self.topLayout.add_widget(top_grid)
         self.ids[field_name] = top_grid
 
     def get_height(self):
-        return ((self.children_height + self.spacing[1]) * (len(self.children) // 2)
-                + self.padding[1] + self.padding[3])
+        return ((self.children_height + self.topLayout.spacing[1])
+                * (len(self.topLayout.children) // 2)
+                + self.topLayout.padding[1] + self.topLayout.padding[3])
 
     def link_file_list(self, file_list_id, input_id):
         button = self.ids[input_id].parent.children[0].children[0]
@@ -180,8 +214,8 @@ class GenericForm(GridLayout):
 
     def hide_field(self, field_name, hide=True, start_index=0):
         if hide:
-            self.remove_widget(self.ids[field_name + '_l'])
-            self.remove_widget(self.ids[field_name + '_b'])
+            self.topLayout.remove_widget(self.ids[field_name + '_l'])
+            self.topLayout.remove_widget(self.ids[field_name + '_b'])
         else:
-            self.add_widget(self.ids[field_name + '_l'], index=start_index)
-            self.add_widget(self.ids[field_name + '_b'], index=start_index)
+            self.topLayout.add_widget(self.ids[field_name + '_l'], index=start_index)
+            self.topLayout.add_widget(self.ids[field_name + '_b'], index=start_index)

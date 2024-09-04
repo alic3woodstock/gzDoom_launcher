@@ -25,7 +25,7 @@ class FrmGames(ModalWindow):
         super().__init__(dialog, **kwargs)
         self.popup = MyPopup()
 
-        self.genericForm = GenericForm()
+        self.genericForm = GenericForm(height=666)
         self.genericForm.add_text_field(text='Name:', field_name='name')
         self.genericForm.add_checkbox_field(text='Is a Mod', field_name='ismod')
         self.genericForm.add_file_field(text='Game Exec.:', field_name='gamexec')
