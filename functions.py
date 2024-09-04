@@ -1,6 +1,7 @@
 import hashlib
 import logging
 import os
+from time import ctime, strftime
 
 LOGLEVEL = logging.ERROR
 FORMAT = '%(levelname)s: %(asctime)s - %(message)s'
@@ -18,12 +19,16 @@ button_width = 128
 
 def log(text, error=True):
     from dataPath import data_path
-    log_file = logging.getLogger(__name__)
-    logging.basicConfig(filename=data_path().logFile, encoding='utf-8', level=LOGLEVEL, format=FORMAT)
+    ctime()
+    log_text = ''
     if error:
-        log_file.error(text)
-    else:
-        log_file.debug(text)
+        log_text = '[ERROR] ' + strftime("%Y-%m-%d %H:%M:%S") + ' - ' + text + '\n'
+    elif LOGLEVEL == logging.DEBUG:
+        log_text = '[DEBUG] ' + strftime("%Y-%m-%d %H:%M:%S") + ' - ' + text + '\n'
+    if log_text.strip():
+        with open(data_path().logFile, 'a') as log_file:
+            log_file.writelines(log_text)
+            log_file.close()
 
 
 def filehash(file_name):

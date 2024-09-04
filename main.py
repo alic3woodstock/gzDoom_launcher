@@ -405,6 +405,7 @@ class GzdLauncher(App):
         return self.frmGzLauncher
 
     def on_start(self):
+        DataPath()
         monitors = get_monitors()
         m_height = 4096
         for m in monitors:
@@ -414,7 +415,6 @@ class GzdLauncher(App):
         if Metrics.dpi > 120 and m_height <= 1080:  # fix for 1080p and 150% zoom on windows
             Window.fullscreen = 'auto'
 
-        DataPath()
         os.chdir(data_path().data)
         self.title = "GZDoom Launcher"
         self.icon = data_path().pentagram
