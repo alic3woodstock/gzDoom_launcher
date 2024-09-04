@@ -1,4 +1,8 @@
+from os import remove
+
 from dataFunctions import connect_db
+from dataPath import data_path
+from functions import log
 from gameDef import GameDef
 
 
@@ -8,6 +12,8 @@ def delete_game_table():
     data_con.exec_sql("""DROP TABLE IF EXISTS files;""")
     data_con.exec_sql("""DROP TABLE IF EXISTS gamedef;""")
     data_con.exec_sql("""DROP TABLE IF EXISTS groups""")
+    data_con.exec_sql("""DROP TABLE IF EXISTS tabs""")
+    data_con.exec_sql("""DROP TABLE IF EXISTS downloadlist""")
     data_con.commit()
     data_con.close_connection()
 

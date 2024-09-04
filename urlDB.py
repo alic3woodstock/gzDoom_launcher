@@ -69,7 +69,7 @@ def insert_default_urls(data_con=None):
 
     # maps
     idg_mirror = "https://youfailit.net/pub/idgames"
-    params = [idg_mirror + "/levels/doom2/megawads/av.zip", "av.zip",
+    params = ["https://doom2.net/av/av.zip", "av.zip",
               "5c5382cc50b565946b6725b3058cc1fdefe7367ee3067808068900117aabf8fc"]
     data_con.exec_sql(sql, params)
     params = [idg_mirror + "/levels/doom2/Ports/megawads/aaliens.zip", "aaliens.zip",
@@ -78,8 +78,8 @@ def insert_default_urls(data_con=None):
     params = [idg_mirror + "/levels/doom2/megawads/btsx_e1.zip", "btsx_e1.zip",
               "9f6d2fba63e20e2fddd5a1012813da1087b751f9311d3d8bf4757f69373c2c9a"]
     data_con.exec_sql(sql, params)
-    params = [idg_mirror + "/levels/doom2/megawads/btsx_e2.zip", "btsx_e2.zip",
-              "2365b9ff5884027523553519830884cc85106c483fdf19c0f2bbe75155b60331"]
+    params = ["https://esselfortium.net/wasd/btsx_e2.zip", "btsx_e2.zip",
+              "1bc72e790aa5438ae3e7b51c3578cde4a2007b14b69337da75848996c686c7ab"]
     data_con.exec_sql(sql, params)
     params = ["https://www.dropbox.com/s/vi47z1a4e4c4980/Sunder%202407.zip?dl=1", "sunder.zip",
               "c11bb7bb6f601b0badbed58f23d04e8b8f352795ebee66074645329d3f17fd2e"]

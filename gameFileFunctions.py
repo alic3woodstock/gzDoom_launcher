@@ -243,7 +243,10 @@ class GameFileFunctions:
             if url.url.find("moddb") >= 0:
                 url.url = get_moddb_url(url.url)
 
-            r = get(url.url, stream=True)
+            headers = {'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                                     'Chrome/128.0.0.0 Safari/537.36'}
+
+            r = get(url.url, stream=True, headers=headers)
             with open(url.get_file_path(), "wb") as downloadF:
                 total_length = r.headers.get('content-length')
                 if total_length is None:

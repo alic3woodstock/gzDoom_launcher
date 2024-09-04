@@ -32,7 +32,7 @@ CREATE_DOWNLOADLIST = """CREATE TABLE IF NOT EXISTS downloadlist(
                 id integer PRIMARY KEY AUTOINCREMENT,
                 url text ,
                 filename text UNIQUE ,
-                sha_hash text UNIQUE)
+                sha_hash text)
             """
 
 

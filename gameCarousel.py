@@ -94,6 +94,7 @@ class GameCarousel(BoxLayout):
     def clear_tabs(self):
         self.carousel.clear_widgets()
         self.topPanel.clear_widgets()
+        self.modList = []
 
     def btn_title_on_state(self, widget, value):
         if value == 'down':
@@ -107,7 +108,6 @@ class GameCarousel(BoxLayout):
         self.dropDown.clear_widgets()
 
         mod_button = DropDownItem(self.noMod)
-        # mod_button.bind(on_press=self.btnDrop_on_press)
         self.dropDown.add_widget(mod_button)
 
         if widget:
