@@ -42,8 +42,6 @@ class FrmHelpControls(ModalWindow):
         self.create_box_buttons(
             '', 'Ok')
         self.canvas.add(Callback(self.update_form))
-
-        self.dialog.width = Window.width
         self.dialog.height = (button_height * 2  # box buttons height + tithe height
                               + self.genericForm.get_height())
 
