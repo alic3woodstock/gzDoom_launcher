@@ -26,6 +26,7 @@ Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
 import functions
 import subprocess
+from frmHelpControls import FrmHelpControls
 from frmImportDoom import FrmImportDoom
 from gzdoomUpdate import GZDoomUpdate
 from screeninfo import get_monitors
@@ -137,6 +138,7 @@ class FrmGzdlauncher(BoxLayout):
         menu_app.add_item('Settings')
         menu_app.add_item('Exit')
 
+        menu_help.add_item('Controls')
         menu_help.add_item('About')
 
         self.menuApp = menu_app
@@ -226,6 +228,8 @@ class FrmGzdlauncher(BoxLayout):
     def menu_help_on_select(self, _widget, data):
         self.popup.title = data.text
         if data.index == 0:
+            self.popup.content = FrmHelpControls(self.popup)
+        elif data.index == 1:
             self.popup.content = Dialog(self.popup, text="GZDoom launcher " + functions.APPVERSION
                                                          + "\nBy Alice Woodstock 2022-2024",
                                         txt_cancel='OK', txt_ok='', icon='pentagram')
