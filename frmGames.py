@@ -24,8 +24,11 @@ class FrmGames(ModalWindow):
     def __init__(self, dialog, game=None, **kwargs):
         super().__init__(dialog, **kwargs)
         self.popup = MyPopup()
-
-        self.genericForm = GenericForm(height=666)
+        if Window.height < 768:
+            self.genericForm = GenericForm(height=666)
+        else:
+            self.genericForm = GenericForm()
+            self.genericForm.topLayout.size_hint = (1, 1)
         self.genericForm.add_text_field(text='Name:', field_name='name')
         self.genericForm.add_checkbox_field(text='Is a Mod', field_name='ismod')
         self.genericForm.add_file_field(text='Game Exec.:', field_name='gamexec')
@@ -58,7 +61,7 @@ class FrmGames(ModalWindow):
         self.create_box_buttons(
             'OK', 'Cancel')
         self.game = game
-        self.dialog.size = Window.size
+        self.dialog.height = Window.height
         self.btnOk.bind(on_release=self.btnok_on_release)
         self.genericForm.ids.ismod.button.bind(on_release=self.ismod_on_release)
 

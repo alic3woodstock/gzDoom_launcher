@@ -1,4 +1,5 @@
 from kivy.clock import Clock
+from kivy.core.window import Window
 from kivy.graphics import Callback, Rectangle, Color, Line
 from kivy.properties import AliasProperty, NumericProperty
 from kivy.uix.boxlayout import BoxLayout
@@ -106,6 +107,8 @@ class ModalWindow(MyBoxLayout):
             if not self.dialog.closeButton.icon:
                 self.dialog.closeButton.icon = (
                     Icon('close', button_margin=10, color=background_color))
+            self.dialog.width = int(Window.height / 3 * 4)
+
         self.buttons = []
         self.borders = ['left', 'bottom', 'right']
 
@@ -336,7 +339,6 @@ class FileProgress(FileChooserProgress):
         self.label_progres = Label(text=str(self.index))
         self.add_widget(self.label_progres)
         self.add_widget(self.progress)
-
 
         self.canvas.add(Callback(self.update_layout))
 

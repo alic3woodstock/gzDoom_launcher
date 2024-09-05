@@ -60,10 +60,9 @@ class FrmSettings(ModalWindow):
                        + self.genericForm.get_height()
                        + layout1.height + layout2.height + 4)
         if form_height > Window.height:
-            self.dialog.size = Window.size
+            self.dialog.height = Window.height
         else:
             self.dialog.height = form_height
-            self.dialog.width = Window.width
         self.canvas.add(Callback(self.update_form))
 
     def update_form(self, _instr):

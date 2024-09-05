@@ -12,7 +12,7 @@ class FrmManageGames(ModalWindow):
 
     def __init__(self, dialog, **kwargs):
         super().__init__(dialog, **kwargs)
-        self.dialog.size = Window.size
+        self.dialog.height = Window.height
         self.popup = MyPopup()
         self.popup.bind(on_dismiss=self.popup_dismiss)
         self.grid = None

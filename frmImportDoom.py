@@ -34,7 +34,6 @@ class FrmImportDoom(ModalWindow):
         self.create_box_buttons(
             'OK', 'Cancel')
         self.btnOk.bind(on_release=self.btn_ok_on_press)
-        self.dialog.width = Window.width
         self.dialog.height = (button_height * 2  # box buttons height + tithe height
                               + self.genericForm.get_height())
 
