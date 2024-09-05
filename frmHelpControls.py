@@ -1,4 +1,3 @@
-from kivy.core.window import Window
 from kivy.graphics import Callback
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.label import Label
@@ -16,7 +15,6 @@ class FrmHelpControls(ModalWindow):
 
         self.genericForm = GenericForm()
         self.labels = []
-        label_l = []
         text = ['Left Arrow:', 'Previous Tab',
                 'Right Arrow:', 'Next Tab',
                 'Up Arrow:', 'Previous Game',
@@ -46,7 +44,5 @@ class FrmHelpControls(ModalWindow):
                               + self.genericForm.get_height())
 
     def update_form(self, _instr):
-        for l in self.labels:
-            l.width = l.texture_size[0]
-            print(l.width)
-            print(l.parent.width)
+        for label in self.labels:
+            label.width = label.texture_size[0]
