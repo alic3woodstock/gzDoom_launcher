@@ -85,6 +85,10 @@ class Credits:
                 self.name = 'Scythe 2 and Scythe X'
                 self.author = 'Erik Alm'
                 self.url = 'https://www.doom2.net/erik/'
+            case "sigil2":
+                self.name = 'Sigil II'
+                self.author = 'John Romero'
+                self.url = 'https://romero.com/'
             case "sunder":
                 self.name = 'Sunder'
                 self.author = 'Insane_Gazebo'

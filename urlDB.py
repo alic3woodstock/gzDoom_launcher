@@ -120,6 +120,10 @@ def insert_default_urls(data_con=None):
     params = [idg_mirror + "/levels/doom2/Ports/s-u/scythex.zip", "scythex.zip",
               "f214b580fd30855c02db0fe509b5939052a6c52eae03044f9b216bdf5598b5b4"]
     data_con.exec_sql(sql, params)
+    params = ["https://romero.com/s/SIGIL_II_V1_0.zip", "sigil2.zip",
+              "41741ce797e6faf9ebd0e3d577b5eaf9a648b64d850fbd741c1b9c28d8461017"]
+    data_con.exec_sql(sql, params)
+
     params = [idg_mirror + "/levels/doom2/Ports/megawads/sunlust.zip", "sunlust.zip",
               "46bc1fe72abec5ad06739b91657f3ed2fed1fda967cd38e6faa4a1701999d64a"]
     data_con.exec_sql(sql, params)
