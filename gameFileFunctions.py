@@ -1,23 +1,21 @@
 import math
 import os
 import shutil
-import stat
 from tarfile import open as TarFile
 from zipfile import ZipFile
 
 from kivy.clock import Clock
 from py7zr import SevenZipFile
-from requests import get
 
 from configDB import update_gzdoom_version, read_config, write_config
 from createDB import create_game_table
 from dataPath import data_path
-from functions import (log as write_log, filehash, WINE_GZDOOM, RE_DOWNLOAD)
+from functions import (log as write_log, filehash, WINE_GZDOOM, RE_DOWNLOAD, log)
 from gameDef import GameDef
 from gameDefDB import delete_game_table, insert_game
 from gzdoomUpdate import GZDoomUpdate
 from url import Url
-from urlDB import insert_default_urls, select_default_urls, get_moddb_url
+from urlDB import insert_default_urls, select_default_urls
 
 
 def create_db():
@@ -236,44 +234,6 @@ class GameFileFunctions:
             Clock.unschedule(self.clock.get_callback())
             Clock.schedule_once(self.clock.get_callback())
 
-    def download_file(self, url):
-        # updates dialog based on a fixed max range since I don't know the total size of all files before download
-        # each file.
-        if not os.path.isfile(url.get_file_path()):
-            if url.url.find("moddb") >= 0:
-                url.url = get_moddb_url(url.url)
-
-            headers = {'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                                     'Chrome/128.0.0.0 Safari/537.36'}
-
-            r = get(url.url, stream=True, headers=headers)
-            with open(url.get_file_path(), "wb") as downloadF:
-                total_length = r.headers.get('content-length')
-                if total_length is None:
-                    total_length = 0
-                else:
-                    total_length = int(total_length)
-                i = 1024
-
-                for chunk in r.iter_content(chunk_size=1024):
-                    if chunk:
-                        if total_length > 0:
-                            # Adding 1 prevents dialog freezes even with download completed
-                            str_total = str(total_length // 1024)
-                        else:
-                            str_total = "..."
-                        downloadF.write(chunk)
-                    if i < total_length:
-                        self.value = math.floor(self.value) + (i / total_length)
-
-                    i += 1024
-
-                    self.message = "Downloading file " + str(self.currentDownload) \
-                                   + "/" + str(self.totalDownloads) + ": " \
-                                   + str(i // 1024) + "k of " + str_total + "k"
-
-        self.currentDownload += 1
-
     def verify_update(self):
         self.done = False
         self.max_range = 1
@@ -364,6 +324,27 @@ class GameFileFunctions:
             write_log(e)
 
         return result
+
+    def download_file(self, url):
+        if not os.path.isfile(url.get_file_path()):
+            url.on_progress = self.url_on_progress
+            url.on_failure = self.url_on_failure
+            url.download()
+
+        self.currentDownload += 1
+
+    def url_on_progress(self, _request, current_size, total_size):
+        # updates dialog based on a fixed max range since I don't know the total size of all files before download
+        # each file.
+        if current_size < total_size:
+            self.value = math.floor(self.value) + (current_size / total_size)
+        self.message = "Downloading file " + str(self.currentDownload) \
+                       + "/" + str(self.totalDownloads) + ": " \
+                       + str(current_size // 1024) + "k of " + str(total_size // 1024) + "k"
+
+    @staticmethod
+    def url_on_failure(request, result):
+        log(str(request) + ': ' + str(result))
 
 
 class GameFile:

@@ -26,6 +26,7 @@ Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
 import functions
 import subprocess
+from frmCredits import FrmCredits
 from frmHelpControls import FrmHelpControls
 from frmImportDoom import FrmImportDoom
 from gzdoomUpdate import GZDoomUpdate
@@ -139,6 +140,7 @@ class FrmGzdlauncher(BoxLayout):
         menu_app.add_item('Exit')
 
         menu_help.add_item('Controls')
+        menu_help.add_item('Credits')
         menu_help.add_item('About')
 
         self.menuApp = menu_app
@@ -172,6 +174,12 @@ class FrmGzdlauncher(BoxLayout):
                 game_tabs.spacebar()
             elif keycode[1] == 'enter':
                 self.btn_run_on_press(None)
+            elif keycode[1] == 'f11':
+                if Window.fullscreen != 'auto':
+                    Window.fullscreen = 'auto'
+                else:
+                    Window.fullscreen = 0
+
         elif isinstance(self.popup.content, FrmManageGames):
             if keycode[1] == 'down':
                 self.popup.content.topGrid.load_next()
@@ -227,9 +235,12 @@ class FrmGzdlauncher(BoxLayout):
 
     def menu_help_on_select(self, _widget, data):
         self.popup.title = data.text
+        print(data.index)
         if data.index == 0:
             self.popup.content = FrmHelpControls(self.popup)
         elif data.index == 1:
+            self.popup.content = FrmCredits(self.popup)
+        elif data.index == 2:
             self.popup.content = Dialog(self.popup, text="GZDoom launcher " + functions.APPVERSION
                                                          + "\nBy Alice Woodstock 2022-2024",
                                         txt_cancel='OK', txt_ok='', icon='pentagram')

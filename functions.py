@@ -18,6 +18,7 @@ button_width = 128
 
 
 def log(text, error=True):
+    text = str(text)
     from dataPath import data_path
     ctime()
     log_text = ''

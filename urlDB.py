@@ -1,21 +1,4 @@
-import requests
-
 from dataFunctions import connect_db
-
-
-def get_moddb_url(modb_url):
-    r = requests.get(modb_url, stream=False)
-    tmp_str = r.text
-    start = tmp_str.find('/downloads/start')
-    end = tmp_str.find('"', start)
-    tmp_str = tmp_str[start:end].strip()
-    r = requests.get('https://moddb.com' + tmp_str, stream=False)
-    tmp_str = r.text
-    start = tmp_str.find('/downloads/mirror/')
-    end = tmp_str.find('"', start)
-    tmp_str = tmp_str[start:end]
-    tmp_str = 'https://moddb.com' + tmp_str
-    return tmp_str
 
 
 def insert_default_urls(data_con=None):

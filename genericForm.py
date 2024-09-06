@@ -201,7 +201,7 @@ class GenericForm(BoxLayout):
 
     def get_height(self):
         return ((self.children_height + self.topLayout.spacing[1])
-                * (len(self.topLayout.children) // 2)
+                * (len(self.topLayout.children) // self.topLayout.cols)
                 + self.topLayout.padding[1] + self.topLayout.padding[3])
 
     def link_file_list(self, file_list_id, input_id):

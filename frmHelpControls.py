@@ -21,6 +21,7 @@ class FrmHelpControls(ModalWindow):
                 'Down Arrow:', 'Next Game',
                 'Space:', 'Change Mod',
                 'Enter:', 'Run Game',
+                'F11:', 'Fullscreen',
                 'Esc:', 'Close Dialog / Exit']
 
         for i in range(0, len(text), 1):

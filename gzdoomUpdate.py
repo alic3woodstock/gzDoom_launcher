@@ -1,7 +1,5 @@
 from os import path, name as os_name, remove, mkdir
 
-from requests import get
-
 from configDB import check_gzdoom_version
 from dataPath import data_path
 from functions import filehash, log as write_log, WINE_GZDOOM
@@ -48,9 +46,9 @@ class GZDoomUpdate:
 
 
 def get_gz_doom_url(gzdoom_windows):
-    r = get("https://github.com/coelckers/gzdoom/releases/latest", stream=False)
-
-    tmp_str = r.text
+    # r = get("https://github.com/coelckers/gzdoom/releases/latest", stream=False)
+    r = Url("https://github.com/coelckers/gzdoom/releases/latest", '').get_html()
+    tmp_str = r.result
     start = tmp_str.find("https://github.com/ZDoom/gzdoom/releases/expanded_assets")
     end = tmp_str.find('"', start)
     tmp_str = tmp_str[start:end].strip()
@@ -58,8 +56,8 @@ def get_gz_doom_url(gzdoom_windows):
     version = tmp_str[start:].strip()
     version = version[version.find('g') + 1:]
 
-    r = get(tmp_str)
-    tmp_str = r.text
+    r = Url(tmp_str, '').get_html()
+    tmp_str = r.result
 
     start = tmp_str.find("/ZDoom/gzdoom/releases/download")
     tmp_str = tmp_str[start:]

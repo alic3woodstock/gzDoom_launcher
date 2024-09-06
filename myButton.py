@@ -1,3 +1,5 @@
+from webbrowser import open as open_url
+
 from kivy.graphics import Color, Line, Callback, Rectangle
 from kivy.metrics import Metrics
 from kivy.uix.anchorlayout import AnchorLayout
@@ -5,6 +7,7 @@ from kivy.uix.behaviors.togglebutton import ToggleButtonBehavior
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import CoreLabel, Label
+from kivy.uix.label import CoreMarkupLabel
 
 from functions import text_color, highlight_color, background_color, button_height
 from icon import Icon
@@ -25,7 +28,7 @@ class MyButton(Button):
         padding = [self.width / 2 - self.texture_size[0] / 2, self.height / 2 - self.texture_size[1] / 2]
         label = CoreLabel(text=self.text, color=self.text_color,
                           font_size=self.font_size, font=self.font_name,
-                          halign='center', valign='center', padding=padding)
+                          halign='center', valign='center', padding=padding, markup=self.markup)
         label.refresh()
         if self.state == 'normal':
             with self.canvas.after:
@@ -58,6 +61,35 @@ class MyButton(Button):
         self.canvas.after.clear()
         self.draw_button()
         self.canvas.ask_update()
+
+
+class HTMLButton(MyButton):
+    def __init__(self, url, **kwargs):
+        super().__init__(**kwargs)
+        self.url = url
+        self.markup = True
+        self.text = '[u]' + url + '[/u]'
+
+    def draw_button(self):
+        padding = [self.width / 2 - self.texture_size[0] / 2, self.height / 2 - self.texture_size[1] / 2]
+        if self.state == 'down':
+            color = self.highlight_color
+        else:
+            color = self.text_color
+        label = CoreMarkupLabel(text=self.text, color=color,
+                                font_size=self.font_size, font=self.font_name,
+                                halign='center', valign='center', padding=padding, markup=self.markup)
+        label.refresh()
+
+        with self.canvas.after:
+            Color(rgba=self.background_color)
+            Rectangle(pos=self.pos, size=(self.width, self.height + 1))
+            Color(rgba=self.text_color)
+            text = label.texture
+            Rectangle(pos=self.pos, size=self.size, texture=text)
+
+    def on_release(self):
+        open_url(self.url)
 
 
 class MyToggleButton(ToggleButtonBehavior, MyButton):
@@ -128,6 +160,9 @@ class TopMenuButton(MyToggleButton):
 
 
 class MyCheckBoxButton(MyToggleButton):
+    @property
+    def active(self):
+        return self.state == 'down'
 
     def __init__(self, **kwargs):
         super().__init__(icon=Icon('maximize'), **kwargs)
@@ -138,7 +173,6 @@ class MyCheckBoxButton(MyToggleButton):
             self.icon = Icon('check', color=highlight_color, line_width=1)
         else:
             self.icon = Icon('maximize', line_width=1)
-        self.active = self.state == 'down'
         self.icon.buttonMargin = 0
 
     def update_button(self, instr):
