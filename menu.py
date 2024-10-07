@@ -16,6 +16,7 @@ class Menu(DropDown):
         self.width = 256
         layout = MyBoxLayout()
         layout.size_hint = (1, None)
+        layout.padding = [2, 0, 2, 0]
         layout.lineWidth = 1
         layout.orientation = 'vertical'
         self.layout = layout
@@ -41,7 +42,7 @@ class Menu(DropDown):
         self.width = 0
         for btn in self.layout.children:
             if btn.texture_size[0] > self.width:
-                self.width = btn.texture_size[0] + 16
+                self.width = btn.texture_size[0] + 32
 
 
 class MenuItem(Button):

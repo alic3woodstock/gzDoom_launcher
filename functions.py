@@ -1,6 +1,10 @@
+import gettext
 import hashlib
 import logging
 import os
+
+from babel.messages.pofile import read_po
+from babel.messages.mofile import write_mo
 from time import ctime, strftime
 
 LOGLEVEL = logging.ERROR
@@ -47,3 +51,25 @@ def filehash(file_name):
 def version_number():
     str_version = APPVERSION.replace(".", "")
     return int(str_version)
+
+
+def set_language(lang):
+    root = os.path.realpath(__file__)
+    root = root.replace('functions.py', '')
+    locale_path = str(root) + 'locale'
+    try:
+        file = open(locale_path + '/' + lang + '.po', 'r')
+        catalog = read_po(file, locale=lang, domain='gzdl_messages')
+        file.close()
+        if not os.path.isdir(locale_path + '/' + lang):
+            os.mkdir(locale_path + '/' + lang)
+        if not os.path.isdir(locale_path + '/' + lang + '/LC_MESSAGES'):
+            os.mkdir(locale_path + '/' + lang + '/LC_MESSAGES/')
+        file = open(locale_path + '/' + lang + '/LC_MESSAGES/' + catalog.domain + '.mo', 'wb')
+        write_mo(file, catalog, True)
+        file.close()
+        function = gettext.translation('gzdl_messages', locale_path, languages=[lang])
+        function.install()
+    except Exception as e:
+        print(e)
+        set_language('en')

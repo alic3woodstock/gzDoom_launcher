@@ -26,6 +26,7 @@ Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
 import functions
 import subprocess
+from functions import set_language
 from frmCredits import FrmCredits
 from frmHelpControls import FrmHelpControls
 from frmImportDoom import FrmImportDoom
@@ -58,6 +59,9 @@ from dataPath import DataPath, data_path
 class FrmGzdlauncher(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        set_language('en')
+
         self.orientation = 'vertical'
         self.padding = 1
 
@@ -116,32 +120,32 @@ class FrmGzdlauncher(BoxLayout):
 
         menu_app = Menu()
         menu_app.bind(on_select=self.menu_app_on_select)
-        btn_menu_app = TopMenuButton(menu_app, text='Application')
+        btn_menu_app = TopMenuButton(menu_app, text=_('Application'))
         self.main_menu.add_widget(btn_menu_app)
 
         menu_games = Menu()
         menu_games.bind(on_select=self.menu_games_on_select)
-        btn_menu_games = TopMenuButton(menu_games, text='Games')
+        btn_menu_games = TopMenuButton(menu_games, text=_('Games'))
         self.main_menu.add_widget(btn_menu_games)
 
         menu_help = Menu()
         menu_help.bind(on_select=self.menu_help_on_select)
-        btm_menu_help = TopMenuButton(menu_help, text='Help')
+        btm_menu_help = TopMenuButton(menu_help, text=_('Help'))
         self.main_menu.add_widget(btm_menu_help)
 
-        menu_games.add_item('Manage Games')
-        menu_games.add_item('Reset to Default')
-        menu_games.add_item('Import Doom + Domm II 2014')
-        menu_games.add_item('Replace freedoom2.wad')
-        menu_games.add_item('Replace blasphemer.wad')
+        menu_games.add_item(_('Manage Games'))
+        menu_games.add_item(_('Reset to Default'))
+        menu_games.add_item(_('Import Doom + Doom II 2024'))
+        menu_games.add_item(_('Replace freedoom2.wad'))
+        menu_games.add_item(_('Replace blasphemer.wad'))
 
-        menu_app.add_item('Update GZDoom')
-        menu_app.add_item('Settings')
-        menu_app.add_item('Exit')
+        menu_app.add_item(_('Update GZDoom'))
+        menu_app.add_item(_('Settings'))
+        menu_app.add_item(_('Exit'))
 
-        menu_help.add_item('Controls')
-        menu_help.add_item('Credits')
-        menu_help.add_item('About')
+        menu_help.add_item(_('Controls'))
+        menu_help.add_item(_('Credits'))
+        menu_help.add_item(_('About'))
 
         self.menuApp = menu_app
         self.menuGames = menu_games
@@ -205,7 +209,7 @@ class FrmGzdlauncher(BoxLayout):
         return True
 
     def btn_run_on_press(self, _widget):
-        self.popup.content = EmptyDialog(self.popup, 'Loading...')
+        self.popup.content = EmptyDialog(self.popup, _('Loading...'))
         self.popup.title = ''
         self.popup.open()
         Clock.schedule_once(self.run_game, 1)
@@ -217,9 +221,9 @@ class FrmGzdlauncher(BoxLayout):
             self.popup.content = dialog
         elif data.index == 1:
             dialog = Dialog(self.popup,
-                            text="This will reset game database to the default values.\n"
-                                 + "Do you want to continue?",
-                            txt_cancel='No', txt_ok='Yes', icon='exclamation')
+                            text=_("This will reset game database to the default values.\n"
+                                   + "Do you want to continue?"),
+                            txt_cancel=_('No'), txt_ok=_('Yes'), icon='exclamation')
             dialog.btnOk.bind(on_release=self.btn_yes1_on_press)
             self.popup.content = dialog
         elif data.index == 2:
@@ -229,28 +233,27 @@ class FrmGzdlauncher(BoxLayout):
         elif data.index == 4:
             self.popup.content = FrmReplaceWad(self.popup, mod_group=2)
         else:
-            self.popup.content = Dialog(self.popup, text='Under construction', txt_cancel='OK', txt_ok='',
+            self.popup.content = Dialog(self.popup, text=_('Under construction'), txt_cancel=_('OK'), txt_ok='',
                                         icon='information')
         self.popup.open()
 
     def menu_help_on_select(self, _widget, data):
         self.popup.title = data.text
-        print(data.index)
         if data.index == 0:
             self.popup.content = FrmHelpControls(self.popup)
         elif data.index == 1:
             self.popup.content = FrmCredits(self.popup)
         elif data.index == 2:
             self.popup.content = Dialog(self.popup, text="GZDoom launcher " + functions.APPVERSION
-                                                         + "\nBy Alice Woodstock 2022-2024",
+                                                         + _("\nBy Alice Woodstock 2022-2024"),
                                         txt_cancel='OK', txt_ok='', icon='pentagram')
         else:
-            self.popup.content = Dialog(self.popup, text='Under construction', txt_cancel='OK', txt_ok='',
+            self.popup.content = Dialog(self.popup, text=_('Under construction'), txt_cancel='OK', txt_ok='',
                                         icon='information')
         self.popup.open()
 
     def btn_yes1_on_press(self, _widget):
-        progress = Progress(self.popup, text='Starting')
+        progress = Progress(self.popup, text=_('Starting'))
         self.popup.content = progress
         game_file = GameFileFunctions()
         progress_clock = Clock.schedule_interval(partial(self.progress_update, progress, game_file), 0.1)
@@ -259,7 +262,7 @@ class FrmGzdlauncher(BoxLayout):
         thread.start()
 
     def btn_update_on_press(self, gzdoom_update):
-        progress = Progress(self.popup, text='Updating GZDoom...')
+        progress = Progress(self.popup, text=_('Updating GZDoom...'))
         self.popup.content = progress
         self.popup.width = 600
         self.popup.height = 200
@@ -277,7 +280,7 @@ class FrmGzdlauncher(BoxLayout):
         progress.max = game_file.max_range
         progress.update_progress(game_file.value, game_file.message)
         if game_file.done:
-            self.popup.content = Dialog(self.popup, text=game_file.message, txt_cancel='OK', txt_ok='',
+            self.popup.content = Dialog(self.popup, text=game_file.message, txt_cancel=_('OK'), txt_ok='',
                                         icon='information')
 
     def menu_app_on_select(self, _widget, data):
@@ -290,7 +293,7 @@ class FrmGzdlauncher(BoxLayout):
             elif data.index == 1:
                 self.popup.content = FrmSettings(self.popup)
             else:
-                self.popup.content = Dialog(self.popup, text='Under contruction', txt_cancel='OK', txt_ok='',
+                self.popup.content = Dialog(self.popup, text=_('Under contruction'), txt_cancel='OK', txt_ok='',
                                             icon='information')
 
             self.popup.open()
@@ -402,8 +405,8 @@ class FrmGzdlauncher(BoxLayout):
     def check_gzdoom_update(self, _clock=None):
         gzdoom_update = GZDoomUpdate()
         if gzdoom_update.check_gzdoom_update():
-            dialog = Dialog(self.popup, "A new version of GZDoom was found, update now?",
-                            txt_ok='Yes', txt_cancel='No', icon='question')
+            dialog = Dialog(self.popup, _("A new version of GZDoom was found, update now?"),
+                            txt_ok=_('Yes'), txt_cancel=_('No'), icon='question')
             self.popup.content = dialog
             dialog.btnOk.bind(on_release=lambda f: self.btn_update_on_press(gzdoom_update))
         else:
@@ -437,21 +440,20 @@ class GzdLauncher(App):
         if not os.path.isfile(data_path().db):
             create_game_table()
             dialog = Dialog(self.frmGzLauncher.popup,
-                            text="Download default games now? (games -> reset to default)",
+                            text=_("Download default games now? (games -> reset to default)"),
                             txt_cancel='No', txt_ok='Yes', icon='exclamation')
             dialog.btnOk.bind(on_release=self.frmGzLauncher.btn_yes1_on_press)
             self.frmGzLauncher.popup.content = dialog
             self.frmGzLauncher.popup.open()
         else:
             update_database()
-
-        if read_config('checkupdate', 'bool'):
-            popup = self.frmGzLauncher.popup
-            popup.content = EmptyDialog(popup,
-                                        'Checking GZDoom version...')
-            popup.open()
-            Clock.schedule_once(callback=self.frmGzLauncher.check_gzdoom_update, timeout=1)
-        self.frmGzLauncher.read_db()
+            if read_config('checkupdate', 'bool'):
+                popup = self.frmGzLauncher.popup
+                popup.content = EmptyDialog(popup,
+                                            _('Checking GZDoom version...'))
+                popup.open()
+                Clock.schedule_once(callback=self.frmGzLauncher.check_gzdoom_update, timeout=1)
+            self.frmGzLauncher.read_db()
 
 
 if __name__ == '__main__':

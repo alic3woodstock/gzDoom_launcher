@@ -1,0 +1,103 @@
+# Translations template for GZDoom_launcher.
+# Copyright (C) 2024 Alice Woodstock
+# This file is distributed under the same license as the GZDoom_launcher
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: GZDoom_launcher 2.02.00\n"
+"Report-Msgid-Bugs-To: awxdeveloper@yahoo.com\n"
+"POT-Creation-Date: 2024-09-09 14:26-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Alice Woodstock <awxdeveloper@yahoo.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.16.0\n"
+
+msgid "Application"
+msgstr "Aplicação"
+
+msgid "Games"
+msgstr "Jogos"
+
+msgid "Help"
+msgstr "Ajuda"
+
+msgid "Manage Games"
+msgstr "Gerenciar Jogos"
+
+msgid "Reset to Default"
+msgstr "Reiniciar Banco de Dados"
+
+msgid "Import Doom + Doom II 2024"
+msgstr "Importar Doom + Doom II 2024"
+
+msgid "Replace freedoom2.wad"
+msgstr "Substituir freedoom2.wad"
+
+msgid "Replace blasphemer.wad"
+msgstr "Substituir blasphemer.wad"
+
+msgid "Update GZDoom"
+msgstr "Atualizar GZDoom"
+
+msgid "Settings"
+msgstr "Configurações"
+
+msgid "Exit"
+msgstr "Sair"
+
+msgid "Controls"
+msgstr "Controles"
+
+msgid "Credits"
+msgstr "Créditos"
+
+msgid "About"
+msgstr "Sobre"
+
+msgid "Loading..."
+msgstr "Carregando..."
+
+msgid ""
+"This will reset game database to the default values.\n"
+"Do you want to continue?"
+msgstr "Isto irá apagar todas as modificações realizadas.\n"
+"Deseja continuar?"
+
+msgid "No"
+msgstr "Não"
+
+msgid "Yes"
+msgstr "Sim"
+
+msgid "Download default games now? (games -> reset to default)"
+msgstr "Baixar jogos agora? (Jogos -> Reiniciar bnaco de dados)"
+
+msgid "Under construction"
+msgstr "Em construção"
+
+msgid "OK"
+msgstr "OK"
+
+msgid ""
+"\n"
+"By Alice Woodstock 2022-2024"
+msgstr "\nPor Alice Woodstock 2022-2024"
+
+msgid "Starting"
+msgstr "Iiniciando..."
+
+msgid "Updating GZDoom..."
+msgstr "Atualizando GZDoom..."
+
+msgid "A new version of GZDoom was found, update now?"
+msgstr "Existe uma nova versão do GZDoom, atualizar agora?"
+
+msgid "Checking GZDoom version..."
+msgstr "Verificando a versão do GZDoom..."
+

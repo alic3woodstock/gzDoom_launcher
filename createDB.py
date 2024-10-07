@@ -104,11 +104,11 @@ def update_database():
 
         sql = """REPLACE INTO tabs(tabindex, label, enabled)
             VALUES (?,?,?)"""
-        params = [-1, "Mods", True]
+        params = [-1, _("Mods"), True]
         data_con.exec_sql(sql, params)
-        params = [0, "Games", True]
+        params = [0, _("Games"), True]
         data_con.exec_sql(sql, params)
-        params = [1, "Maps", True]
+        params = [1, _("Maps"), True]
         data_con.exec_sql(sql, params)
 
         sql = """UPDATE gamedef SET tabindex=0 WHERE id IN (
@@ -153,11 +153,11 @@ def create_game_table():
 
     sql = """INSERT or IGNORE INTO tabs(tabindex, label, enabled)
         VALUES (?,?,?)"""
-    params = [-1, "Mods", True]
+    params = [-1, _("Mods"), True]
     data_con.exec_sql(sql, params)
-    params = [0, "Games", True]
+    params = [0, _("Games"), True]
     data_con.exec_sql(sql, params)
-    params = [1, "Maps", True]
+    params = [1, _("Maps"), True]
     data_con.exec_sql(sql, params)
 
     data_con.exec_sql(CREATE_GAMEDEF)
