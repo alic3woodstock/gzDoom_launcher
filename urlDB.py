@@ -70,8 +70,8 @@ def insert_default_urls(data_con=None):
     params = [idg_mirror + "/levels/doom2/Ports/megawads/eviternity.zip", "eviternity.zip",
               "ad2f8b73108df7e4d3843d46a9e903238ac7e321ae9281f8c61f67fb92983656"]
     data_con.exec_sql(sql, params)
-    params = ["https://eviternity-dl-eu.dfdoom.com/Eviternity-II.zip", "Eviternity-II.zip",
-              "b7dc107ad633a637a9e89473596faf8d973294c9e069f89c6c89f6fb66cf8f86"]
+    params = ["https://eviternity-dl-eu.dfdoom.com/Eviternity-II-Final.zip", "Eviternity-II-Final.zip",
+              "6ff39d964ef7b3306d8807208e6583a0c980e26f01ff6effb0f27e7ce3b3728d"]
     data_con.exec_sql(sql, params)
     params = [idg_mirror + "/levels/doom2/Ports/megawads/gd.zip", "gd.zip",
               "48accac85af296534565e4c6cbc4cb7312e70756012c327b3d7c1c14c9872dc9"]
