@@ -1,6 +1,7 @@
 import os
 from os import listdir
 from os.path import isdir
+from os.path import isfile
 from shutil import copy
 
 from kivy.core.window import Window
@@ -73,8 +74,8 @@ class FrmImportDoom(ModalWindow):
                 for f in files:
                     if f.lower() == 'doom.wad':
                         doomwad = file + f
-                        games.append(GameDef(0, 'Doom', free_id,
-                                             data_path().gzDoomExec, 1, 0, doomwad))
+                        # games.append(GameDef(0, 'Doom', free_id,
+                        #                      data_path().gzDoomExec, 1, 0, doomwad))
                     if f.lower() == 'doom2.wad':
                         doom2wad = file + f
                         games.append(GameDef(0, 'Doom II: Hell on Earth', free_id,
@@ -85,6 +86,15 @@ class FrmImportDoom(ModalWindow):
                     msg.alert('Doom2.wad not found!')
                 else:
                     for f in files:
+                        if f.lower() == 'sigil.wad':
+                            if isfile(data_path().map + 'sigil2.zip'):
+                                games.append(GameDef(0, 'Doom + Sigil + Sigil II', free_id,
+                                                     data_path().gzDoomExec, 1, 0, doomwad,
+                                                     [file + f, data_path().map + 'sigil2.zip']))
+                            else:
+                                games.append(GameDef(0, 'Doom + Sigil', free_id,
+                                                     data_path().gzDoomExec, 1, 0, doomwad,
+                                                     [file + f]))
                         if f.lower() == 'masterlevels.wad':
                             games.append(GameDef(0, 'Master Levels for Doom II', free_id,
                                                  data_path().gzDoomExec, 1, 0, doom2wad,
@@ -98,10 +108,6 @@ class FrmImportDoom(ModalWindow):
                         if f.lower() == 'nerve.wad':
                             games.append(GameDef(0, 'No Rest for the Living', free_id,
                                                  data_path().gzDoomExec, 1, 0, doom2wad,
-                                                 [file + f]))
-                        if f.lower() == 'sigil.wad':
-                            games.append(GameDef(0, 'Sigil', free_id,
-                                                 data_path().gzDoomExec, 1, 0, doomwad,
                                                  [file + f]))
                         if f.lower() == 'extras.wad':
                             extraswad = file + f
@@ -124,7 +130,7 @@ class FrmImportDoom(ModalWindow):
                         for g in games:
                             g.files.append(extraswad.strip())
 
-                    if len(games) < 8:
+                    if len(games) < 7:
                         msg.alert('Invalid Doom + Doom2 release!')
                     else:
                         can_save = True
