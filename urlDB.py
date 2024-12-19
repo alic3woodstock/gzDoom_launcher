@@ -30,9 +30,9 @@ def insert_default_urls(data_con=None):
     data_con.exec_sql(sql, params)
 
     # Space Cats Saga
-    params = ['https://www.moddb.com/mods/space-cats-saga-chapter-2-macrocosm/downloads/space-cats-saga',
-              "space_cats.7z", "b8d475467a0ddcffb3d9865299f16401bca5fb38292debbbb4a905278536c0ba"]
-    data_con.exec_sql(sql, params)
+    # params = ['https://www.moddb.com/downloads/start/269216',
+    #           "space_cats.zip", "f8685d4e60959f4d2106952aa28e453b8d44295cc43285b129960756eded18e8"]
+    # data_con.exec_sql(sql, params)
 
     # 150skins
     params = ["https://awxdeveloper.edu.eu.org/downloads/150skins.zip",  # my personal server
