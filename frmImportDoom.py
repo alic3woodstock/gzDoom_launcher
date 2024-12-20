@@ -1,11 +1,8 @@
 import os
-from os import listdir
 from os.path import isdir
 from os.path import isfile
-from shutil import copy
-
-from kivy.core.window import Window
-
+from functions import log
+from shutil import copy, rmtree
 from configDB import write_config, read_config
 from dataPath import data_path
 from functions import button_height
@@ -40,19 +37,17 @@ class FrmImportDoom(ModalWindow):
 
     def btn_ok_on_press(self, _widget):
         msg = MessageBox()
+        folder_char = '/'
         if os.name == 'nt':
-            file = self.genericForm.ids.file.text.strip() + '\\'
-        else:
-            file = self.genericForm.ids.file.text.strip() + '/'
+            folder_char = '\\'
+
+        file = self.genericForm.ids.file.text.strip() + folder_char
         if not isdir(file):
             msg.alert('Invalid path!')
         else:
-            if os.name == 'nt':
-                file = self.genericForm.ids.file.text.strip() + '\\'
-            else:
-                file = self.genericForm.ids.file.text.strip() + '/'
+            file = self.genericForm.ids.file.text.strip() + folder_char
 
-            files = listdir(file.strip())
+            files = os.listdir(file.strip())
             games = []
             tabs = select_all_game_tabs()
             free_id = read_config('doom2024tab', 'num')
@@ -71,100 +66,134 @@ class FrmImportDoom(ModalWindow):
                 id24reswad = ''
                 id1reswad = ''
                 id1weapwad = ''
-                for f in files:
-                    if f.lower() == 'doom.wad':
-                        doomwad = file + f
-                        # games.append(GameDef(0, 'Doom', free_id,
-                        #                      data_path().gzDoomExec, 1, 0, doomwad))
-                    if f.lower() == 'doom2.wad':
-                        doom2wad = file + f
-                        games.append(GameDef(0, 'Doom II: Hell on Earth', free_id,
-                                             data_path().gzDoomExec, 1, 0, doom2wad))
-                if not doomwad.strip():
-                    msg.alert('Doom.wad not found!')
-                elif not doom2wad.strip():
-                    msg.alert('Doom2.wad not found!')
-                else:
+                can_save = True
+
+                tmp_folder = data_path().data + folder_char + 'doom2024_tmp'
+                doom_folder = data_path().data + folder_char + 'doom2024' + folder_char
+                try:
+                    if isdir(tmp_folder):
+                        rmtree(tmp_folder)
+                    os.mkdir(tmp_folder)
+                except Exception as e:
+                    log(e)
+                    msg.alert("Can't create doom2024 temp folder!")
+                    can_save = False
+
+                if can_save:
                     for f in files:
-                        if f.lower() == 'sigil.wad':
-                            if isfile(data_path().map + 'sigil2.zip'):
-                                games.append(GameDef(0, 'Doom + Sigil + Sigil II', free_id,
-                                                     data_path().gzDoomExec, 1, 0, doomwad,
-                                                     [file + f, data_path().map + 'sigil2.zip']))
-                            else:
-                                games.append(GameDef(0, 'Doom + Sigil', free_id,
-                                                     data_path().gzDoomExec, 1, 0, doomwad,
-                                                     [file + f]))
-                        if f.lower() == 'masterlevels.wad':
-                            games.append(GameDef(0, 'Master Levels for Doom II', free_id,
-                                                 data_path().gzDoomExec, 1, 0, doom2wad,
-                                                 [file + f]))
-                        if f.lower() == 'tnt.wad':
-                            games.append(GameDef(0, 'TNT: Evolution', free_id,
-                                                 data_path().gzDoomExec, 1, 0, file + f))
-                        if f.lower() == 'plutonia.wad':
-                            games.append(GameDef(0, 'The Plutonia Experiment', free_id,
-                                                 data_path().gzDoomExec, 1, 0, file + f))
-                        if f.lower() == 'nerve.wad':
-                            games.append(GameDef(0, 'No Rest for the Living', free_id,
-                                                 data_path().gzDoomExec, 1, 0, doom2wad,
-                                                 [file + f]))
-                        if f.lower() == 'extras.wad':
-                            extraswad = file + f
-                        if f.lower() == 'id1.wad':
-                            id1wad = file + f
-                        if f.lower() == 'id24res.wad':
-                            id24reswad = file + f
-                        if f.lower() == 'id1-res.wad':
-                            id1reswad = file + f
-                        if f.lower() == 'id1-weap.wad':
-                            id1weapwad = file + f
+                        copy(file + f, tmp_folder)
 
-                    if (id1wad.strip() and id24reswad.strip() and id1reswad.strip() and
-                            id1weapwad.strip()):
-                        games.append(GameDef(0, 'Legacy of Rust', free_id,
-                                             data_path().gzDoomExec, 1, 0, doom2wad,
-                                             [id1wad.strip(), id24reswad.strip(), id1reswad.strip(),
-                                              id1weapwad.strip()]))
-                    if extraswad.strip():
-                        for g in games:
-                            g.files.append(extraswad.strip())
+                        if f.lower() == 'doom.wad':
+                            doomwad = doom_folder + f
+                            # games.append(GameDef(0, 'Doom', free_id,
+                            #                      data_path().gzDoomExec, 1, 0, doomwad))
+                        if f.lower() == 'doom2.wad':
+                            doom2wad = doom_folder + f
 
-                    if len(games) < 7:
-                        msg.alert('Invalid Doom + Doom2 release!')
+                    if not doomwad.strip():
+                        msg.alert('Doom.wad not found!')
+                    elif not doom2wad.strip():
+                        msg.alert('Doom2.wad not found!')
                     else:
-                        can_save = True
-                        if self.genericForm.ids.remix.active:
-                            try:
-                                game_file = GameFileFunctions()
-                                game_file.totalDownloads = 1
-                                gzde_file_name = 'gzd-extras-sndinfos-v2.pk3'
-                                url = Url('https://forum.zdoom.org/download/file.php?id=45740',
-                                          gzde_file_name)
-                                game_file.download_file(url)
-                                copy(data_path().download + gzde_file_name,
-                                     data_path().mod + gzde_file_name)
-                                for g in games:
-                                    g.files.append(data_path().mod + 'gzd-extras-sndinfos-v2.pk3')
-                            except Exception as e:
-                                can_save = False
-                                msg.alert('Error downloading remix patch: ' + str(e) + '!')
+                        for f in files:
+                            if f.lower() == 'sigil.wad':
+                                if isfile(data_path().map + 'sigil2.zip'):
+                                    games.append(GameDef(0, 'Doom + Sigil + Sigil II', free_id,
+                                                         data_path().gzDoomExec, 1, 0, doomwad,
+                                                         [doom_folder + f, data_path().map + 'sigil2.zip']))
+                                else:
+                                    games.append(GameDef(0, 'Doom + Sigil', free_id,
+                                                         data_path().gzDoomExec, 1, 0, doomwad,
+                                                         [doom_folder + f]))
+                            if f.lower() == 'doom2.wad':
+                                games.append(GameDef(0, 'Doom II: Hell on Earth', free_id,
+                                                     data_path().gzDoomExec, 1, 0, doom2wad))
 
-                        if can_save:
-                            tab_found = False
-                            for t in tabs:
-                                if t.index == free_id:
-                                    t.name = 'DOOM + DOOM II'
-                                    t.is_enabled = True
-                                    tab_found = True
-                            if not tab_found:
-                                tabs.append(GameTab(free_id, 'DOOM + DOOM II', True))
-                            delete_games_from_tab(free_id)
-                            update_all_game_tabs(tabs)
-                            write_config('doom2024tab', free_id, 'num')
+                            if f.lower() == 'masterlevels.wad':
+                                games.append(GameDef(0, 'Master Levels for Doom II', free_id,
+                                                     data_path().gzDoomExec, 1, 0, doom2wad,
+                                                     [doom_folder + f]))
+                            if f.lower() == 'tnt.wad':
+                                games.append(GameDef(0, 'TNT: Evolution', free_id,
+                                                     data_path().gzDoomExec, 1, 0, doom_folder + f))
+                            if f.lower() == 'plutonia.wad':
+                                games.append(GameDef(0, 'The Plutonia Experiment', free_id,
+                                                     data_path().gzDoomExec, 1, 0, doom_folder + f))
+                            if f.lower() == 'nerve.wad':
+                                games.append(GameDef(0, 'No Rest for the Living', free_id,
+                                                     data_path().gzDoomExec, 1, 0, doom2wad,
+                                                     [doom_folder + f]))
+                            if f.lower() == 'extras.wad':
+                                extraswad = doom_folder + f
+                            if f.lower() == 'id1.wad':
+                                id1wad = doom_folder + f
+                            if f.lower() == 'id24res.wad':
+                                id24reswad = doom_folder + f
+                            if f.lower() == 'id1-res.wad':
+                                id1reswad = doom_folder + f
+                            if f.lower() == 'id1-weap.wad':
+                                id1weapwad = doom_folder + f
 
+                        if (id1wad.strip() and id24reswad.strip() and id1reswad.strip() and
+                                id1weapwad.strip()):
+                            games.append(GameDef(0, 'Legacy of Rust', free_id,
+                                                 data_path().gzDoomExec, 1, 0, doom2wad,
+                                                 [id1wad.strip(), id24reswad.strip(), id1reswad.strip(),
+                                                  id1weapwad.strip()]))
+                        if extraswad.strip():
                             for g in games:
-                                insert_game(g)
+                                g.files.append(extraswad.strip())
 
-                            msg.message('DOOM + DOOM II 2024 successfully imported.', 'information')
-                            self.dialog.dismiss()
+                        if len(games) < 7:
+                            msg.alert('Invalid Doom + Doom2 release!')
+                        else:
+                            if self.genericForm.ids.remix.active:
+                                try:
+                                    game_file = GameFileFunctions()
+                                    game_file.totalDownloads = 1
+                                    gzde_file_name = 'gzd-extras-sndinfos-v2.pk3'
+                                    url = Url('https://forum.zdoom.org/download/file.php?id=45740',
+                                              gzde_file_name)
+                                    game_file.download_file(url)
+                                    copy(data_path().download + gzde_file_name,
+                                         data_path().mod + gzde_file_name)
+                                    for g in games:
+                                        g.files.append(data_path().mod + 'gzd-extras-sndinfos-v2.pk3')
+                                except Exception as e:
+                                    can_save = False
+                                    msg.alert('Error downloading remix patch: ' + str(e) + '!')
+
+                            if can_save:
+                                try:
+                                    doom_folder = data_path().data + folder_char + 'doom2024'
+
+                                    if isdir(doom_folder):
+                                        os.rename(doom_folder, doom_folder + '_bak')
+
+                                    os.rename(tmp_folder, doom_folder)
+
+                                    if isdir(doom_folder + '_bak'):
+                                        rmtree(doom_folder + '_bak')
+                                except Exception as e:
+                                    log(e)
+                                    msg.alert('Error creating doom 2024 folder!')
+                                    can_save = False
+
+                            if can_save:
+                                tab_found = False
+                                for t in tabs:
+                                    if t.index == free_id:
+                                        t.name = 'DOOM + DOOM II'
+                                        t.is_enabled = True
+                                        tab_found = True
+                                if not tab_found:
+                                    tabs.append(GameTab(free_id, 'DOOM + DOOM II', True))
+                                delete_games_from_tab(free_id)
+                                update_all_game_tabs(tabs)
+                                write_config('doom2024tab', free_id, 'num')
+
+                                for g in games:
+                                    insert_game(g)
+
+                                msg.message('DOOM + DOOM II 2024 successfully imported.', 'information')
+                                self.dialog.dismiss()

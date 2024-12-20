@@ -292,6 +292,8 @@ class FrmGzdlauncher(BoxLayout):
                 self.btn_update_on_press(data)
             elif data.index == 1:
                 self.popup.content = FrmSettings(self.popup)
+            elif data.index == 2:
+                Window.close()
             else:
                 self.popup.content = Dialog(self.popup, text=_('Under contruction'), txt_cancel='OK', txt_ok='',
                                             icon='information')
