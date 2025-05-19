@@ -45,8 +45,8 @@ class Url:
 #        request.wait()
         i = 0
         while not request.is_finished:
-            sleep(0.5)
-            if i < 10: # timeout 5 seconds
+            sleep(0.25)
+            if i < 20: # timeout 5 seconds
                 i += 1
             else:
                 break
