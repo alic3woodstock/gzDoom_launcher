@@ -1,3 +1,5 @@
+from time import sleep
+
 from kivy.network.urlrequest import UrlRequest
 
 from dataPath import data_path
@@ -36,13 +38,18 @@ class Url:
         headers = ('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
                    'Chrome/128.0.0.0 Safari/537.36')
         self.redirect = False
-        request = UrlRequest(url=self.url, on_progress=self.on_progress, chunk_size=1024,
+        request = UrlRequest(url=self.url, on_progress=self.on_progress, chunk_size=1024, timeout=5,
                              file_path=self.get_file_path(), on_failure=self.on_failure,
                              on_redirect=self.on_redirect, user_agent=headers)
 
-        request.wait()
+#        request.wait()
+        i = 0
         while not request.is_finished:
-            pass
+            sleep(0.5)
+            if i < 10: # timeout 5 seconds
+                i += 1
+            else:
+                break
 
         return request
 

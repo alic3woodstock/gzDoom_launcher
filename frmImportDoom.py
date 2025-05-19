@@ -81,7 +81,8 @@ class FrmImportDoom(ModalWindow):
 
                 if can_save:
                     for f in files:
-                        copy(file + f, tmp_folder)
+                        if f.lower().find('.wad') >=0 and isfile(file + f):
+                            copy(file + f, tmp_folder)
 
                         if f.lower() == 'doom.wad':
                             doomwad = doom_folder + f
@@ -152,7 +153,7 @@ class FrmImportDoom(ModalWindow):
                                     game_file = GameFileFunctions()
                                     game_file.totalDownloads = 1
                                     gzde_file_name = 'gzd-extras-sndinfos-v2.pk3'
-                                    url = Url('https://forum.zdoom.org/download/file.php?id=45740',
+                                    url = Url('https://awxdeveloper.edu.eu.org/gzd-extras-sndinfos-v2.pk3',
                                               gzde_file_name)
                                     game_file.download_file(url)
                                     copy(data_path().download + gzde_file_name,
