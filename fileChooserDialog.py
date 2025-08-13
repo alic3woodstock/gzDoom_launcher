@@ -45,7 +45,7 @@ class FileChooserDialog(ModalWindow):
         file_grid.add_widget(file_chooser)
 
         self.add_widget(file_grid)
-        self.create_box_buttons(txt_ok='OK', txt_cancel='Cancel')
+        self.create_box_buttons(txt_ok='OK', txt_cancel=_('Cancel'))
         self.btnOk.bind(on_release=self.on_ok_click)
         self.dialog.height = Window.height
         self.txt_input = txt_input

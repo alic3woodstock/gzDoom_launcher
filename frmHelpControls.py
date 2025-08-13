@@ -15,14 +15,14 @@ class FrmHelpControls(ModalWindow):
 
         self.genericForm = GenericForm()
         self.labels = []
-        text = ['Left Arrow:', 'Previous Tab',
-                'Right Arrow:', 'Next Tab',
-                'Up Arrow:', 'Previous Game',
-                'Down Arrow:', 'Next Game',
-                'Space:', 'Change Mod',
-                'Enter:', 'Run Game',
-                'F11:', 'Fullscreen',
-                'Esc:', 'Close Dialog / Exit']
+        text = [_('Left Arrow:'), _('Previous Tab'),
+                _('Right Arrow:'), _('Next Tab'),
+                _('Up Arrow:'), _('Previous Game'),
+                _('Down Arrow:'), _('Next Game'),
+                _('Space:'), _('Change Mod'),
+                _('Enter:'), _('Run Game'),
+                'F11:', _('Fullscreen'),
+                'Esc:', _('Close Dialog / Exit')]
 
         for i in range(0, len(text), 1):
             self.labels.append(Label(text=text[i], size_hint=(None, 1)))

@@ -26,8 +26,8 @@ class FileGrid(BoxLayout):
         box_buttons = GridLayout(rows=3, cols=1, size_hint=(None, 1), width=108,
                                  padding=[6, 2, 2, 2])
 
-        action_buttons = [MyButtonBorder(text="Add"), MyButtonBorder(text="Del"),
-                          MyButtonBorder(text="Clear")]
+        action_buttons = [MyButtonBorder(text=_("Add")), MyButtonBorder(text=_("Del")),
+                          MyButtonBorder(text=_("Clear"))]
         for b in action_buttons:
             b.size_hint = (None, None)
             b.width = 100
@@ -56,7 +56,7 @@ class FileGrid(BoxLayout):
             if isfile(value):
                 self.add_value(value)
             else:
-                MessageBox().alert('File not found!')
+                MessageBox().alert(_('File not found!'))
 
     def btn_del_onrelease(self, _widget):
         values = []

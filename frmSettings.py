@@ -19,7 +19,7 @@ class FrmSettings(ModalWindow):
 
         layout1 = self.anchor_layout()
         layout1.borders = []
-        self.label_tabs = Label(text='Configure Tabs:')
+        self.label_tabs = Label(text=_('Configure Tabs:'))
         self.label_tabs.size_hint = (None, None)
         self.label_tabs.halign = 'left'
         self.label_tabs.valign = 'middle'
@@ -29,7 +29,7 @@ class FrmSettings(ModalWindow):
         self.genericForm.topLayout.padding = [16, 0, 16, 16]
         for i in range(1, 10):
             field_name = 'tab' + str(i)
-            text = 'Tab ' + str(i) + ':'
+            text = _('Tab') + ' ' + str(i) + ':'
             self.genericForm.add_checkbox_input(text, field_name)
 
         game_tabs = select_all_game_tabs()
@@ -43,7 +43,7 @@ class FrmSettings(ModalWindow):
         layout2 = self.anchor_layout()
         layout2.borders = ['top']
         layout2.height += 16
-        self.ChkCheckUpdate = MyCheckBox(text='Check for GZDoom updates on startup')
+        self.ChkCheckUpdate = MyCheckBox(text=_('Check for GZDoom updates on startup'))
         self.ChkCheckUpdate.height = self.genericForm.children_height
         self.ChkCheckUpdate.active = read_config('checkupdate', 'bool')
         layout2.add_widget(self.ChkCheckUpdate)
@@ -53,7 +53,7 @@ class FrmSettings(ModalWindow):
         self.add_widget(layout2)
 
         self.create_box_buttons(
-            'OK', 'Cancel')
+            'OK', _('Cancel'))
         self.btnOk.bind(on_release=self.btn_ok_on_press)
 
         form_height = (button_height * 2  # box buttons height + tithe height
@@ -92,9 +92,9 @@ class FrmSettings(ModalWindow):
 
         msg = MessageBox()
         if not has_active_tab:
-            msg.alert('At least one tab has to be enabled!')
+            msg.alert(_('At least one tab has to be enabled!'))
         elif empty_text:
-            msg.alert('Enabled tabs must have a description!')
+            msg.alert(_('Enabled tabs must have a description!'))
         else:
             game_tabs = []
             for i in range(0, 9):

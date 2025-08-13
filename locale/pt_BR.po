@@ -18,6 +18,159 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
 
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Add"
+msgstr "Adicionar"
+
+msgid "Del"
+msgstr "Excluir"
+
+msgid "Clear"
+msgstr "Limpar"
+
+msgid "File not found!"
+msgstr "Arquivo não encontrado!"
+
+msgid "Name:"
+msgstr "Nome:"
+
+msgid "Is a Mod"
+msgstr "É um Mod"
+
+msgid "Game Exec.:"
+msgstr "Executável"
+
+msgid "Wad:"
+msgstr "Wad"
+
+msgid "Tab.:"
+msgstr "Aba:"
+
+msgid "Mod Group:"
+msgstr "Grupo de Mods:"
+
+msgid "Cmd. Parameters:"
+msgstr "Parâmetros:"
+
+msgid "Files:"
+msgstr "Arquivos:"
+
+msgid "Invalid name!"
+msgstr "Nome inválido!"
+
+msgid "Invalid game executable!"
+msgstr "Executável inválido!"
+
+msgid "Invalid game wad!"
+msgstr "Wad inválido!"
+
+msgid "New game/mod successfully added!"
+msgstr "Novo jogo/mod adicionado com sucesso!"
+
+msgid "Left Arrow:"
+msgstr "Seta para Esquerda:"
+
+msgid "Previous Tab"
+msgstr "Aba Anterior"
+
+msgid "Right Arrow:"
+msgstr "Seta para Direita:"
+
+msgid "Next Tab"
+msgstr "Próxima Aba"
+
+msgid "Up Arrow:"
+msgstr "Seta para Cima:"
+
+msgid "Previous Game"
+msgstr "Jogo Anterior"
+
+msgid "Down Arrow:"
+msgstr "Seta para Baixo:"
+
+msgid "Next Game"
+msgstr "Próximo Jogo"
+
+msgid "Space:"
+msgstr "Espaço:"
+
+msgid "Change Mod"
+msgstr "Trocar Mod Atual"
+
+msgid "Enter:"
+msgstr "Enter:"
+
+msgid "Run Game"
+msgstr "Executar Jogo"
+
+msgid "Fullscreen"
+msgstr "Tela Cheia"
+
+msgid "Close Dialog / Exit"
+msgstr "Fechar Janela / Sair"
+
+msgid "Doom + Doom II path:"
+msgstr "Pasta do jogo:"
+
+msgid "Use remix tracks"
+msgstr "Usar músicas remixadas"
+
+msgid "Error downloading remix patch: "
+msgstr "Erro ao baixar o patch para as músicas remixadas: "
+
+msgid "Error creating doom2024 folder!"
+msgstr "Erro ao criar a pasta doom2024"
+
+msgid "DOOM + DOOM II 2024 successfully imported!"
+msgstr "DOOM + DOOM II 2024 importado com sucesso!"
+
+msgid "Delete game"
+msgstr "Excluir jogo"
+
+msgid "Yes"
+msgstr "Sim"
+
+msgid "No"
+msgstr "Não"
+
+msgid "Delete"
+msgstr "Excluir"
+
+msgid "Close"
+msgstr "Fechar"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "Replace by"
+msgstr "Substituir por"
+
+msgid "Invalid wad file!"
+msgstr "Arquivo wad inválido!"
+
+msgid " replaced by "
+msgstr " substituído por "
+
+msgid "Configure Tabs:"
+msgstr "Configurar Abas:"
+
+msgid "Tab"
+msgstr "Aba"
+
+msgid "Check for GZDoom updates on startup"
+msgstr "Verificar por atualizações do GZDoom ao iniciar"
+
+msgid "At least one tab has to be enabled!"
+msgstr "Ao menos uma aba deve estar habilitada!"
+
+msgid "Enabled tabs must have a description!"
+msgstr "Abas habilitadas devem possuir uma descrição!"
+
+msgid " in tab "
+msgstr " na aba "
+
 msgid "Application"
 msgstr "Aplicação"
 
@@ -84,10 +237,8 @@ msgstr "Em construção"
 msgid "OK"
 msgstr "OK"
 
-msgid ""
-"\n"
-"By Alice Woodstock 2022-2024"
-msgstr "\nPor Alice Woodstock 2022-2024"
+msgid "Copyright"
+msgstr "Direitos autorais"
 
 msgid "Starting"
 msgstr "Iiniciando..."

@@ -22,12 +22,12 @@ class FrmReplaceWad(ModalWindow):
             self.suggested_wad = 'doom2.wad'
         self.mod_group = mod_group
         self.formLayout = GenericForm()
-        text = 'Replace by (' + self.suggested_wad + '):'
+        text = _('Replace by') + ' (' + self.suggested_wad + '):'
         self.formLayout.add_file_field(text, 'file')
         self.add_widget(self.formLayout)
 
         self.create_box_buttons(
-            'OK', 'Cancel')
+            'OK', _('Cancel'))
         self.btnOk.bind(on_release=self.btn_ok_on_press)
         self.dialog.height = (button_height * 2  # box buttons height + tithe height
                               + self.formLayout.get_height())
@@ -36,11 +36,11 @@ class FrmReplaceWad(ModalWindow):
         msg = MessageBox()
         file = self.formLayout.ids.file.text
         if not isfile(file):
-            msg.alert('Invalid wad file!')
+            msg.alert(_('Invalid wad file!'))
         else:
             update_wad(file, self.mod_group)
             tab = select_game_tab_by_id(1)
-            msg.message('Wad ' + self.old_wad + ' successfully replaced by '
-                        + basename(file) + ' in tab '
+            msg.message('Wad ' + self.old_wad + _(' replaced by ')
+                        + basename(file) + _(' in tab ')
                         + tab.name + "!", icon='information')
             self.dialog.dismiss()

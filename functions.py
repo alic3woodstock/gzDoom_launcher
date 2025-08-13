@@ -9,8 +9,7 @@ from time import ctime, strftime
 
 LOGLEVEL = logging.ERROR
 FORMAT = '%(levelname)s: %(asctime)s - %(message)s'
-APPVERSION = "2.02.00"
-AUTHOR = "Copyright 2022-2024 © Alice Woodstock"
+APPVERSION = "2.03.00"
 WINE_GZDOOM = True  # linux gzdoom works only on ubuntu for now.
 RE_DOWNLOAD = False
 

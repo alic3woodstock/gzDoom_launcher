@@ -1,15 +1,15 @@
 # Translations template for GZDoom_launcher.
-# Copyright (C) 2024 Alice Woodstock
+# Copyright (C) 2025 Alice Woodstock
 # This file is distributed under the same license as the GZDoom_launcher
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: GZDoom_launcher 2.02.00\n"
 "Report-Msgid-Bugs-To: awxdeveloper@yahoo.com\n"
-"POT-Creation-Date: 2024-09-09 14:35-0300\n"
+"POT-Creation-Date: 2025-08-13 10:05-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Alice Woodstock <awxdeveloper@yahoo.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,10 +18,169 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
 
-msgid "Application"
+msgid "Mods"
 msgstr ""
 
 msgid "Games"
+msgstr ""
+
+msgid "Maps"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "Del"
+msgstr ""
+
+msgid "Clear"
+msgstr ""
+
+msgid "File not found!"
+msgstr ""
+
+msgid "Name:"
+msgstr ""
+
+msgid "Is a Mod"
+msgstr ""
+
+msgid "Game Exec.:"
+msgstr ""
+
+msgid "Wad:"
+msgstr ""
+
+msgid "Tab.:"
+msgstr ""
+
+msgid "Mod Group:"
+msgstr ""
+
+msgid "Cmd. Parameters:"
+msgstr ""
+
+msgid "Files:"
+msgstr ""
+
+msgid "Invalid name!"
+msgstr ""
+
+msgid "Invalid game executable!"
+msgstr ""
+
+msgid "Invalid game wad!"
+msgstr ""
+
+msgid "New game/mod successfully added!"
+msgstr ""
+
+msgid "Left Arrow:"
+msgstr ""
+
+msgid "Previous Tab"
+msgstr ""
+
+msgid "Right Arrow:"
+msgstr ""
+
+msgid "Next Tab"
+msgstr ""
+
+msgid "Up Arrow:"
+msgstr ""
+
+msgid "Previous Game"
+msgstr ""
+
+msgid "Down Arrow:"
+msgstr ""
+
+msgid "Next Game"
+msgstr ""
+
+msgid "Space:"
+msgstr ""
+
+msgid "Change Mod"
+msgstr ""
+
+msgid "Enter:"
+msgstr ""
+
+msgid "Run Game"
+msgstr ""
+
+msgid "Fullscreen"
+msgstr ""
+
+msgid "Close Dialog / Exit"
+msgstr ""
+
+msgid "Doom + Doom II path:"
+msgstr ""
+
+msgid "Use remix tracks"
+msgstr ""
+
+msgid "Error downloading remix patch: "
+msgstr ""
+
+msgid "Error creating doom2024 folder!"
+msgstr ""
+
+msgid "DOOM + DOOM II 2024 successfully imported!"
+msgstr ""
+
+msgid "Delete game"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Replace by"
+msgstr ""
+
+msgid "Invalid wad file!"
+msgstr ""
+
+msgid " replaced by "
+msgstr ""
+
+msgid " in tab "
+msgstr ""
+
+msgid "Configure Tabs:"
+msgstr ""
+
+msgid "Tab"
+msgstr ""
+
+msgid "Check for GZDoom updates on startup"
+msgstr ""
+
+msgid "At least one tab has to be enabled!"
+msgstr ""
+
+msgid "Enabled tabs must have a description!"
+msgstr ""
+
+msgid "Application"
 msgstr ""
 
 msgid "Help"
@@ -68,21 +227,13 @@ msgid ""
 "Do you want to continue?"
 msgstr ""
 
-msgid "No"
-msgstr ""
-
-msgid "Yes"
-msgstr ""
-
 msgid "Under construction"
 msgstr ""
 
 msgid "OK"
 msgstr ""
 
-msgid ""
-"\n"
-"By Alice Woodstock 2022-2024"
+msgid "Copyright"
 msgstr ""
 
 msgid "Starting"

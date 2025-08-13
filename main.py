@@ -60,7 +60,9 @@ class FrmGzdlauncher(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        set_language('en')
+        # language = 'pt_BR'
+        language = 'en'
+        set_language(language)
 
         self.orientation = 'vertical'
         self.padding = 1
@@ -106,8 +108,11 @@ class FrmGzdlauncher(BoxLayout):
 
         run_button = MyButtonBorder()
         run_button.size_hint = (None, 1)
-        run_button.width = 128
-        run_button.text = 'Run Game'
+        if language == 'pt_BR':
+            run_button.width = 164
+        else:
+            run_button.width = 128
+        run_button.text = _('Run Game')
         run_button.bind(on_release=self.btn_run_on_press)
 
         box_buttons.add_widget(run_button)
@@ -245,7 +250,7 @@ class FrmGzdlauncher(BoxLayout):
             self.popup.content = FrmCredits(self.popup)
         elif data.index == 2:
             self.popup.content = Dialog(self.popup, text="GZDoom launcher " + functions.APPVERSION
-                                                         + _("\nBy Alice Woodstock 2022-2024"),
+                                                         + "\n" + _('Copyright') + ' © 2022-2025 ' + "Alice Woodstock",
                                         txt_cancel='OK', txt_ok='', icon='pentagram')
         else:
             self.popup.content = Dialog(self.popup, text=_('Under construction'), txt_cancel='OK', txt_ok='',
@@ -326,18 +331,20 @@ class FrmGzdlauncher(BoxLayout):
         y = pos[1] * Metrics.dpi / 96
         top_panel = self.main_menu
         pressed = False
-        btn_pressed = None
         for btn in top_panel.children:
             if btn.state == 'down':
                 pressed = True
-                btn_pressed = btn
+
         if pressed and top_panel.collide_point(x, y):
             for btn in top_panel.children:
-                if btn.x <= x <= (btn.x + btn.width):
+                if btn.x < x < (btn.x + btn.width):
                     if btn.state == 'normal':
                         btn.state = 'down'
-                        btn_pressed.dropdown.dismiss()
                         Clock.schedule_once(btn.on_release, 0)
+                        for btn2 in top_panel.children:
+                            if btn2 != btn:
+                                btn2.dropdown.dismiss()
+                        break
 
         for btn in top_panel.children:
             if btn.isDropOpen:

@@ -29,14 +29,14 @@ class FrmGames(ModalWindow):
         else:
             self.genericForm = GenericForm()
             self.genericForm.topLayout.size_hint = (1, 1)
-        self.genericForm.add_text_field(text='Name:', field_name='name')
-        self.genericForm.add_checkbox_field(text='Is a Mod', field_name='ismod')
-        self.genericForm.add_file_field(text='Game Exec.:', field_name='gamexec')
-        self.genericForm.add_file_field(text='Wad:', field_name='wad')
-        self.genericForm.add_dropdown(text='Tab.:', field_name='tab')
-        self.genericForm.add_dropdown(text='Mod Group:', field_name='modgroup')
-        self.genericForm.add_text_field(text='Cmd. Parameters:', field_name='params')
-        self.genericForm.add_file_field(text='Files:', field_name='files')
+        self.genericForm.add_text_field(text=_('Name:'), field_name='name')
+        self.genericForm.add_checkbox_field(text=_('Is a Mod'), field_name='ismod')
+        self.genericForm.add_file_field(text=_('Game Exec.:'), field_name='gamexec')
+        self.genericForm.add_file_field(text=_('Wad:'), field_name='wad')
+        self.genericForm.add_dropdown(text=_('Tab.:'), field_name='tab')
+        self.genericForm.add_dropdown(text=_('Mod Group:'), field_name='modgroup')
+        self.genericForm.add_text_field(text=_('Cmd. Parameters:'), field_name='params')
+        self.genericForm.add_file_field(text=_('Files:'), field_name='files')
         self.genericForm.add_file_list(self.genericForm.ids.files,
                                        field_name='filelist')
         self.genericForm.ids.filelist.refresh_file_list(-1)
@@ -59,7 +59,7 @@ class FrmGames(ModalWindow):
         dropdown.select(groups[0])
 
         self.create_box_buttons(
-            'OK', 'Cancel')
+            'OK', _('Cancel'))
         self.game = game
         self.dialog.height = Window.height
         self.btnOk.bind(on_release=self.btnok_on_release)
@@ -93,11 +93,11 @@ class FrmGames(ModalWindow):
         msg = MessageBox()
 
         if not game_def.name:
-            msg.alert('Invalid name!')
+            msg.alert(_('Invalid name!'))
         elif game_def.tabId >= 0 and not isfile(game_def.exec):
-            msg.alert('Invalid game executable!')
+            msg.alert(_('Invalid game executable!'))
         elif game_def.iWad and not isfile(game_def.iWad):
-            msg.alert('Invalid game wad!')
+            msg.alert(_('Invalid game wad!'))
         else:
             frmManageGames.refresh_database = True
             if game_id > 0:
@@ -106,7 +106,7 @@ class FrmGames(ModalWindow):
                 update_game(game_def, True)
             else:
                 insert_game(game_def)
-            self.popup.content = Dialog(self.popup, text="New game/mod successfully added!",
+            self.popup.content = Dialog(self.popup, text=_("New game/mod successfully added!"),
                                         txt_cancel="OK")
             self.dialog.dismiss()
 

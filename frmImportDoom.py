@@ -22,9 +22,9 @@ class FrmImportDoom(ModalWindow):
         super().__init__(dialog, **kwargs)
         self.popup = MyPopup()
         self.genericForm = GenericForm()
-        text = 'Doom + Doom II path:'
+        text = _('Doom + Doom II path:')
         self.genericForm.add_file_field(text, 'file', True)
-        self.genericForm.add_checkbox_field('Use remix tracks', 'remix')
+        self.genericForm.add_checkbox_field(_('Use remix tracks'), 'remix')
         self.add_widget(self.genericForm)
 
         self.genericForm.ids.remix.active = True
@@ -162,7 +162,7 @@ class FrmImportDoom(ModalWindow):
                                         g.files.append(data_path().mod + 'gzd-extras-sndinfos-v2.pk3')
                                 except Exception as e:
                                     can_save = False
-                                    msg.alert('Error downloading remix patch: ' + str(e) + '!')
+                                    msg.alert(_('Error downloading remix patch: ') + str(e) + '!')
 
                             if can_save:
                                 try:
@@ -177,7 +177,7 @@ class FrmImportDoom(ModalWindow):
                                         rmtree(doom_folder + '_bak')
                                 except Exception as e:
                                     log(e)
-                                    msg.alert('Error creating doom 2024 folder!')
+                                    msg.alert(_('Error creating doom2024 folder!'))
                                     can_save = False
 
                             if can_save:
@@ -196,5 +196,5 @@ class FrmImportDoom(ModalWindow):
                                 for g in games:
                                     insert_game(g)
 
-                                msg.message('DOOM + DOOM II 2024 successfully imported.', 'information')
+                                msg.message(_('DOOM + DOOM II 2024 successfully imported!'), 'information')
                                 self.dialog.dismiss()
