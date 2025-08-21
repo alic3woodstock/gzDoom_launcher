@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GZDoom_launcher 2.02.00\n"
 "Report-Msgid-Bugs-To: awxdeveloper@yahoo.com\n"
-"POT-Creation-Date: 2025-08-21 13:21-0300\n"
+"POT-Creation-Date: 2025-08-21 13:45-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Alice Woodstock <awxdeveloper@yahoo.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -195,6 +195,9 @@ msgstr ""
 msgid "Enabled tabs must have a description!"
 msgstr ""
 
+msgid "-- None --"
+msgstr ""
+
 msgid "Starting ..."
 msgstr ""
 
@@ -213,7 +216,7 @@ msgstr ""
 msgid "All done, have fun!"
 msgstr ""
 
-msgid "Checking GZDoom Version..."
+msgid "Checking GZDoom version..."
 msgstr ""
 
 msgid "GZDoom already at latest version."
@@ -235,6 +238,9 @@ msgid "Extracting wine..."
 msgstr ""
 
 msgid "Downloading file"
+msgstr ""
+
+msgid "Empty Tab"
 msgstr ""
 
 msgid "Application"
@@ -306,8 +312,5 @@ msgid "A new version of GZDoom was found, update now?"
 msgstr ""
 
 msgid "Download default games now? (games -> reset to default)"
-msgstr ""
-
-msgid "Checking GZDoom version..."
 msgstr ""
 
