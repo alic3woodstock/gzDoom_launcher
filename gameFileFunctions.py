@@ -118,7 +118,7 @@ def create_db():
 class GameFileFunctions:
     def __init__(self):
         self.value = 0
-        self.message = 'Starting ...'
+        self.message = _('Starting ...')
         self.max_range = 100
         self.clock = None
         self.totalDownloads = 0
@@ -127,7 +127,7 @@ class GameFileFunctions:
 
     def extract_all(self):
         self.done = False
-        self.message = 'Downloading files...'
+        self.message = _('Downloading files...')
 
         if RE_DOWNLOAD:
             shutil.rmtree(data_path().download)
@@ -158,14 +158,14 @@ class GameFileFunctions:
             self.value = math.floor(self.value)
             self.value += 1
 
-        self.message = 'Updating gzdoom...'
+        self.message = _('Updating gzdoom...')
         update = self.update_gz_doom()
         self.value += 1
         if not update:
-            write_log('Update gzdoom failed', True)
+            write_log(_('Update gzdoom failed'), True)
 
         file_names = os.listdir(data_path().download)
-        self.message = "Extracting/Copying files..."
+        self.message = _("Extracting/Copying files...")
 
         game_files = []
         for z in file_names:
@@ -224,7 +224,7 @@ class GameFileFunctions:
         create_db()
         self.value += 1
 
-        self.message = 'All done, have fun!'
+        self.message = _('All done, have fun!')
         # self.value = self.max_range
         self.finish_task()
 
@@ -238,15 +238,15 @@ class GameFileFunctions:
         self.done = False
         self.max_range = 1
         self.totalDownloads = 1
-        self.message = 'Verifying GZDoom Version...'
+        self.message = _('Checking GZDoom version...')
         self.currentDownload = 1
         result = self.update_gz_doom()
         if result == 2:
-            self.message = 'GZDoom already at latest version.'
+            self.message = _('GZDoom already at latest version.')
         elif result:
-            self.message = 'GZDoom updated to version: ' + read_config('gzdversion', 'text')
+            self.message = _('GZDoom updated to version:') + ' ' + read_config('gzdversion', 'text')
         else:
-            self.message = 'Update failed!\nRead ' + data_path().logFile + ' for more details!'
+            self.message = _('Update failed!') + "\n" + _('Read') + ' ' + data_path().logFile + ' ' + _('for more details!')
         self.value = self.max_range
         self.finish_task()
 
@@ -311,7 +311,7 @@ class GameFileFunctions:
                     self.value = math.floor(self.value)
                     self.value += 1
                     self.download_file(url)
-                    self.message = "Extracting wine..."
+                    self.message = _("Extracting wine...")
                     zip_file = GameFile('wine.tar.xz', 'xz')
                     zip_file.extract_to(data_path().gzDoom)
             else:
@@ -338,7 +338,7 @@ class GameFileFunctions:
         # each file.
         if current_size < total_size:
             self.value = math.floor(self.value) + (current_size / total_size)
-        self.message = "Downloading file " + str(self.currentDownload) \
+        self.message = _("Downloading file") + " " + str(self.currentDownload) \
                        + "/" + str(self.totalDownloads) + ": " \
                        + str(current_size // 1024) + "k of " + str(total_size // 1024) + "k"
 

@@ -53,6 +53,9 @@ def version_number():
 
 
 def set_language(lang):
+    if lang not in ('pt_BR'): # Supported languages other than english
+        lang = 'en'
+
     root = os.path.realpath(__file__)
     root = root.replace('functions.py', '')
     locale_path = str(root) + 'locale'

@@ -10,7 +10,7 @@ class GZDoomUpdate:
     def __init__(self):
         self.gzdoom_windows = (os_name == "nt") or WINE_GZDOOM
         self.wine_gzdoom = not (os_name == "nt") and WINE_GZDOOM
-        self.file = ""
+        self.file = None
         self.filename = ""
         self.local_hash = ""
         self.version = ""

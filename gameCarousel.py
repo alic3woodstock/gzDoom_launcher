@@ -39,7 +39,7 @@ class GameCarousel(BoxLayout):
         label.size_hint = (None, 1)
 
         spinner_box.add_widget(label)
-        main_btn_drop = MainModButton(game=GameDef(0, '-- None --', -1), text='None',
+        main_btn_drop = MainModButton(game=GameDef(0, _('-- None --'), -1), text='None',
                                       height=button_height)
 
         drop_down = MyDropdown(main_btn_drop)

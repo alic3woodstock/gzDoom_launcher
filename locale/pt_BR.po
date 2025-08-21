@@ -160,7 +160,7 @@ msgid "Tab"
 msgstr "Aba"
 
 msgid "Check for GZDoom updates on startup"
-msgstr "Verificar por atualizações do GZDoom ao iniciar"
+msgstr "Procurar atualizações do GZDoom ao iniciar"
 
 msgid "At least one tab has to be enabled!"
 msgstr "Ao menos uma aba deve estar habilitada!"
@@ -176,6 +176,9 @@ msgstr "Aplicação"
 
 msgid "Games"
 msgstr "Jogos"
+
+msgid "Maps"
+msgstr "Mapas"
 
 msgid "Help"
 msgstr "Ajuda"
@@ -249,6 +252,50 @@ msgstr "Atualizando GZDoom..."
 msgid "A new version of GZDoom was found, update now?"
 msgstr "Existe uma nova versão do GZDoom, atualizar agora?"
 
+msgid "Starting ..."
+msgstr "Iniciando..."
+
+msgid "Downloading files..."
+msgstr "Baixando arquivos..."
+
+msgid "Updating gzdoom..."
+msgstr "Atualizando GZDoom"
+
+msgid "Update gzdoom failed"
+msgstr "Erro ao atualizar o GZDoom"
+
+msgid "Extracting/Copying files..."
+msgstr "Extraindo/Copiando os arquivos..."
+
+msgid "All done, have fun!"
+msgstr "Tudo pronto, divirta-se!"
+
 msgid "Checking GZDoom version..."
 msgstr "Verificando a versão do GZDoom..."
 
+msgid "GZDoom already at latest version."
+msgstr "O GZDoom já se encontra na última versão"
+
+msgid "GZDoom updated to version:"
+msgstr "GZdoom atualizado para versão:"
+
+msgid "Update failed!"
+msgstr "Erro ao atualizar"
+
+msgid "Read"
+msgstr "Leia"
+
+msgid "for more details!"
+msgstr "para mais detalhes!"
+
+msgid "Extracting wine..."
+msgstr "Extraindo wine..."
+
+msgid "Downloading file"
+msgstr "Extraindo arquivo"
+
+msgid "-- None --"
+msgstr "-- Nenhum --"
+
+msgid "Empty Tab"
+msgstr "Aba Vazia"

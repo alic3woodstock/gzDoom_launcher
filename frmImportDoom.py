@@ -57,7 +57,7 @@ class FrmImportDoom(ModalWindow):
                         free_id += 1
 
             if free_id > 9:
-                msg.alert("Can't create a new tab!")
+                msg.alert(_("Can't create a new tab!"))
             else:
                 doomwad = ''
                 doom2wad = ''
@@ -76,7 +76,7 @@ class FrmImportDoom(ModalWindow):
                     os.mkdir(tmp_folder)
                 except Exception as e:
                     log(e)
-                    msg.alert("Can't create doom2024 temp folder!")
+                    msg.alert(_("Can't create doom2024 temp folder!"))
                     can_save = False
 
                 if can_save:
@@ -92,9 +92,9 @@ class FrmImportDoom(ModalWindow):
                             doom2wad = doom_folder + f
 
                     if not doomwad.strip():
-                        msg.alert('Doom.wad not found!')
+                        msg.alert(_('Doom.wad not found!'))
                     elif not doom2wad.strip():
-                        msg.alert('Doom2.wad not found!')
+                        msg.alert(_('Doom2.wad not found!'))
                     else:
                         for f in files:
                             if f.lower() == 'sigil.wad':
@@ -146,7 +146,7 @@ class FrmImportDoom(ModalWindow):
                                 g.files.append(extraswad.strip())
 
                         if len(games) < 7:
-                            msg.alert('Invalid Doom + Doom2 release!')
+                            msg.alert(_('Invalid Doom + Doom2 release!'))
                         else:
                             if self.genericForm.ids.remix.active:
                                 try:

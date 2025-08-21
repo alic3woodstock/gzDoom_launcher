@@ -1,8 +1,7 @@
 import os
-
 import kivy
 
-from configDB import read_config
+from configDB import read_config, write_config
 
 os.environ['KIVY_METRICS_DENSITY'] = '1'
 
@@ -54,15 +53,24 @@ from menu import Menu
 from gameFileFunctions import GameFileFunctions
 from frmReplaceWad import FrmReplaceWad
 from dataPath import DataPath, data_path
+from locale import getlocale
 
 
 class FrmGzdlauncher(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        # language = 'pt_BR'
-        language = 'en'
-        set_language(language)
+        DataPath()
+
+        if not os.path.isfile(data_path().db):
+            language = getlocale()[0]
+            set_language(language)
+            create_game_table()
+            write_config("firstrun", True, "bool")
+            write_config("language", language, "text")
+        else:
+            language = read_config("language","text")
+            set_language(language)
 
         self.orientation = 'vertical'
         self.padding = 1
@@ -250,7 +258,7 @@ class FrmGzdlauncher(BoxLayout):
             self.popup.content = FrmCredits(self.popup)
         elif data.index == 2:
             self.popup.content = Dialog(self.popup, text="GZDoom launcher " + functions.APPVERSION
-                                                         + "\n" + _('Copyright') + ' © 2022-2025 ' + "Alice Woodstock",
+                                                         + "\n" + _('Copyright') + ' © 2022-2025 ' + 'Alice "alic3woodstock" Xavier',
                                         txt_cancel='OK', txt_ok='', icon='pentagram')
         else:
             self.popup.content = Dialog(self.popup, text=_('Under construction'), txt_cancel='OK', txt_ok='',
@@ -432,7 +440,6 @@ class GzdLauncher(App):
         return self.frmGzLauncher
 
     def on_start(self):
-        DataPath()
         monitors = get_monitors()
         m_height = 4096
         for m in monitors:
@@ -446,11 +453,11 @@ class GzdLauncher(App):
         self.title = "GZDoom Launcher"
         self.icon = data_path().pentagram
 
-        if not os.path.isfile(data_path().db):
-            create_game_table()
+        if read_config("firstrun", "bool"):
+            write_config("firstrun", False, "bool")
             dialog = Dialog(self.frmGzLauncher.popup,
                             text=_("Download default games now? (games -> reset to default)"),
-                            txt_cancel='No', txt_ok='Yes', icon='exclamation')
+                            txt_cancel=_('No'), txt_ok=_('Yes'), icon='exclamation')
             dialog.btnOk.bind(on_release=self.frmGzLauncher.btn_yes1_on_press)
             self.frmGzLauncher.popup.content = dialog
             self.frmGzLauncher.popup.open()

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GZDoom_launcher 2.02.00\n"
 "Report-Msgid-Bugs-To: awxdeveloper@yahoo.com\n"
-"POT-Creation-Date: 2025-08-13 10:05-0300\n"
+"POT-Creation-Date: 2025-08-21 13:45-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Alice Woodstock <awxdeveloper@yahoo.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -126,6 +126,21 @@ msgstr ""
 msgid "Use remix tracks"
 msgstr ""
 
+msgid "Can't create a new tab!"
+msgstr ""
+
+msgid "Can't create doom2024 temp folder!"
+msgstr ""
+
+msgid "Doom.wad not found!"
+msgstr ""
+
+msgid "Doom2.wad not found!"
+msgstr ""
+
+msgid "Invalid Doom + Doom2 release!"
+msgstr ""
+
 msgid "Error downloading remix patch: "
 msgstr ""
 
@@ -178,6 +193,54 @@ msgid "At least one tab has to be enabled!"
 msgstr ""
 
 msgid "Enabled tabs must have a description!"
+msgstr ""
+
+msgid "-- None --"
+msgstr ""
+
+msgid "Starting ..."
+msgstr ""
+
+msgid "Downloading files..."
+msgstr ""
+
+msgid "Updating gzdoom..."
+msgstr ""
+
+msgid "Update gzdoom failed"
+msgstr ""
+
+msgid "Extracting/Copying files..."
+msgstr ""
+
+msgid "All done, have fun!"
+msgstr ""
+
+msgid "Checking GZDoom version..."
+msgstr ""
+
+msgid "GZDoom already at latest version."
+msgstr ""
+
+msgid "GZDoom updated to version:"
+msgstr ""
+
+msgid "Update failed!"
+msgstr ""
+
+msgid "Read"
+msgstr ""
+
+msgid "for more details!"
+msgstr ""
+
+msgid "Extracting wine..."
+msgstr ""
+
+msgid "Downloading file"
+msgstr ""
+
+msgid "Empty Tab"
 msgstr ""
 
 msgid "Application"
@@ -249,8 +312,5 @@ msgid "A new version of GZDoom was found, update now?"
 msgstr ""
 
 msgid "Download default games now? (games -> reset to default)"
-msgstr ""
-
-msgid "Checking GZDoom version..."
 msgstr ""
 
