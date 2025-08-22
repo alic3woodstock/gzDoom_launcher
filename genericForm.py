@@ -1,3 +1,4 @@
+from kivy.graphics import Callback
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
@@ -32,6 +33,7 @@ class GenericForm(BoxLayout):
         self.topLayout.spacing = [16, 16]
 
         self.add_widget(self.topLayout)
+        self.canvas.add(Callback(self.update_form))
 
     def add_label(self, text):
         label = Label()
@@ -157,7 +159,6 @@ class GenericForm(BoxLayout):
         for lb in self.labels:
             lb.parent.width = max_size
 
-        super().update_form(_instr)
 
     def add_file_list(self, input_widget, field_name=''):
         label = self.add_label('')

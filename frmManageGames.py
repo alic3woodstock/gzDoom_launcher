@@ -55,7 +55,7 @@ class FrmManageGames(ModalWindow):
         self.grid = DBGrid()
         self.topGrid = GridContainer(grid=self.grid, has_title=True)
         self.add_widget(self.topGrid)
-        self.grid.get_values(['id', 'Name', 'Tab', 'Mod Group'],
+        self.grid.get_values(['id', _('Name'), _('Tab'), _('Mod Group')],
                              """SELECT g.id, g.name, t.label, r.groupname
                                     FROM gamedef g 
                                     LEFT JOIN tabs t ON g.tabindex=t.tabindex

@@ -40,10 +40,10 @@ msgid "Is a Mod"
 msgstr "É um Mod"
 
 msgid "Game Exec.:"
-msgstr "Executável"
+msgstr "Executável:"
 
 msgid "Wad:"
-msgstr "Wad"
+msgstr "Wad:"
 
 msgid "Tab.:"
 msgstr "Aba:"
@@ -299,3 +299,12 @@ msgstr "-- Nenhum --"
 
 msgid "Empty Tab"
 msgstr "Aba Vazia"
+
+msgid "Language:"
+msgstr "Idioma:"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Mod Group"
+msgstr "Grupo de Mods"
