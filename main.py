@@ -1,4 +1,6 @@
 import os
+import shutil
+
 import kivy
 
 from configDB import read_config, write_config
@@ -68,8 +70,19 @@ class FrmGzdlauncher(BoxLayout):
             create_game_table()
             write_config("firstrun", True, "bool")
             write_config("language", language, "text")
+            write_config("winecommand", data_path().wine, "text")
         else:
             language = read_config("language","text")
+            wine_command = read_config("winecommand", "text")
+            try:
+                wine_command = shutil.which(wine_command)
+                if wine_command:
+                    result = subprocess.run([wine_command])
+                    if result == 0:
+                        data_path().wine = wine_command
+            finally:
+                pass
+
             set_language(language)
 
         self.orientation = 'vertical'
