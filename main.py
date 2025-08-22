@@ -411,10 +411,13 @@ class FrmGzdlauncher(BoxLayout):
                 if len(command) > 0:
                     functions.log(command, False)
                     result = subprocess.run(command)
-                    if result.returncode == 0:
-                        update_last_run_mod(game[0], game[1].id)
-                        game[0].lastMod = game[1].id
-                        self.ids.gameTabs.update_current_game(game[0])
+                    update_last_run_mod(game[0], game[1].id)
+                    game[0].lastMod = game[1].id
+                    self.ids.gameTabs.update_current_game(game[0])
+
+                    if result.returncode != 0:
+                        functions.log(f"Command failed with return code {result.returncode}. Error: {result.stderr}")
+
 
         self.popup.dismiss()
         self.is_game_running = False
