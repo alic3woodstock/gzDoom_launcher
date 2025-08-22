@@ -411,6 +411,7 @@ class FrmGzdlauncher(BoxLayout):
                 if len(command) > 0:
                     functions.log(command, False)
                     result = subprocess.run(command)
+                    Window.raise_window()
                     update_last_run_mod(game[0], game[1].id)
                     game[0].lastMod = game[1].id
                     self.ids.gameTabs.update_current_game(game[0])
