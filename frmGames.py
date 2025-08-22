@@ -47,14 +47,14 @@ class FrmGames(ModalWindow):
         tabs = select_all_game_tabs()
         dropdown = self.genericForm.ids.tab
         for t in tabs:
-            btn_tab = DropDownItem(game=t, text=t.name)
+            btn_tab = DropDownItem(game=t)
             dropdown.add_widget(btn_tab)
         dropdown.select(tabs[0])
 
         groups = select_all_groups()
         dropdown = self.genericForm.ids.modgroup
         for g in groups:
-            btn_group = DropDownItem(game=g, text=g.name)
+            btn_group = DropDownItem(game=g)
             dropdown.add_widget(btn_group)
         dropdown.select(groups[0])
 

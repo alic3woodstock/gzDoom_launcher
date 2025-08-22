@@ -8,15 +8,16 @@ from kivy.metrics import Metrics
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
+from kivy.uix.gridlayout import GridLayout
 from kivy.uix.layout import Layout
 from kivy.uix.relativelayout import RelativeLayout
+from kivy.uix.scrollview import ScrollView
 from kivy.uix.stacklayout import StackLayout
 
 from functions import text_color
 from getBorders import GetBorders
 from icon import Icon
 from myButton import MyButton
-
 
 class MyLayout(Layout):
 
@@ -59,10 +60,8 @@ class MyBoxLayout(MyLayout, BoxLayout):
 class MyAnchorLayout(MyLayout, AnchorLayout):
     pass
 
-
 class RelativeLayoutButton(Button, RelativeLayout):
     pass
-
 
 class TitleIcon(BoxLayout):
 

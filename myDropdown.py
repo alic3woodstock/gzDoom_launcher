@@ -1,3 +1,4 @@
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.dropdown import DropDown
 
 
@@ -15,3 +16,12 @@ class MyDropdown(DropDown):
 
     def on_dismiss(self):
         self.main_button.state = 'normal'
+
+    def create_dropbox(self):
+        self.main_button.size_hint = (1, 1)
+        drop_box = BoxLayout()
+        drop_box.size_hint = (1, None)
+        drop_box.padding = 2
+        drop_box.add_widget(self.main_button)
+        return drop_box
+

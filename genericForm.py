@@ -1,9 +1,7 @@
-from kivy.graphics import Callback
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
-from kivy.uix.scrollview import ScrollView
 from kivy.uix.textinput import TextInput
 
 from fileChooserDialog import FileChooserDialog
@@ -13,7 +11,6 @@ from icon import Icon
 from myButton import DropdownMainButton, MyButtonBorder, MyCheckBox
 from myDropdown import MyDropdown
 from myPopup import MyPopup
-from scrollBar import VertScrollBar
 
 
 def open_file_event(input_value, select_dir, _widget):
@@ -25,26 +22,16 @@ def open_file_event(input_value, select_dir, _widget):
 class GenericForm(BoxLayout):
     def __init__(self, height=0, **kwargs):
         super().__init__(**kwargs)
-        self.scroll_bar = None
-
-        self.scroll = ScrollView()
-        self.scroll.scroll_type = ['bars']
-        self.scroll.always_overscroll = False
-        self.scroll.bar_width = 4
+        self.values = []
+        self.labels = []
+        self.children_height = button_height
 
         self.topLayout = GridLayout()
         self.topLayout.cols = 2
         self.topLayout.padding = [16, 16]
         self.topLayout.spacing = [16, 16]
-        self.topLayout.size_hint = (1, None)
-        self.topLayout.height = height
 
-        self.values = []
-        self.labels = []
-        self.children_height = button_height
-        self.scroll.add_widget(self.topLayout)
-        self.add_widget(self.scroll)
-        self.canvas.add(Callback(self.update_form))
+        self.add_widget(self.topLayout)
 
     def add_label(self, text):
         label = Label()
@@ -140,11 +127,8 @@ class GenericForm(BoxLayout):
         main_button.size_hint = (1, 1)
         dropdown = MyDropdown(main_button)
 
-        drop_box = BoxLayout()
-        drop_box.size_hint = (1, None)
-        drop_box.padding = 2
+        drop_box = dropdown.create_dropbox()
         drop_box.height = self.children_height
-        drop_box.add_widget(main_button)
 
         self.topLayout.add_widget(label)
         self.topLayout.add_widget(drop_box)
@@ -173,23 +157,7 @@ class GenericForm(BoxLayout):
         for lb in self.labels:
             lb.parent.width = max_size
 
-        if self.topLayout.height <= 0:
-            self.topLayout.height = (self.get_height() - self.topLayout.padding[1]
-                                     - self.topLayout.padding[3])
-
-        scroll = None
-        for widget in self.children:
-            if isinstance(widget, VertScrollBar):
-                scroll = widget
-                break
-
-        if self.scroll.viewport_size[1] > self.height:
-            if not scroll:
-                self.scroll_bar = VertScrollBar(self.scroll)
-                self.add_widget(self.scroll_bar)
-        elif scroll:
-            self.remove_widget(scroll)
-            self.scroll_bar = None
+        super().update_form(_instr)
 
     def add_file_list(self, input_widget, field_name=''):
         label = self.add_label('')
