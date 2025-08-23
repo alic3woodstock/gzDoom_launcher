@@ -291,8 +291,8 @@ msgstr "para mais detalhes!"
 msgid "Extracting wine..."
 msgstr "Extraindo wine..."
 
-msgid "Downloading file"
-msgstr "Extraindo arquivo"
+msgid "Downloading file..."
+msgstr "Baixando arquivo..."
 
 msgid "-- None --"
 msgstr "-- Nenhum --"

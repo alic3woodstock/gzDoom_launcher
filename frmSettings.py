@@ -1,23 +1,24 @@
+import os
+import shutil
+
 from kivy.core.window import Window
 from kivy.graphics import Callback
-from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 
 from configDB import read_config, write_config
-from functions import button_height, set_language
+from functions import button_height, set_language, log
 from gameTab import GameTab
 from gameTabDB import select_all_game_tabs, update_all_game_tabs
 from genericForm import GenericForm
 from gridContainer import GridContainer
-from myButton import MyCheckBox, DropdownMainButton, DropDownItem
+from myButton import DropDownItem
 from myLayout import MyAnchorLayout, MyBoxLayout
 from myPopup import ModalWindow, MessageBox
 
 
 class FrmSettings(ModalWindow):
-    def __init__(self, dialog, temp_locale = None, **kwargs):
+    def __init__(self, dialog, temp_locale=None, **kwargs):
         super().__init__(dialog, **kwargs)
         self.genericForm = GenericForm()
 
@@ -50,13 +51,13 @@ class FrmSettings(ModalWindow):
 
         self.genericForm2 = GenericForm()
         self.genericForm2.add_dropdown(_('Language:'), 'language')
-        language = [LanguageOpt('en', 'English'), LanguageOpt('pt_BR', 'Portugues do Brasil')]
+        language = [LanguageOpt('en', 'English'), LanguageOpt('pt_BR', 'Português do Brasil')]
 
         for l in language:
             self.genericForm2.ids.language.add_widget(DropDownItem(l))
 
         if not temp_locale:
-            temp_locale = read_config("language","text")
+            temp_locale = read_config("language", "text")
 
         for l in language:
             if l.locale == temp_locale:
@@ -64,6 +65,10 @@ class FrmSettings(ModalWindow):
                 break
 
         self.genericForm2.ids.language.bind(on_select=self.on_language_select)
+
+        if os.name != 'nt':
+            self.genericForm2.add_file_field(_("Custom wine binary:"), "winecommand", False)
+            self.genericForm2.ids.winecommand.text = read_config("winecommand", "text")
 
         self.genericForm2.add_checkbox_field(_('Check for GZDoom updates on startup'), 'chkupdate')
         self.genericForm2.ids.chkupdate.active = read_config('checkupdate', 'bool')
@@ -73,18 +78,18 @@ class FrmSettings(ModalWindow):
 
         form_height = self.genericForm.get_height() + layout1.height + layout2.height + 4
 
-        topBox = BoxLayout()
-        topBox.size_hint = (1, None)
-        topBox.height = form_height
-        topBox.orientation = 'vertical'
-        topBox.add_widget(layout1)
-        topBox.add_widget(self.genericForm)
-        topBox.add_widget(layout2)
-        topLayout = GridContainer(topBox)
-        topLayout.padding = 0
-        topLayout.container.size_hint = (1, 1)
-        topLayout.borders = []
-        self.add_widget(topLayout)
+        top_box = BoxLayout()
+        top_box.size_hint = (1, None)
+        top_box.height = form_height
+        top_box.orientation = 'vertical'
+        top_box.add_widget(layout1)
+        top_box.add_widget(self.genericForm)
+        top_box.add_widget(layout2)
+        top_layout = GridContainer(top_box)
+        top_layout.padding = 0
+        top_layout.container.size_hint = (1, 1)
+        top_layout.borders = []
+        self.add_widget(top_layout)
 
         self.create_box_buttons(
             'OK', _('Cancel'))
@@ -121,13 +126,30 @@ class FrmSettings(ModalWindow):
                     and not self.genericForm.ids['tab' + str(i) + '_name'].text.strip()):
                 empty_text = True
 
+        wine_ok = True
+        winecmd = ""
+        if os.name != 'nt':
+            wine_ok = False
+            winecmd = self.genericForm2.ids.winecommand.text.strip()
+            if winecmd:
+                try:
+                    if os.path.isfile(winecmd) and shutil.which(winecmd):
+                        wine_ok = True
+                except Exception as e:
+                    log(str(e), True)
+                    wine_ok = False
+            else:
+                wine_ok = True
+
         msg = MessageBox()
         if not has_active_tab:
             msg.alert(_('At least one tab has to be enabled!'))
         elif empty_text:
             msg.alert(_('Enabled tabs must have a description!'))
+        elif not wine_ok:
+            msg.alert(_("Invalid wine binary!"))
         else:
-            old_locale = read_config("language","text")
+            old_locale = read_config("language", "text")
             new_locale = self.genericForm2.ids.language.main_button.game.locale
             if old_locale != new_locale:
                 write_config("language", new_locale, "text")
@@ -146,11 +168,13 @@ class FrmSettings(ModalWindow):
 
             update_all_game_tabs(game_tabs)
             write_config('checkupdate', self.genericForm2.ids.chkupdate.active, 'bool')
+            write_config("winecommand", winecmd, "text")
             self.dialog.dismiss()
 
     def on_language_select(self, _widget, data):
         set_language(data.locale)
         self.__init__(self.dialog, data.locale)
+
 
 class LanguageOpt:
 

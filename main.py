@@ -72,18 +72,16 @@ class FrmGzdlauncher(BoxLayout):
             write_config("language", language, "text")
             write_config("winecommand", data_path().wine, "text")
         else:
-            language = read_config("language","text")
+            language = read_config("language", "text")
             wine_command = read_config("winecommand", "text")
             try:
                 wine_command = shutil.which(wine_command)
                 if wine_command:
-                    result = subprocess.run([wine_command])
-                    if result == 0:
+                    result = subprocess.run([wine_command, '--version'], check=True)
+                    if not result.stderr:
                         data_path().wine = wine_command
             finally:
-                pass
-
-            set_language(language)
+                set_language(language)
 
         self.orientation = 'vertical'
         self.padding = 1
@@ -271,7 +269,8 @@ class FrmGzdlauncher(BoxLayout):
             self.popup.content = FrmCredits(self.popup)
         elif data.index == 2:
             self.popup.content = Dialog(self.popup, text="GZDoom launcher " + functions.APPVERSION
-                                                         + "\n" + _('Copyright') + ' © 2022-2025 ' + 'Alice "alic3woodstock" Xavier',
+                                                         + "\n" + _(
+                'Copyright') + ' © 2022-2025 ' + 'Alice "alic3woodstock" Xavier',
                                         txt_cancel='OK', txt_ok='', icon='pentagram')
         else:
             self.popup.content = Dialog(self.popup, text=_('Under construction'), txt_cancel='OK', txt_ok='',
@@ -431,7 +430,6 @@ class FrmGzdlauncher(BoxLayout):
 
                     if result.returncode != 0:
                         functions.log(f"Command failed with return code {result.returncode}. Error: {result.stderr}")
-
 
         self.popup.dismiss()
         self.is_game_running = False

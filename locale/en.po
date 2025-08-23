@@ -9,14 +9,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GZDoom_launcher 2.02.00\n"
 "Report-Msgid-Bugs-To: awxdeveloper@yahoo.com\n"
-"POT-Creation-Date: 2025-08-21 13:45-0300\n"
+"POT-Creation-Date: 2025-08-23 07:31-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Alice Woodstock <awxdeveloper@yahoo.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.17.0\n"
 
 msgid "Mods"
 msgstr ""
@@ -159,6 +159,15 @@ msgstr ""
 msgid "No"
 msgstr ""
 
+msgid "Name"
+msgstr ""
+
+msgid "Tab"
+msgstr ""
+
+msgid "Mod Group"
+msgstr ""
+
 msgid "Delete"
 msgstr ""
 
@@ -183,7 +192,7 @@ msgstr ""
 msgid "Configure Tabs:"
 msgstr ""
 
-msgid "Tab"
+msgid "Language:"
 msgstr ""
 
 msgid "Check for GZDoom updates on startup"
@@ -237,7 +246,7 @@ msgstr ""
 msgid "Extracting wine..."
 msgstr ""
 
-msgid "Downloading file"
+msgid "Downloading file..."
 msgstr ""
 
 msgid "Empty Tab"

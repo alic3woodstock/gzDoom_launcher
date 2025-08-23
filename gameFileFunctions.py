@@ -338,7 +338,7 @@ class GameFileFunctions:
         # each file.
         if current_size < total_size:
             self.value = math.floor(self.value) + (current_size / total_size)
-        self.message = _("Downloading file") + " " + str(self.currentDownload) \
+        self.message = _("Downloading file...") + " " + str(self.currentDownload) \
                        + "/" + str(self.totalDownloads) + ": " \
                        + str(current_size // 1024) + "k of " + str(total_size // 1024) + "k"
 
