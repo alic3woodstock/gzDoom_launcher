@@ -21,5 +21,7 @@ I don't fallow any strict programing rules, I make this for hobby. It's fun to c
 <li>Desktop behavior: Double click to run/edit games</li>
 <li>Desktop behavior: Tab / Shift + tab to change input focus</li>
 <li>Enter press OK button on information/alert dialogs</li>
+<li>Switch to uzdoom appimage.</li>
+<li>Create a new form of distribution (venv no longer works on arch linux)</li>
 </ul>
 
