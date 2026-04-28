@@ -149,7 +149,7 @@ class FrmGzdlauncher(BoxLayout):
 
         menu_games = Menu()
         menu_games.bind(on_select=self.menu_games_on_select)
-        btn_menu_games = TopMenuButton(menu_games, text=_('Games'))
+        btn_menu_games = TopMenuButton(menu_games, text=_('Tools'))
         self.main_menu.add_widget(btn_menu_games)
 
         menu_help = Menu()
@@ -162,6 +162,7 @@ class FrmGzdlauncher(BoxLayout):
         menu_games.add_item(_('Import Doom + Doom II 2024'))
         menu_games.add_item(_('Replace freedoom2.wad'))
         menu_games.add_item(_('Replace blasphemer.wad'))
+        menu_games.add_item(_('Replace Game Exec.'))
 
         menu_app.add_item(_('Update GZDoom'))
         menu_app.add_item(_('Settings'))
@@ -253,9 +254,11 @@ class FrmGzdlauncher(BoxLayout):
         elif data.index == 2:
             self.popup.content = FrmImportDoom(self.popup)
         elif data.index == 3:
-            self.popup.content = FrmReplaceWad(self.popup, mod_group=1)
+            self.popup.content = FrmReplaceWad(self.popup, 1)
         elif data.index == 4:
-            self.popup.content = FrmReplaceWad(self.popup, mod_group=2)
+            self.popup.content = FrmReplaceWad(self.popup, 2)
+        elif data.index == 5:
+            self.popup.content = FrmReplaceWad(self.popup, 0)
         else:
             self.popup.content = Dialog(self.popup, text=_('Under construction'), txt_cancel=_('OK'), txt_ok='',
                                         icon='information')

@@ -1,10 +1,10 @@
 #!/bin/bash
 if [ -e /usr/bin/paru ]; then
-	paru -Sy python-kivy python-babel python-py7zr python-screeninfo fuse --needed
+	paru -S python-kivy python-babel python-py7zr python-screeninfo fuse xsel --needed
 elif [ -e /usr/bin/yay ]; then
-	yay -Sy python-kivy python-babel python-py7zr python-screeninfo fuse --needed
+	yay -S python-kivy python-babel python-py7zr python-screeninfo fuse xsel --needed
 else
-	sudo pacman -Sy python-kivy python-babel python-py7zr python-screeninfo fuse --needed
+	sudo pacman -S python-kivy python-babel python-py7zr python-screeninfo fuse xsel --needed
 fi
 
 python main.py

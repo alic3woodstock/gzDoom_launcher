@@ -139,3 +139,12 @@ def delete_games_from_tab(tab_id):
     sql = """DELETE FROM gamedef WHERE tabindex=?"""
     data_con.exec_sql(sql, params)
     data_con.commit()
+
+def update_exec(exec):
+    data_con = connect_db()
+    data_con.start_transaction()
+
+    sql = """UPDATE gamedef SET gamexec=?"""
+    params = [exec]
+    data_con.exec_sql(sql, params)
+    data_con.commit()

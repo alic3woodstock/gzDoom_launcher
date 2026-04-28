@@ -3,7 +3,7 @@ from os.path import isfile, basename
 from kivy.core.window import Window
 
 from functions import button_height
-from gameDefDB import update_wad
+from gameDefDB import update_wad, update_exec
 from gameTabDB import select_game_tab_by_id
 from genericForm import GenericForm
 from myPopup import MyPopup, ModalWindow, MessageBox
@@ -17,12 +17,18 @@ class FrmReplaceWad(ModalWindow):
         if mod_group == 2:
             self.old_wad = 'blasphem.wad'
             self.suggested_wad = 'heretic.wad'
+        elif mod_group == 0:
+            self.old_wad = ""
+            self.suggested_wad = ""
         else:
             self.old_wad = 'freedoom2.wad'
             self.suggested_wad = 'doom2.wad'
         self.mod_group = mod_group
         self.formLayout = GenericForm()
-        text = _('Replace by') + ' (' + self.suggested_wad + '):'
+        if self.suggested_wad:
+            text = _('Replace by') + ' (' + self.suggested_wad + '):'
+        else:
+            text = _('Replace by') + ':'
         self.formLayout.add_file_field(text, 'file')
         self.add_widget(self.formLayout)
 
@@ -36,11 +42,18 @@ class FrmReplaceWad(ModalWindow):
         msg = MessageBox()
         file = self.formLayout.ids.file.text
         if not isfile(file):
-            msg.alert(_('Invalid wad file!'))
+            msg.alert(_('Invalid file!'))
         else:
-            update_wad(file, self.mod_group)
-            tab = select_game_tab_by_id(1)
-            msg.message('Wad ' + self.old_wad + _(' replaced by ')
-                        + basename(file) + _(' in tab ')
-                        + tab.name + "!", icon='information')
-            self.dialog.dismiss()
+            if self.old_wad:
+                update_wad(file, self.mod_group)
+                tab = select_game_tab_by_id(1)
+                msg.message('Wad ' + self.old_wad + _(' replaced by ')
+                            + basename(file) + _(' in tab ')
+                            + tab.name + "!", icon='information')
+                self.dialog.dismiss()
+            else:
+                update_exec(file)
+                msg.message(_('Game Exec.') + self.old_wad + _(' replaced by ')
+                            + basename(file) + "!", icon='information')
+                self.dialog.dismiss()
+

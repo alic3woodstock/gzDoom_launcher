@@ -147,8 +147,8 @@ msgstr "Editar"
 msgid "Replace by"
 msgstr "Substituir por"
 
-msgid "Invalid wad file!"
-msgstr "Arquivo wad inválido!"
+msgid "Invalid file!"
+msgstr "Arquivo inválido!"
 
 msgid " replaced by "
 msgstr " substituído por "
@@ -308,3 +308,12 @@ msgstr "Nome"
 
 msgid "Mod Group"
 msgstr "Grupo de Mods"
+
+msgid "Tools"
+msgstr "Ferramentas"
+
+msgid "Replace Game Exec."
+msgstr "Substituir Executável"
+
+msgid "Game Exec."
+msgstr "Executável"

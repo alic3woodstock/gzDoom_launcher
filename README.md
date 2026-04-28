@@ -22,6 +22,8 @@ I don't fallow any strict programing rules, I make this for hobby. It's fun to c
 <li>Desktop behavior: Tab / Shift + tab to change input focus</li>
 <li>Enter press OK button on information/alert dialogs</li>
 <li>Switch to uzdoom appimage.</li>
-<li>Create a new form of distribution (venv no longer works on arch linux)</li>
+<li>Use appimage for releases (venv no longer works on arch linux)</li>
+<li>Replace gzDoom with uzdoom</li>
+<li>Suports Hexen + Heretic 2025 (when uzdoom supports it)</li>
 </ul>
 
