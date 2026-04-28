@@ -1,6 +1,7 @@
 import math
 import os
 import shutil
+import stat
 from tarfile import open as TarFile
 from zipfile import ZipFile
 
@@ -284,11 +285,12 @@ class GameFileFunctions:
                 if zip_file.test_file_name("uzdoom"):
                     try:
                         if gzdoom_update.gzdoom_windows:
-                            if zip_file.extract_to(data_path().gzDoom):
-                                extract_ok = True
+                            extract_ok =zip_file.extract_to(data_path().gzDoom)
                         else:
-                            if zip_file.copy_to(data_path().gzDoom):
-                                extract_ok = True
+                            extract_ok = zip_file.copy_to(data_path().gzDoom)
+                            os.chmod(gzdoom_update.local_file_name,
+                                     stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP |
+                                     stat.S_IROTH | stat.S_IXOTH )
 
                         gzdoom_update.local_hash = filehash(gzdoom_update.local_file_name)
                     except Exception as e:
