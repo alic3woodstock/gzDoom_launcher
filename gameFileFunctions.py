@@ -267,6 +267,7 @@ class GameFileFunctions:
                 finish = False
                 gzdoom_update = GZDoomUpdate()
 
+
             if update_wine:
                 self.max_range += 1
                 self.totalDownloads += 1
@@ -277,26 +278,21 @@ class GameFileFunctions:
                 if gzdoom_update.gzdoom_windows:
                     zip_file = GameFile(gzdoom_update.filename, "zip")
                 else:
-                    zip_file = GameFile(gzdoom_update.filename, "xz")
+                    zip_file = GameFile(gzdoom_update.filename, "AppImage")
 
                 extract_ok = False
-                if zip_file.test_file_name("gzdoom"):
+                if zip_file.test_file_name("uzdoom"):
                     try:
                         if gzdoom_update.gzdoom_windows:
                             if zip_file.extract_to(data_path().gzDoom):
                                 extract_ok = True
                         else:
-                            if zip_file.extract_to(data_path().temp):
+                            if zip_file.copy_to(data_path().gzDoom):
                                 extract_ok = True
-                            dirs = os.listdir(data_path().temp)
-                            for d in dirs:
-                                if d.lower().find("gzdoom") >= 0:
-                                    if os.path.exists(data_path().gzDoom):
-                                        shutil.rmtree(data_path().gzDoom)
-                                    shutil.copytree(data_path().temp + d, data_path().gzDoom)
+
                         gzdoom_update.local_hash = filehash(gzdoom_update.local_file_name)
                     except Exception as e:
-                        write_log(e)
+                        write_log('update_gz_doom - ' + str(e))
 
                     update_gzdoom_version(gzdoom_update.version, gzdoom_update.local_hash)
                     if os.path.exists(data_path().temp):
@@ -392,9 +388,12 @@ class GameFile:
 
             if os.path.isfile(from_file):
                 shutil.copy(from_file, path)
+
+            return True
         except Exception as e:
             write_log("CopyTo - " + str(e))
             write_log("Copying " + self.get_name() + " failed")
+            return False
 
     def get_name(self):
         return self._name

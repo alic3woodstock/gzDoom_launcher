@@ -34,9 +34,9 @@ class DataPath:
         self.logFile = self.data + '/gzDoomLauncher.log'
 
         if WINE_GZDOOM:
-            self.gzDoomExec = self.gzDoom + "gzdoom.exe"
+            self.gzDoomExec = self.gzDoom + "uzdoom.exe"
         else:
-            self.gzDoomExec = self.gzDoom + "gzdoom"
+            self.gzDoomExec = self.gzDoom + "UZDoom.AppImage"
 
         self.wine = self.gzDoom + 'lutris-GE-Proton8-26-x86_64/bin/wine64'
 

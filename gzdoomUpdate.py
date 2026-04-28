@@ -9,7 +9,7 @@ from url import Url
 class GZDoomUpdate:
     def __init__(self):
         self.gzdoom_windows = (os_name == "nt") or WINE_GZDOOM
-        self.wine_gzdoom = not (os_name == "nt") and WINE_GZDOOM
+        self.wine_gzdoom = (not (os_name == "nt")) and WINE_GZDOOM
         self.file = None
         self.filename = ""
         self.local_hash = ""
@@ -18,7 +18,7 @@ class GZDoomUpdate:
         if self.gzdoom_windows:
             self.filename = "gzdoom.zip"
         else:
-            self.filename = "gzdoom.tar.xz"
+            self.filename = "UZDoom.AppImage"
 
         self.local_file_name = data_path().gzDoomExec
 
@@ -42,30 +42,29 @@ class GZDoomUpdate:
             return ((not path.isfile(self.local_file_name)) or
                     (not check_gzdoom_version(self.version, self.local_hash)))
         except Exception as e:
-            write_log(e)
+            write_log('check_gzdoom_update - ' + str(e))
 
 
 def get_gz_doom_url(gzdoom_windows):
-    # r = get("https://github.com/coelckers/gzdoom/releases/latest", stream=False)
-    r = Url("https://github.com/coelckers/gzdoom/releases/latest", '').get_html()
+    r = Url("https://github.com/UZDoom/UZDoom/releases/latest", '').get_html()
     tmp_str = r.result
-    start = tmp_str.find("https://github.com/ZDoom/gzdoom/releases/expanded_assets")
+    start = tmp_str.find("https://github.com/UZDoom/UZDoom/releases/expanded_assets")
     end = tmp_str.find('"', start)
     tmp_str = tmp_str[start:end].strip()
-    start = tmp_str.find("expanded_assets/g")
+    start = tmp_str.find("expanded_assets/")
     version = tmp_str[start:].strip()
-    version = version[version.find('g') + 1:]
+    version = version[version.find('/') + 1:]
 
     r = Url(tmp_str, '').get_html()
     tmp_str = r.result
 
-    start = tmp_str.find("/ZDoom/gzdoom/releases/download")
+    start = tmp_str.find("/UZDoom/UZDoom/releases/download")
     tmp_str = tmp_str[start:]
     if gzdoom_windows:
-        start = tmp_str.lower().find('windows.zip')
+        start = tmp_str.lower().find('windows-uzdoom')
     else:
-        start = tmp_str.lower().find('linux')
-    start = tmp_str.find("/ZDoom/gzdoom/releases/download", start - 200, )
+        start = tmp_str.lower().find('linux-uzdoom')
+    start = tmp_str.find("/UZDoom/UZDoom/releases/download", start - 200, )
     tmp_str = tmp_str[start:]
     end = tmp_str.lower().find('" rel=')
 

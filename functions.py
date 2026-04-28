@@ -7,10 +7,10 @@ from babel.messages.pofile import read_po
 from babel.messages.mofile import write_mo
 from time import ctime, strftime
 
-LOGLEVEL = logging.ERROR
+LOGLEVEL = logging.DEBUG
 FORMAT = '%(levelname)s: %(asctime)s - %(message)s'
 APPVERSION = "2.04.00"
-WINE_GZDOOM = True  # linux gzdoom works only on ubuntu for now.
+WINE_GZDOOM = False  # Using native AppImage version of UZDoom
 RE_DOWNLOAD = False
 
 text_color = [1, 1, 1, 1]
