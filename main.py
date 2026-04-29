@@ -156,10 +156,10 @@ class FrmGzdlauncher(BoxLayout):
         menu_help.bind(on_select=self.menu_help_on_select)
         btm_menu_help = TopMenuButton(menu_help, text=_('Help'))
         self.main_menu.add_widget(btm_menu_help)
-
         menu_games.add_item(_('Manage Games'))
-        menu_games.add_item(_('Reset to Default'))
         menu_games.add_item(_('Import Doom + Doom II 2024'))
+        menu_games.add_item(_('Import Hexen + Heretic'))
+        menu_games.add_item(_('Reset to Default Games'))
         menu_games.add_item(_('Replace freedoom2.wad'))
         menu_games.add_item(_('Replace blasphemer.wad'))
         menu_games.add_item(_('Replace Game Exec.'))
@@ -245,19 +245,21 @@ class FrmGzdlauncher(BoxLayout):
             dialog = FrmManageGames(self.popup)
             self.popup.content = dialog
         elif data.index == 1:
+            self.popup.content = FrmImportDoom(self.popup)
+        elif data.index == 2:
+            self.popup.content = FrmImportDoom(self.popup, True)
+        elif data.index == 3:
             dialog = Dialog(self.popup,
                             text=_("This will reset game database to the default values.\n"
                                    + "Do you want to continue?"),
                             txt_cancel=_('No'), txt_ok=_('Yes'), icon='exclamation')
             dialog.btnOk.bind(on_release=self.btn_yes1_on_press)
             self.popup.content = dialog
-        elif data.index == 2:
-            self.popup.content = FrmImportDoom(self.popup)
-        elif data.index == 3:
-            self.popup.content = FrmReplaceWad(self.popup, 1)
         elif data.index == 4:
-            self.popup.content = FrmReplaceWad(self.popup, 2)
+            self.popup.content = FrmReplaceWad(self.popup, 1)
         elif data.index == 5:
+            self.popup.content = FrmReplaceWad(self.popup, 2)
+        elif data.index == 6:
             self.popup.content = FrmReplaceWad(self.popup, 0)
         else:
             self.popup.content = Dialog(self.popup, text=_('Under construction'), txt_cancel=_('OK'), txt_ok='',

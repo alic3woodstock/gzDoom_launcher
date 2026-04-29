@@ -317,3 +317,24 @@ msgstr "Substituir Executável"
 
 msgid "Game Exec."
 msgstr "Executável"
+
+msgid "Hexen + Heretic path:"
+msgstr "Pasta do jogo:"
+
+msgid "Can't create heretic_hexen temp folder!"
+msgstr "Não foi possĩvel criar a pasta heretic_hexen"
+
+msgid "Heretic.wad not found!"
+msgstr "Heretic.wad não encontrado"
+
+msgid "Hexen.wad not found!"
+msgstr "Hexen.wad não encontrado"
+
+msgid "Invalid Heretic + Hexen release!"
+msgstr "Jogo Hexen + Heretic não corresponde ao esperado!"
+
+msgid "Error creating heretic_hexen folder!"
+msgstr "Erro ao criar a pasta hexen_heretic!"
+
+msgid "Heretic + Hexen successfully imported!"
+msgstr "Heretic + Hexen importado com sucesso!"

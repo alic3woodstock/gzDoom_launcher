@@ -18,22 +18,29 @@ from url import Url
 
 class FrmImportDoom(ModalWindow):
 
-    def __init__(self, dialog, **kwargs):
+    def __init__(self, dialog, hexen_heretic=False, **kwargs):
         super().__init__(dialog, **kwargs)
         self.popup = MyPopup()
         self.genericForm = GenericForm()
-        text = _('Doom + Doom II path:')
+        if hexen_heretic:
+            text = _('Hexen + Heretic path:')
+        else:
+            text = _('Doom + Doom II path:')
         self.genericForm.add_file_field(text, 'file', True)
-        self.genericForm.add_checkbox_field(_('Use remix tracks'), 'remix')
+
+        # remix mod doesn't work on uzdoom
+        # self.genericForm.add_checkbox_field(_('Use remix tracks'), 'remix')
         self.add_widget(self.genericForm)
 
-        self.genericForm.ids.remix.active = True
+        # self.genericForm.ids.remix.active = True
 
         self.create_box_buttons(
             'OK', 'Cancel')
         self.btnOk.bind(on_release=self.btn_ok_on_press)
         self.dialog.height = (button_height * 2  # box buttons height + tithe height
                               + self.genericForm.get_height())
+
+        self.hexen_heretic = hexen_heretic
 
     def btn_ok_on_press(self, _widget):
         msg = MessageBox()
@@ -50,7 +57,12 @@ class FrmImportDoom(ModalWindow):
             files = os.listdir(file.strip())
             games = []
             tabs = select_all_game_tabs()
-            free_id = read_config('doom2024tab', 'num')
+
+            if self.hexen_heretic:
+                free_id = read_config('heretic2025tab', 'num')
+            else:
+                free_id = read_config('doom2024tab', 'num')
+
             if free_id <= 0:
                 for t in tabs:
                     if t.index == free_id:
@@ -58,6 +70,92 @@ class FrmImportDoom(ModalWindow):
 
             if free_id > 9:
                 msg.alert(_("Can't create a new tab!"))
+            elif self.hexen_heretic:
+                hereticwad = ''
+                hexenwad = ''
+                can_save = False
+                tmp_folder = data_path().data + folder_char + 'heretic_hexen_tmp'
+                heretic_folder = data_path().data + folder_char + 'heretic_hexen' + folder_char
+
+                try:
+                    if isdir(tmp_folder):
+                        rmtree(tmp_folder)
+                    os.mkdir(tmp_folder)
+                    can_save = True
+                except Exception as e:
+                    log(e)
+                    msg.alert(_("Can't create heretic_hexen temp folder!"))
+
+                if can_save:
+                    for f in files:
+                        if f.lower().find('.wad') >= 0 and isfile(file + f):
+                            copy(file + f, tmp_folder)
+
+                        if f.lower() == 'heretic.wad':
+                            hereticwad = heretic_folder + f
+                        if f.lower() == 'hexen.wad':
+                            hexenwad = heretic_folder + f
+
+                    if not hereticwad.strip():
+                        msg.alert(_('Heretic.wad not found!'))
+                    elif not hexenwad.strip():
+                        msg.alert(_('Hexen.wad not found!'))
+                    else:
+                        for f in files:
+                            if f.lower().find('.wad') >= 0 and isfile(file + f):
+                                copy(file + f, tmp_folder)
+
+                            if f.lower() == 'heretic.wad':
+                                games.append(GameDef(0, 'Heretic: Shadow of the Serpent Riders', free_id,
+                                                     data_path().gzDoomExec, 2, 0, hereticwad))
+
+                            if f.lower() == 'hexen.wad':
+                                games.append(GameDef(0, 'Hexen: Beyond Heretic', free_id,
+                                                     data_path().gzDoomExec, 3, 0, hexenwad))
+
+                            if f.lower() == 'hexdd.wad':
+                                games.append(GameDef(0, 'Hexen: Deathkings of the Dark Citadel', free_id,
+                                                     data_path().gzDoomExec, 3, 0, hexenwad,
+                                                     [heretic_folder + f]))
+
+                        if len(games) < 3:
+                            msg.alert(_('Invalid Heretic + Hexen release!'))
+                        else:
+                            if can_save:
+                                try:
+                                    heretic_folder = data_path().data + folder_char + 'heretic_hexen'
+
+                                    if isdir(heretic_folder):
+                                        os.rename(heretic_folder, heretic_folder + '_bak')
+
+                                    os.rename(tmp_folder, heretic_folder)
+
+                                    if isdir(heretic_folder + '_bak'):
+                                        rmtree(heretic_folder + '_bak')
+                                except Exception as e:
+                                    log(e)
+                                    can_save = False
+                                    msg.alert(_('Error creating heretic_hexen folder!'))
+
+                            if can_save:
+                                tab_found = False
+                                for t in tabs:
+                                    if t.index == free_id:
+                                        t.name = 'Heretic + Hexen'
+                                        t.is_enabled = True
+                                        tab_found = True
+                                if not tab_found:
+                                    tabs.append(GameTab(free_id, 'Heretic + Hexen', True))
+                                delete_games_from_tab(free_id)
+                                update_all_game_tabs(tabs)
+                                write_config('heretic2025tab', free_id, 'num')
+
+                                for g in games:
+                                    insert_game(g)
+
+                                msg.message(_('Heretic + Hexen successfully imported!'), 'information')
+                                self.dialog.dismiss()
+
             else:
                 doomwad = ''
                 doom2wad = ''
@@ -148,21 +246,21 @@ class FrmImportDoom(ModalWindow):
                         if len(games) < 7:
                             msg.alert(_('Invalid Doom + Doom2 release!'))
                         else:
-                            if self.genericForm.ids.remix.active:
-                                try:
-                                    game_file = GameFileFunctions()
-                                    game_file.totalDownloads = 1
-                                    gzde_file_name = 'gzd-extras-sndinfos-v2.pk3'
-                                    url = Url('https://awxdeveloper.edu.eu.org/gzd-extras-sndinfos-v2.pk3',
-                                              gzde_file_name)
-                                    game_file.download_file(url)
-                                    copy(data_path().download + gzde_file_name,
-                                         data_path().mod + gzde_file_name)
-                                    for g in games:
-                                        g.files.append(data_path().mod + 'gzd-extras-sndinfos-v2.pk3')
-                                except Exception as e:
-                                    can_save = False
-                                    msg.alert(_('Error downloading remix patch: ') + str(e) + '!')
+                            # if self.genericForm.ids.remix.active:
+                            #     try:
+                            #         game_file = GameFileFunctions()
+                            #         game_file.totalDownloads = 1
+                            #         gzde_file_name = 'gzd-extras-sndinfos-v2.pk3'
+                            #         url = Url('https://awxdeveloper.edu.eu.org/gzd-extras-sndinfos-v2.pk3',
+                            #                   gzde_file_name)
+                            #         game_file.download_file(url)
+                            #         copy(data_path().download + gzde_file_name,
+                            #              data_path().mod + gzde_file_name)
+                            #         for g in games:
+                            #             g.files.append(data_path().mod + 'gzd-extras-sndinfos-v2.pk3')
+                            #     except Exception as e:
+                            #         can_save = False
+                            #         msg.alert(_('Error downloading remix patch: ') + str(e) + '!')
 
                             if can_save:
                                 try:
@@ -184,11 +282,11 @@ class FrmImportDoom(ModalWindow):
                                 tab_found = False
                                 for t in tabs:
                                     if t.index == free_id:
-                                        t.name = 'DOOM + DOOM II'
+                                        t.name = 'Doom + Doom II'
                                         t.is_enabled = True
                                         tab_found = True
                                 if not tab_found:
-                                    tabs.append(GameTab(free_id, 'DOOM + DOOM II', True))
+                                    tabs.append(GameTab(free_id, 'Doom + Doom II', True))
                                 delete_games_from_tab(free_id)
                                 update_all_game_tabs(tabs)
                                 write_config('doom2024tab', free_id, 'num')
@@ -196,5 +294,5 @@ class FrmImportDoom(ModalWindow):
                                 for g in games:
                                     insert_game(g)
 
-                                msg.message(_('DOOM + DOOM II 2024 successfully imported!'), 'information')
+                                msg.message(_('Doom + Doom II 2024 successfully imported!'), 'information')
                                 self.dialog.dismiss()

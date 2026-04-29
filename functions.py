@@ -9,7 +9,7 @@ from time import ctime, strftime
 
 LOGLEVEL = logging.DEBUG
 FORMAT = '%(levelname)s: %(asctime)s - %(message)s'
-APPVERSION = "2.04.00"
+APPVERSION = "2.05.00"
 WINE_GZDOOM = False  # Using native AppImage version of UZDoom
 RE_DOWNLOAD = False
 
