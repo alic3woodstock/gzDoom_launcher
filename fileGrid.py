@@ -6,7 +6,7 @@ from kivy.uix.gridlayout import GridLayout
 from dbGrid import DBGrid, GridButton
 from gridContainer import GridContainer
 from myButton import MyButtonBorder
-from myPopup import MessageBox
+from myPopup import MessageBox, MyPopup
 
 
 class FileGrid(BoxLayout):
@@ -48,7 +48,8 @@ class FileGrid(BoxLayout):
     def add_value(self, value):
         tmp_id = len(self.grid.children) // 2
         self.grid.add_row([str(tmp_id), value])
-        self.input_widget.text = ''
+        if self.input_widget:
+            self.input_widget.text = ''
 
     def btn_add_onrelease(self, _widget):
         if self.input_widget:
@@ -57,6 +58,11 @@ class FileGrid(BoxLayout):
                 self.add_value(value)
             else:
                 MessageBox().alert(_('File not found!'))
+        else:
+            popup = MyPopup()
+            from fileChooserDialog import FileChooserDialog
+            popup.content = FileChooserDialog(popup, self, False)
+            popup.open()
 
     def btn_del_onrelease(self, _widget):
         values = []

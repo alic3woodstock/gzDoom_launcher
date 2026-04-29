@@ -160,9 +160,12 @@ class GenericForm(BoxLayout):
             lb.parent.width = max_size
 
 
-    def add_file_list(self, input_widget, field_name=''):
-        label = self.add_label('')
-        top_grid = FileGrid(input_widget)
+    def add_file_list(self, text='', field_name=''):
+
+        label = self.add_label(text)
+        label.size_hint = (None, 1)
+        label.anchor_y = 'top'
+        top_grid = FileGrid(None)
 
         self.topLayout.add_widget(label)
         self.topLayout.add_widget(top_grid)

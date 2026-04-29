@@ -36,11 +36,10 @@ class FrmGames(ModalWindow):
         self.genericForm.add_dropdown(text=_('Tab.:'), field_name='tab')
         self.genericForm.add_dropdown(text=_('Mod Group:'), field_name='modgroup')
         self.genericForm.add_text_field(text=_('Cmd. Parameters:'), field_name='params')
-        self.genericForm.add_file_field(text=_('Files:'), field_name='files')
-        self.genericForm.add_file_list(self.genericForm.ids.files,
-                                       field_name='filelist')
+        # self.genericForm.add_file_field(text=_('Files:'), field_name='files')
+        self.genericForm.add_file_list(text=_('Files:'), field_name='filelist')
         self.genericForm.ids.filelist.refresh_file_list(-1)
-        self.genericForm.link_file_list('filelist', 'files')
+        # self.genericForm.link_file_list('filelist', 'files')
         self.add_widget(self.genericForm)
         self.ismod_index = get_widget_index(self.genericForm.ids.ismod)
 

@@ -53,7 +53,7 @@ class DataPath:
             self.mod = self.mod.replace('/', '\\')
 
             self.logFile = self.logFile.replace('/', '\\')
-            self.gzDoomExec = self.gzDoom + "gzdoom.exe"
+            self.gzDoomExec = self.gzDoom + "uzdoom.exe"
             self.pentagram = self.pentagram.replace('/', '\\')
 
         dataPath = self
