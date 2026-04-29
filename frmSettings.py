@@ -70,7 +70,7 @@ class FrmSettings(ModalWindow):
             self.genericForm2.add_file_field(_("Custom wine binary:"), "winecommand", False)
             self.genericForm2.ids.winecommand.text = read_config("winecommand", "text")
 
-        self.genericForm2.add_checkbox_field(_('Check for GZDoom updates on startup'), 'chkupdate')
+        self.genericForm2.add_checkbox_field(_('Check for UZDoom updates on startup'), 'chkupdate')
         self.genericForm2.ids.chkupdate.active = read_config('checkupdate', 'bool')
 
         layout2.height = self.genericForm2.get_height() - 16

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GZDoom_launcher 2.02.00\n"
 "Report-Msgid-Bugs-To: awxdeveloper@yahoo.com\n"
-"POT-Creation-Date: 2026-04-29 07:33-0300\n"
+"POT-Creation-Date: 2026-04-29 08:15-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Alice Woodstock <awxdeveloper@yahoo.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -216,7 +216,7 @@ msgstr ""
 msgid "Custom wine binary:"
 msgstr ""
 
-msgid "Check for GZDoom updates on startup"
+msgid "Check for UZDoom updates on startup"
 msgstr ""
 
 msgid "At least one tab has to be enabled!"
@@ -237,10 +237,10 @@ msgstr ""
 msgid "Downloading files..."
 msgstr ""
 
-msgid "Updating gzdoom..."
+msgid "Updating UZDoom..."
 msgstr ""
 
-msgid "Update gzdoom failed"
+msgid "Update UZDoom failed"
 msgstr ""
 
 msgid "Extracting/Copying files..."
@@ -249,13 +249,13 @@ msgstr ""
 msgid "All done, have fun!"
 msgstr ""
 
-msgid "Checking GZDoom version..."
+msgid "Checking UZDoom version..."
 msgstr ""
 
-msgid "GZDoom already at latest version."
+msgid "UZDoom already at latest version."
 msgstr ""
 
-msgid "GZDoom updated to version:"
+msgid "UZDoom updated to version:"
 msgstr ""
 
 msgid "Update failed!"
@@ -306,7 +306,7 @@ msgstr ""
 msgid "Replace Game Exec."
 msgstr ""
 
-msgid "Update GZDoom"
+msgid "Update UZDoom"
 msgstr ""
 
 msgid "Settings"
@@ -344,15 +344,15 @@ msgstr ""
 msgid "Starting"
 msgstr ""
 
-msgid "Updating GZDoom..."
-msgstr ""
-
 msgid "Under contruction"
 msgstr ""
 
-msgid "A new version of GZDoom was found, update now?"
+msgid "A new version of UZDoom was found, update now?"
 msgstr ""
 
 msgid "Download default games now? (games -> reset to default)"
+msgstr ""
+
+msgid "Checking GZDoom version..."
 msgstr ""
 

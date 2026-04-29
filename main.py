@@ -164,7 +164,7 @@ class FrmGzdlauncher(BoxLayout):
         menu_games.add_item(_('Replace blasphemer.wad'))
         menu_games.add_item(_('Replace Game Exec.'))
 
-        menu_app.add_item(_('Update GZDoom'))
+        menu_app.add_item(_('Update UZDoom'))
         menu_app.add_item(_('Settings'))
         menu_app.add_item(_('Exit'))
 
@@ -292,7 +292,7 @@ class FrmGzdlauncher(BoxLayout):
         thread.start()
 
     def btn_update_on_press(self, gzdoom_update):
-        progress = Progress(self.popup, text=_('Updating GZDoom...'))
+        progress = Progress(self.popup, text=_('Updating UZDoom...'))
         self.popup.content = progress
         self.popup.width = 600
         self.popup.height = 200
@@ -442,7 +442,7 @@ class FrmGzdlauncher(BoxLayout):
     def check_gzdoom_update(self, _clock=None):
         gzdoom_update = GZDoomUpdate()
         if gzdoom_update.check_gzdoom_update():
-            dialog = Dialog(self.popup, _("A new version of GZDoom was found, update now?"),
+            dialog = Dialog(self.popup, _("A new version of UZDoom was found, update now?"),
                             txt_ok=_('Yes'), txt_cancel=_('No'), icon='question')
             self.popup.content = dialog
             dialog.btnOk.bind(on_release=lambda f: self.btn_update_on_press(gzdoom_update))

@@ -1,22 +1,22 @@
 # Translations template for GZDoom_launcher.
-# Copyright (C) 2025 Alice Woodstock
+# Copyright (C) 2026 Alice Woodstock
 # This file is distributed under the same license as the GZDoom_launcher
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: GZDoom_launcher 2.02.00\n"
 "Report-Msgid-Bugs-To: awxdeveloper@yahoo.com\n"
-"POT-Creation-Date: 2025-08-23 07:31-0300\n"
+"POT-Creation-Date: 2026-04-29 08:15-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Alice Woodstock <awxdeveloper@yahoo.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 msgid "Mods"
 msgstr ""
@@ -120,13 +120,31 @@ msgstr ""
 msgid "Close Dialog / Exit"
 msgstr ""
 
+msgid "Hexen + Heretic path:"
+msgstr ""
+
 msgid "Doom + Doom II path:"
 msgstr ""
 
-msgid "Use remix tracks"
+msgid "Can't create a new tab!"
 msgstr ""
 
-msgid "Can't create a new tab!"
+msgid "Can't create heretic_hexen temp folder!"
+msgstr ""
+
+msgid "Heretic.wad not found!"
+msgstr ""
+
+msgid "Hexen.wad not found!"
+msgstr ""
+
+msgid "Invalid Heretic + Hexen release!"
+msgstr ""
+
+msgid "Error creating heretic_hexen folder!"
+msgstr ""
+
+msgid "Heretic + Hexen successfully imported!"
 msgstr ""
 
 msgid "Can't create doom2024 temp folder!"
@@ -141,13 +159,10 @@ msgstr ""
 msgid "Invalid Doom + Doom2 release!"
 msgstr ""
 
-msgid "Error downloading remix patch: "
-msgstr ""
-
 msgid "Error creating doom2024 folder!"
 msgstr ""
 
-msgid "DOOM + DOOM II 2024 successfully imported!"
+msgid "Doom + Doom II 2024 successfully imported!"
 msgstr ""
 
 msgid "Delete game"
@@ -180,7 +195,7 @@ msgstr ""
 msgid "Replace by"
 msgstr ""
 
-msgid "Invalid wad file!"
+msgid "Invalid file!"
 msgstr ""
 
 msgid " replaced by "
@@ -189,19 +204,28 @@ msgstr ""
 msgid " in tab "
 msgstr ""
 
+msgid "Game Exec."
+msgstr ""
+
 msgid "Configure Tabs:"
 msgstr ""
 
 msgid "Language:"
 msgstr ""
 
-msgid "Check for GZDoom updates on startup"
+msgid "Custom wine binary:"
+msgstr ""
+
+msgid "Check for UZDoom updates on startup"
 msgstr ""
 
 msgid "At least one tab has to be enabled!"
 msgstr ""
 
 msgid "Enabled tabs must have a description!"
+msgstr ""
+
+msgid "Invalid wine binary!"
 msgstr ""
 
 msgid "-- None --"
@@ -213,10 +237,10 @@ msgstr ""
 msgid "Downloading files..."
 msgstr ""
 
-msgid "Updating gzdoom..."
+msgid "Updating UZDoom..."
 msgstr ""
 
-msgid "Update gzdoom failed"
+msgid "Update UZDoom failed"
 msgstr ""
 
 msgid "Extracting/Copying files..."
@@ -225,13 +249,13 @@ msgstr ""
 msgid "All done, have fun!"
 msgstr ""
 
-msgid "Checking GZDoom version..."
+msgid "Checking UZDoom version..."
 msgstr ""
 
-msgid "GZDoom already at latest version."
+msgid "UZDoom already at latest version."
 msgstr ""
 
-msgid "GZDoom updated to version:"
+msgid "UZDoom updated to version:"
 msgstr ""
 
 msgid "Update failed!"
@@ -255,16 +279,22 @@ msgstr ""
 msgid "Application"
 msgstr ""
 
+msgid "Tools"
+msgstr ""
+
 msgid "Help"
 msgstr ""
 
 msgid "Manage Games"
 msgstr ""
 
-msgid "Reset to Default"
+msgid "Import Doom + Doom II 2024"
 msgstr ""
 
-msgid "Import Doom + Doom II 2024"
+msgid "Import Hexen + Heretic"
+msgstr ""
+
+msgid "Reset to Default Games"
 msgstr ""
 
 msgid "Replace freedoom2.wad"
@@ -273,7 +303,10 @@ msgstr ""
 msgid "Replace blasphemer.wad"
 msgstr ""
 
-msgid "Update GZDoom"
+msgid "Replace Game Exec."
+msgstr ""
+
+msgid "Update UZDoom"
 msgstr ""
 
 msgid "Settings"
@@ -311,15 +344,15 @@ msgstr ""
 msgid "Starting"
 msgstr ""
 
-msgid "Updating GZDoom..."
-msgstr ""
-
 msgid "Under contruction"
 msgstr ""
 
-msgid "A new version of GZDoom was found, update now?"
+msgid "A new version of UZDoom was found, update now?"
 msgstr ""
 
 msgid "Download default games now? (games -> reset to default)"
+msgstr ""
+
+msgid "Checking GZDoom version..."
 msgstr ""
 

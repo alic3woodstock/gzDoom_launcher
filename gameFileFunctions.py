@@ -159,11 +159,11 @@ class GameFileFunctions:
             self.value = math.floor(self.value)
             self.value += 1
 
-        self.message = _('Updating gzdoom...')
+        self.message = _('Updating UZDoom...')
         update = self.update_gz_doom()
         self.value += 1
         if not update:
-            write_log(_('Update gzdoom failed'), True)
+            write_log(_('Update UZDoom failed'), True)
 
         file_names = os.listdir(data_path().download)
         self.message = _("Extracting/Copying files...")
@@ -239,13 +239,13 @@ class GameFileFunctions:
         self.done = False
         self.max_range = 1
         self.totalDownloads = 1
-        self.message = _('Checking GZDoom version...')
+        self.message = _('Checking UZDoom version...')
         self.currentDownload = 1
         result = self.update_gz_doom()
         if result == 2:
-            self.message = _('GZDoom already at latest version.')
+            self.message = _('UZDoom already at latest version.')
         elif result:
-            self.message = _('GZDoom updated to version:') + ' ' + read_config('gzdversion', 'text')
+            self.message = _('UZDoom updated to version:') + ' ' + read_config('gzdversion', 'text')
         else:
             self.message = _('Update failed!') + "\n" + _('Read') + ' ' + data_path().logFile + ' ' + _('for more details!')
         self.value = self.max_range

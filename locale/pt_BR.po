@@ -159,8 +159,8 @@ msgstr "Configurar Abas:"
 msgid "Tab"
 msgstr "Aba"
 
-msgid "Check for GZDoom updates on startup"
-msgstr "Procurar atualizações do GZDoom ao iniciar"
+msgid "Check for UZDoom updates on startup"
+msgstr "Procurar atualizações do UZDoom ao iniciar"
 
 msgid "At least one tab has to be enabled!"
 msgstr "Ao menos uma aba deve estar habilitada!"
@@ -186,9 +186,6 @@ msgstr "Ajuda"
 msgid "Manage Games"
 msgstr "Gerenciar Jogos"
 
-msgid "Reset to Default"
-msgstr "Reiniciar Banco de Dados"
-
 msgid "Import Doom + Doom II 2024"
 msgstr "Importar Doom + Doom II 2024"
 
@@ -198,8 +195,8 @@ msgstr "Substituir freedoom2.wad"
 msgid "Replace blasphemer.wad"
 msgstr "Substituir blasphemer.wad"
 
-msgid "Update GZDoom"
-msgstr "Atualizar GZDoom"
+msgid "Update UZDoom"
+msgstr "Atualizar UZDoom"
 
 msgid "Settings"
 msgstr "Configurações"
@@ -246,11 +243,11 @@ msgstr "Direitos autorais"
 msgid "Starting"
 msgstr "Iiniciando..."
 
-msgid "Updating GZDoom..."
-msgstr "Atualizando GZDoom..."
+msgid "Updating UZDoom..."
+msgstr "Atualizando UZDoom..."
 
-msgid "A new version of GZDoom was found, update now?"
-msgstr "Existe uma nova versão do GZDoom, atualizar agora?"
+msgid "A new version of UZDoom was found, update now?"
+msgstr "Existe uma nova versão do UZDoom, atualizar agora?"
 
 msgid "Starting ..."
 msgstr "Iniciando..."
@@ -258,11 +255,8 @@ msgstr "Iniciando..."
 msgid "Downloading files..."
 msgstr "Baixando arquivos..."
 
-msgid "Updating gzdoom..."
-msgstr "Atualizando GZDoom"
-
-msgid "Update gzdoom failed"
-msgstr "Erro ao atualizar o GZDoom"
+msgid "Update UZDoom failed"
+msgstr "Erro ao atualizar o UZDoom"
 
 msgid "Extracting/Copying files..."
 msgstr "Extraindo/Copiando os arquivos..."
@@ -270,14 +264,14 @@ msgstr "Extraindo/Copiando os arquivos..."
 msgid "All done, have fun!"
 msgstr "Tudo pronto, divirta-se!"
 
-msgid "Checking GZDoom version..."
-msgstr "Verificando a versão do GZDoom..."
+msgid "Checking UZDoom version..."
+msgstr "Verificando a versão do UZDoom..."
 
-msgid "GZDoom already at latest version."
-msgstr "O GZDoom já se encontra na última versão"
+msgid "UZDoom already at latest version."
+msgstr "O UZDoom já se encontra na última versão"
 
-msgid "GZDoom updated to version:"
-msgstr "GZdoom atualizado para versão:"
+msgid "UZDoom updated to version:"
+msgstr "UZDoom atualizado para versão:"
 
 msgid "Update failed!"
 msgstr "Erro ao atualizar"
@@ -338,3 +332,6 @@ msgstr "Erro ao criar a pasta hexen_heretic!"
 
 msgid "Heretic + Hexen successfully imported!"
 msgstr "Heretic + Hexen importado com sucesso!"
+
+msgid "Reset to Default Games"
+msgstr "Retornar à Configuração Inicial"
