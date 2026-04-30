@@ -17,6 +17,7 @@ def get_widget_index(widget):
     for i in range(len(widget.parent.children) - 1, 0, -1):
         if widget.parent.children[i] == widget:
             return i
+    return None
 
 
 class FrmGames(ModalWindow):
@@ -66,6 +67,8 @@ class FrmGames(ModalWindow):
 
         if game:
             self.load_game()
+
+        self.genericForm.ids.name.focus = True
 
     def btnok_on_release(self, _widget):
         # AddGame

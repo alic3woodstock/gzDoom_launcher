@@ -62,11 +62,16 @@ class GenericForm(BoxLayout):
     def add_text_field(self, text='', field_name=''):
         label = self.add_label(text)
         value_input = TextInput()
-        value_input.size_hint = (1, None)
-        value_input.height = self.children_height
+        value_input.size_hint = (1, 1)
         value_input.id = field_name
+
+        box = BoxLayout()
+        box.size_hint = (1, None)
+        box.height = self.children_height
+        box.add_widget(value_input)
+
         self.topLayout.add_widget(label)
-        self.topLayout.add_widget(value_input)
+        self.topLayout.add_widget(box)
         self.ids[field_name] = value_input
         self.ids[field_name + '_l'] = label
         self.ids[field_name + '_b'] = value_input
