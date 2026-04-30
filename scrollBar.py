@@ -73,7 +73,10 @@ class VertScrollBar(MyBoxLayout):
             else:
                 self.trailButton.height = self.width
 
-            const = (self.trail.height - self.trailButton.height) / self.trail.height
+            if self.trail.height > 0:
+                const = (self.trail.height - self.trailButton.height) / self.trail.height
+            else:
+                const = 0
             self.const = const
 
             if not self.trailButton_pressed and self.parent:

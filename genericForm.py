@@ -1,3 +1,4 @@
+from kivy.core.window import Window
 from kivy.graphics import Callback
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.boxlayout import BoxLayout
@@ -8,10 +9,11 @@ from kivy.uix.textinput import TextInput
 from fileChooserDialog import FileChooserDialog
 from fileGrid import FileGrid
 from functions import text_color, background_color, button_height
+from gridContainer import GridContainer
 from icon import Icon
 from myButton import DropdownMainButton, MyButtonBorder, MyCheckBox
 from myDropdown import MyDropdown
-from myPopup import MyPopup
+from myPopup import MyPopup, ModalWindow
 
 
 def open_file_event(input_value, select_dir, _widget):
@@ -21,18 +23,22 @@ def open_file_event(input_value, select_dir, _widget):
 
 
 class GenericForm(BoxLayout):
-    def __init__(self, height=0, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.values = []
         self.labels = []
         self.children_height = button_height
 
         self.topLayout = GridLayout()
+        self.topLayout.size_hint = (1, None)
         self.topLayout.cols = 2
         self.topLayout.padding = [16, 16]
         self.topLayout.spacing = [16, 16]
 
-        self.add_widget(self.topLayout)
+        self.gridContainer = GridContainer(self.topLayout)
+        self.gridContainer.container.size_hint = (1, 1)
+
+        self.add_widget(self.gridContainer)
         self.canvas.add(Callback(self.update_form))
 
     def add_label(self, text):
@@ -142,11 +148,13 @@ class GenericForm(BoxLayout):
         for c in self.topLayoutchildren:
             if isinstance(c, TextInput) and c.id == field_name:
                 return c.text
+        return None
 
     def get_widget(self, field_name):
         for c in self.topLayout.children:
             if c.id == field_name:
                 return c
+        return None
 
     def update_form(self, _instr):
         max_size = 0
@@ -159,6 +167,13 @@ class GenericForm(BoxLayout):
         for lb in self.labels:
             lb.parent.width = max_size
 
+        self.topLayout.height = self.get_height()
+
+        if isinstance(self.parent, ModalWindow):
+            if self.parent.dialog.height < Window.height:
+                self.parent.dialog.height = self.get_height() + button_height * 2 + 50
+        else:
+            self.height = self.get_height() + 48
 
     def add_file_list(self, text='', field_name=''):
 
@@ -172,9 +187,9 @@ class GenericForm(BoxLayout):
         self.ids[field_name] = top_grid
 
     def get_height(self):
-        return ((self.children_height + self.topLayout.spacing[1])
-                * (len(self.topLayout.children) // self.topLayout.cols)
-                + self.topLayout.padding[1] + self.topLayout.padding[3])
+        total_height = self.children_height + self.topLayout.spacing[1]
+        return (total_height * (len(self.topLayout.children) // self.topLayout.cols)
+                + self.topLayout.padding[1])
 
     def link_file_list(self, file_list_id, input_id):
         button = self.ids[input_id].parent.children[0].children[0]

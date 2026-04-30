@@ -2,7 +2,6 @@ from kivy.graphics import Callback
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.label import Label
 
-from functions import button_height
 from genericForm import GenericForm
 from myPopup import ModalWindow, MyPopup
 
@@ -34,15 +33,16 @@ class FrmHelpControls(ModalWindow):
             else:
                 anchor = AnchorLayout(anchor_x='left')
                 anchor.add_widget(self.labels[i])
+            anchor.size_hint = (1, None)
+            anchor.height = self.genericForm.children_height
             self.genericForm.topLayout.add_widget(anchor)
 
         self.add_widget(self.genericForm)
 
         self.create_box_buttons(
             '', 'Ok')
+        self.dialog.height = 100
         self.canvas.add(Callback(self.update_form))
-        self.dialog.height = (button_height * 2  # box buttons height + tithe height
-                              + self.genericForm.get_height())
 
     def update_form(self, _instr):
         for label in self.labels:

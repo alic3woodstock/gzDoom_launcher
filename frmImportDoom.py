@@ -1,19 +1,17 @@
 import os
 from os.path import isdir
 from os.path import isfile
-from functions import log
 from shutil import copy, rmtree
+
 from configDB import write_config, read_config
 from dataPath import data_path
-from functions import button_height
+from functions import log
 from gameDef import GameDef
 from gameDefDB import insert_game, delete_games_from_tab
-from gameFileFunctions import GameFileFunctions
 from gameTab import GameTab
 from gameTabDB import select_all_game_tabs, update_all_game_tabs
 from genericForm import GenericForm
 from myPopup import MyPopup, ModalWindow, MessageBox
-from url import Url
 
 
 class FrmImportDoom(ModalWindow):
@@ -37,10 +35,8 @@ class FrmImportDoom(ModalWindow):
         self.create_box_buttons(
             'OK', 'Cancel')
         self.btnOk.bind(on_release=self.btn_ok_on_press)
-        self.dialog.height = (button_height * 2  # box buttons height + tithe height
-                              + self.genericForm.get_height())
-
         self.hexen_heretic = hexen_heretic
+        self.dialog.height = 100
 
     def btn_ok_on_press(self, _widget):
         msg = MessageBox()
@@ -179,7 +175,7 @@ class FrmImportDoom(ModalWindow):
 
                 if can_save:
                     for f in files:
-                        if f.lower().find('.wad') >=0 and isfile(file + f):
+                        if f.lower().find('.wad') >= 0 and isfile(file + f):
                             copy(file + f, tmp_folder)
 
                         if f.lower() == 'doom.wad':

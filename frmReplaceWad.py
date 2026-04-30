@@ -1,8 +1,5 @@
 from os.path import isfile, basename
 
-from kivy.core.window import Window
-
-from functions import button_height
 from gameDefDB import update_wad, update_exec
 from gameTabDB import select_game_tab_by_id
 from genericForm import GenericForm
@@ -35,8 +32,7 @@ class FrmReplaceWad(ModalWindow):
         self.create_box_buttons(
             'OK', _('Cancel'))
         self.btnOk.bind(on_release=self.btn_ok_on_press)
-        self.dialog.height = (button_height * 2  # box buttons height + tithe height
-                              + self.formLayout.get_height())
+        self.dialog.height = 100
 
     def btn_ok_on_press(self, _widget):
         msg = MessageBox()
@@ -48,7 +44,7 @@ class FrmReplaceWad(ModalWindow):
                 update_wad(file, self.mod_group)
                 tab = select_game_tab_by_id(1)
                 msg.message('Wad ' + self.old_wad + _(' replaced by ')
-                            + basename(file) + _(' in tab ')
+                            + str(basename(file)) + _(' in tab ')
                             + tab.name + "!", icon='information')
                 self.dialog.dismiss()
             else:
@@ -56,4 +52,3 @@ class FrmReplaceWad(ModalWindow):
                 msg.message(_('Game Exec.') + self.old_wad + _(' replaced by ')
                             + basename(file) + "!", icon='information')
                 self.dialog.dismiss()
-
